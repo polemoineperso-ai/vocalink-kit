@@ -28,6 +28,8 @@ export function IdeaRecorder({
 }) {
   const [processing, setProcessing] = useState(false);
   const [processError, setProcessError] = useState<string | null>(null);
+  // « Réessayer » n'a de sens que si l'enregistrement peut être renvoyé tel quel.
+  const [canRetry, setCanRetry] = useState(false);
   const blobRef = useRef<Blob | null>(null);
   const autoStarted = useRef(false);
   const resumed = useRef(false);
@@ -37,6 +39,8 @@ export function IdeaRecorder({
     if (!blob) return;
     if (blob.size > MAX_AUDIO_BYTES) {
       blobRef.current = null;
+      void clearPendingAudio();
+      setCanRetry(false);
       setProcessError(AUDIO_TOO_LARGE_MESSAGE);
       return;
     }
@@ -51,6 +55,12 @@ export function IdeaRecorder({
     }
     setProcessing(false);
     if (!result.ok) {
+      if (result.discard) {
+        // Rien d'audible : inutile de le garder ni de le renvoyer.
+        blobRef.current = null;
+        void clearPendingAudio();
+      }
+      setCanRetry(!result.discard);
       setProcessError(result.error);
       return;
     }
@@ -90,7 +100,8 @@ export function IdeaRecorder({
   }, [autoStart, recorder]);
 
   const recording = recorder.phase === "recording";
-  const errorMessage = processError ?? recorder.error;
+  // L'erreur du dernier enregistrement (trop court, micro) passe avant celle d'un envoi précédent.
+  const errorMessage = recorder.error ?? processError;
 
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-8 text-center">
@@ -156,7 +167,7 @@ export function IdeaRecorder({
         {!recording && !processing && errorMessage ? (
           <div className="flex flex-col items-center gap-3">
             <p className="text-sm text-danger">{errorMessage}</p>
-            {processError && processError !== AUDIO_TOO_LARGE_MESSAGE ? (
+            {processError && canRetry ? (
               <button type="button" onClick={() => void transcribe()} className="btn btn-secondary">
                 <RotateCcw size={16} aria-hidden="true" />
                 Réessayer la transcription

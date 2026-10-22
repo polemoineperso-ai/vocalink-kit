@@ -7,7 +7,7 @@
  * essaie le modèle suivant de sa liste (voir modelChain).
  */
 
-export type OpenAIFailure = "key" | "quota" | "busy" | "model" | "network" | "other";
+export type OpenAIFailure = "key" | "quota" | "busy" | "model" | "network" | "other" | "silence";
 
 export function classifyOpenAIError(status: number, body: string): OpenAIFailure {
   let code = "";
@@ -36,6 +36,8 @@ const MESSAGES: Record<OpenAIFailure, string> = {
   network: "OpenAI est injoignable — vérifiez la connexion, puis réessayez.",
   model: "La transcription a échoué — réessayez. Si ça continue, signalez-le (Réglages).",
   other: "La transcription a échoué — réessayez. Si ça continue, signalez-le (Réglages).",
+  // Pas une erreur d'OpenAI : rien d'audible dans l'enregistrement (voir transcript-filter.ts).
+  silence: "Rien d'audible dans l'enregistrement — parlez près du micro, puis réessayez.",
 };
 
 export function openAIFailureMessage(failure: OpenAIFailure): string {

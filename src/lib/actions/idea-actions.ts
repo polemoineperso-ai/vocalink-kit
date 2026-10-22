@@ -24,7 +24,8 @@ import { pickRediscovery } from "@/lib/rediscover";
 
 export type ProcessIdeaResult =
   | { ok: true; transcript: string; extraction: IdeaExtraction | null }
-  | { ok: false; error: string };
+  // discard : l'enregistrement ne vaut pas d'être renvoyé (rien d'audible).
+  | { ok: false; error: string; discard?: boolean };
 
 export async function processIdea(audio: Blob): Promise<ProcessIdeaResult> {
   if (!isTranscriptionAvailable()) {
@@ -32,7 +33,9 @@ export async function processIdea(audio: Blob): Promise<ProcessIdeaResult> {
   }
 
   const transcription = await transcribeAudio(audio);
-  if (!transcription.ok) return { ok: false, error: openAIFailureMessage(transcription.failure) };
+  if (!transcription.ok) {
+    return { ok: false, error: openAIFailureMessage(transcription.failure), discard: transcription.failure === "silence" };
+  }
   const transcript = transcription.text;
 
   if (!isClassificationAvailable()) {

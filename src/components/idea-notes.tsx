@@ -69,7 +69,7 @@ export function IdeaNotes({ ideaId, notes }: { ideaId: string; notes: NoteView[]
     startTransition(async () => {
       try {
         const result = await addVoiceNote(ideaId, audio);
-        setCanRetry(!result.ok);
+        setCanRetry(!result.ok && !result.discard);
         afterAdd(result);
       } catch {
         // Réseau coupé, serveur injoignable… : on garde l'audio pour réessayer.
@@ -187,9 +187,9 @@ export function IdeaNotes({ ideaId, notes }: { ideaId: string; notes: NoteView[]
             </button>
           </div>
         )}
-        {error ?? recorder.error ? (
+        {recorder.error ?? error ? (
           <div className="mt-2 flex flex-wrap items-center gap-2">
-            <p className="text-sm text-danger">{error ?? recorder.error}</p>
+            <p className="text-sm text-danger">{recorder.error ?? error}</p>
             {error && canRetry && mode === "idle" ? (
               <button type="button" onClick={sendVoiceNote} disabled={isPending} className="btn btn-secondary px-3 py-1.5 text-sm">
                 <RotateCcw size={14} aria-hidden="true" />

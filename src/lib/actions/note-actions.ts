@@ -13,7 +13,8 @@ import type { IdeaNote } from "@prisma/client";
  * Ajouter une note à une idée « Nouvelle » la fait passer « En réflexion ».
  */
 
-export type AddNoteResult = { ok: true; note: IdeaNote; advanced: boolean } | { ok: false; error: string };
+// discard : l'enregistrement ne vaut pas d'être renvoyé (rien d'audible).
+export type AddNoteResult = { ok: true; note: IdeaNote; advanced: boolean } | { ok: false; error: string; discard?: boolean };
 
 async function createNote(ideaId: string, rawText: string, source: "voice" | "text"): Promise<AddNoteResult> {
   const text = cleanNoteText(rawText);
@@ -33,7 +34,9 @@ async function createNote(ideaId: string, rawText: string, source: "voice" | "te
 export async function addVoiceNote(ideaId: string, audio: Blob): Promise<AddNoteResult> {
   if (!isTranscriptionAvailable()) return { ok: false, error: "Transcription indisponible — clé OPENAI_API_KEY manquante." };
   const transcription = await transcribeAudio(audio);
-  if (!transcription.ok) return { ok: false, error: openAIFailureMessage(transcription.failure) };
+  if (!transcription.ok) {
+    return { ok: false, error: openAIFailureMessage(transcription.failure), discard: transcription.failure === "silence" };
+  }
   return createNote(ideaId, transcription.text, "voice");
 }
 

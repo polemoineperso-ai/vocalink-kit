@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ChevronLeft, ExternalLink, LogOut } from "lucide-react";
+import { ChevronLeft, Download, ExternalLink, FileJson, LogOut } from "lucide-react";
 import { logout } from "@/lib/actions/auth-actions";
 import { getAppSettings } from "@/lib/actions/settings-actions";
 import { NotificationsToggle } from "@/components/notifications-toggle";
@@ -56,6 +56,28 @@ export default async function SettingsPage() {
           </div>
         </>
       ) : null}
+
+      <h2 className="group-label">Mes données</h2>
+      <div className="group">
+        <a href="/export?format=csv" download className="row">
+          <span className="icon-btn bg-brand-soft text-brand-ink" aria-hidden="true">
+            <Download size={17} />
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="row-title block">Exporter mes idées</span>
+            <span className="row-sub block">Un tableau qui s&apos;ouvre dans Excel, avec notes et contacts</span>
+          </span>
+        </a>
+        <a href="/export?format=json" download className="row">
+          <span className="icon-btn bg-subtle text-muted" aria-hidden="true">
+            <FileJson size={17} />
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="row-title block">Sauvegarde complète</span>
+            <span className="row-sub block">Toutes les informations, au format JSON</span>
+          </span>
+        </a>
+      </div>
 
       <h2 className="group-label">Dépannage</h2>
       <div className="group">

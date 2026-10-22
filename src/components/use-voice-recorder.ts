@@ -21,6 +21,9 @@ const AUDIO_BITS_PER_SECOND = 32_000;
 // Taille maximale envoyée au serveur (limite de 4 Mo dans next.config.ts,
 // moins une marge pour l'enveloppe de la requête).
 export const MAX_AUDIO_BYTES = 3.8 * 1024 * 1024;
+// En dessous, c'est un toucher par erreur : rien n'est envoyé (ni payé).
+const MIN_RECORDING_MS = 1000;
+
 export const AUDIO_TOO_LARGE_MESSAGE = "Enregistrement trop long pour être envoyé — dictez en plusieurs fois.";
 
 function createRecorder(stream: MediaStream): MediaRecorder {
@@ -46,6 +49,7 @@ export function useVoiceRecorder({ onRecorded, bars = 28 }: { onRecorded: (audio
   const audioCtxRef = useRef<AudioContext | null>(null);
   const frameRef = useRef<number | null>(null);
   const onRecordedRef = useRef(onRecorded);
+  const startedAtRef = useRef(0);
 
   useEffect(() => {
     onRecordedRef.current = onRecorded;
@@ -115,10 +119,15 @@ export function useVoiceRecorder({ onRecorded, bars = 28 }: { onRecorded: (audio
           audioCtxRef.current?.close().catch(() => {});
           stream.getTracks().forEach((t) => t.stop());
           setPhase("idle");
+          if (Date.now() - startedAtRef.current < MIN_RECORDING_MS) {
+            setError("Trop court : parlez, puis touchez pour terminer.");
+            return;
+          }
           onRecordedRef.current(new Blob(chunksRef.current, { type: recorder.mimeType || "audio/webm" }));
         };
         recorderRef.current = recorder;
         recorder.start();
+        startedAtRef.current = Date.now();
         startWaveform(stream);
         setPhase("recording");
       } catch {

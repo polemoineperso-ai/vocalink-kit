@@ -16,6 +16,7 @@
  */
 
 import { classifyOpenAIError, modelChain, type OpenAIFailure } from "@/lib/openai-errors";
+import { isLikelyHallucination } from "@/lib/transcript-filter";
 
 const TRANSCRIPTION_URL = "https://api.openai.com/v1/audio/transcriptions";
 const FALLBACK_MODELS = ["whisper-1", "gpt-4o-mini-transcribe"];
@@ -52,7 +53,8 @@ export async function transcribeAudio(audio: Blob, filename = "idea.webm"): Prom
       }
       const data = (await res.json()) as { text?: unknown };
       const text = typeof data.text === "string" ? data.text.trim() : "";
-      return text ? { ok: true, text } : { ok: false, failure: "other" };
+      // Silence ou bruit : Whisper renvoie du vide ou une phrase inventée.
+      return isLikelyHallucination(text) ? { ok: false, failure: "silence" } : { ok: true, text };
     } catch (e) {
       console.error("[transcription] OpenAI injoignable", model, e);
       return { ok: false, failure: "network" };
