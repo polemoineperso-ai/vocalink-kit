@@ -154,7 +154,8 @@ export async function classifyAndExtractIdea(text: string, today: string): Promi
         },
         contact_phone: {
           type: "string",
-          description: "Numéro de téléphone du contact, uniquement s'il est dicté chiffre par chiffre ou en entier. Omettre sinon.",
+          description:
+            "Numéro de téléphone du contact, uniquement s'il figure dans le texte. Recopie les chiffres EXACTEMENT dans l'ordre où ils apparaissent, sans en ajouter, retirer ni corriger aucun, même si le numéro semble incomplet ou inhabituel. Omettre s'il n'y a pas de numéro.",
         },
         contact_email: {
           type: "string",
@@ -184,6 +185,8 @@ export async function classifyAndExtractIdea(text: string, today: string): Promi
     prompt: `Tu analyses une idée dictée à voix haute par son auteur, pour la classer et en extraire les informations utiles à son suivi.
 
 Règle stricte : n'invente jamais une information absente du texte (contact, téléphone, email, date, heure...). Si un champ n'est pas clairement déductible, omets-le plutôt que de deviner.
+
+Numéros, adresses email et noms propres : recopie-les exactement tels qu'ils apparaissent dans le texte, caractère par caractère, sans jamais les corriger — c'est l'auteur qui vérifiera à la relecture.
 
 Aujourd'hui : ${today}.
 
