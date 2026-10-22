@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Mic, PenLine, X } from "lucide-react";
+import { Mic, PenLine, RotateCcw, X } from "lucide-react";
 import { addTextNote, addVoiceNote, deleteNote, restoreNote, type AddNoteResult } from "@/lib/actions/note-actions";
 import { formatAge } from "@/lib/idea-sections";
-import { formatDuration, useVoiceRecorder } from "@/components/use-voice-recorder";
+import { AUDIO_TOO_LARGE_MESSAGE, formatDuration, MAX_AUDIO_BYTES, useVoiceRecorder } from "@/components/use-voice-recorder";
 import { useToast } from "@/components/toast";
 
 /**
@@ -27,6 +27,10 @@ export function IdeaNotes({ ideaId, notes }: { ideaId: string; notes: NoteView[]
   const [draft, setDraft] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  // Dernier enregistrement, gardé tant que la note n'est pas enregistrée :
+  // « Réessayer » le renvoie sans avoir à redicter.
+  const lastAudioRef = useRef<Blob | null>(null);
+  const [canRetry, setCanRetry] = useState(false);
 
   function afterAdd(result: AddNoteResult) {
     if (!result.ok) {
@@ -35,6 +39,8 @@ export function IdeaNotes({ ideaId, notes }: { ideaId: string; notes: NoteView[]
       return;
     }
     setError(null);
+    setCanRetry(false);
+    lastAudioRef.current = null;
     setDraft("");
     setMode("idle");
     router.refresh();
@@ -44,12 +50,38 @@ export function IdeaNotes({ ideaId, notes }: { ideaId: string; notes: NoteView[]
   const recorder = useVoiceRecorder({
     bars: 22,
     onRecorded: (audio) => {
-      setMode("transcribing");
-      startTransition(async () => afterAdd(await addVoiceNote(ideaId, audio)));
+      lastAudioRef.current = audio;
+      sendVoiceNote();
     },
   });
 
+  function sendVoiceNote() {
+    const audio = lastAudioRef.current;
+    if (!audio) return;
+    if (audio.size > MAX_AUDIO_BYTES) {
+      lastAudioRef.current = null;
+      setCanRetry(false);
+      setError(AUDIO_TOO_LARGE_MESSAGE);
+      return;
+    }
+    setError(null);
+    setMode("transcribing");
+    startTransition(async () => {
+      try {
+        const result = await addVoiceNote(ideaId, audio);
+        setCanRetry(!result.ok);
+        afterAdd(result);
+      } catch {
+        // Réseau coupé, serveur injoignable… : on garde l'audio pour réessayer.
+        setCanRetry(true);
+        setError("Envoi impossible — vérifiez la connexion puis réessayez.");
+        setMode("idle");
+      }
+    });
+  }
+
   function saveText() {
+    setCanRetry(false);
     startTransition(async () => afterAdd(await addTextNote(ideaId, draft)));
   }
 
@@ -155,7 +187,17 @@ export function IdeaNotes({ ideaId, notes }: { ideaId: string; notes: NoteView[]
             </button>
           </div>
         )}
-        {error ?? recorder.error ? <p className="mt-2 text-sm text-danger">{error ?? recorder.error}</p> : null}
+        {error ?? recorder.error ? (
+          <div className="mt-2 flex flex-wrap items-center gap-2">
+            <p className="text-sm text-danger">{error ?? recorder.error}</p>
+            {error && canRetry && mode === "idle" ? (
+              <button type="button" onClick={sendVoiceNote} disabled={isPending} className="btn btn-secondary px-3 py-1.5 text-sm">
+                <RotateCcw size={14} aria-hidden="true" />
+                Réessayer
+              </button>
+            ) : null}
+          </div>
+        ) : null}
       </div>
     </section>
   );

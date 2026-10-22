@@ -63,4 +63,9 @@ L'envoi est automatique tous les jours vers 8 h UTC (10 h en été et 9 h en hiv
 
 Par défaut, OpenAI transcrit **et** classe les idées. Si vous ajoutez une clé Anthropic (`ANTHROPIC_API_KEY`, sur [console.anthropic.com](https://console.anthropic.com)), c'est Claude qui classe ; OpenAI reste utilisé pour la transcription.
 
-Le modèle OpenAI de classification peut être changé avec `OPENAI_CLASSIFICATION_MODEL` (par défaut `gpt-4.1-mini`).
+## Changer les modèles OpenAI
+
+Normalement inutile : si OpenAI retire un modèle, Vocalink passe tout seul au suivant de sa liste. Pour en imposer un autre :
+
+- `OPENAI_TRANSCRIPTION_MODEL` : la voix (par défaut `whisper-1`, puis `gpt-4o-mini-transcribe`) ;
+- `OPENAI_CLASSIFICATION_MODEL` : le classement des idées (par défaut `gpt-4.1-mini`, puis `gpt-4o-mini`, puis `gpt-5-mini`).

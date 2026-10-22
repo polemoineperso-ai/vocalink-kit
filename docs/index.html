@@ -189,6 +189,7 @@
   .safety details p b { color: var(--text); }
   .safety details p + p { margin-top: -6px; }
   @media (max-width: 560px) { .safety details p { padding-left: 16px; } }
+  .legal { margin: 32px 0 0; text-align: center; color: var(--muted); font-size: 13px; line-height: 1.5; }
   @media (max-width: 560px) {
     body { font-size: 17px; }
     .hero { padding-top: 36px; }
@@ -259,8 +260,11 @@
   <section class="help" id="help" hidden>
     <h2><span class="ic"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="m4.93 4.93 4.24 4.24"></path><path d="m14.83 9.17 4.24-4.24"></path><path d="m14.83 14.83 4.24 4.24"></path><path d="m9.17 14.83-4.24 4.24"></path><circle cx="12" cy="12" r="4"></circle></svg></span> Un souci après l'installation ?</h2>
     <details>
-      <summary>Vocalink dit « Transcription indisponible » ou « a échoué »</summary>
-      <div>Votre clé OpenAI a peut-être <b>expiré</b> (regardez la colonne « Expire » sur la page des clés OpenAI), votre crédit est épuisé, ou la clé a été mal collée. Vérifiez votre crédit sur <a href="https://platform.openai.com/settings/organization/billing" target="_blank" rel="noopener">votre compte OpenAI</a>, puis si besoin changez la clé (voir juste en dessous).</div>
+      <summary>La dictée ne marche plus (« Crédit épuisé », « Clé refusée »…)</summary>
+      <div>Dans Vocalink, ouvrez <span class="btn">Réglages</span> → <span class="btn">Tout fonctionne ?</span> : il dit ce qui coince.<ul>
+        <li><b>Crédit OpenAI épuisé ou expiré</b> (le crédit expire un an après l'achat) : rachetez du crédit sur <a href="https://platform.openai.com/settings/organization/billing" target="_blank" rel="noopener">votre compte OpenAI</a>. Rien d'autre à faire.</li>
+        <li><b>Clé OpenAI refusée</b> : elle a expiré ou a été supprimée. Créez-en une nouvelle et remplacez-la (voir juste en dessous).</li>
+      </ul></div>
     </details>
     <details>
       <summary>Changer la clé ou le mot de passe (ou mot de passe oublié)</summary>
@@ -340,6 +344,8 @@
       </details>
     </div>
   </section>
+
+  <p class="legal">Vocalink est un logiciel libre (<a href="https://github.com/polemoineperso-ai/vocalink-kit/blob/main/LICENSE" target="_blank" rel="noopener">licence MIT</a>) de Pierre-Olivier Lemoine, fourni tel quel, sans garantie : vous l'installez et l'utilisez sous votre responsabilité.</p>
 </div>
 
 <template id="missions">
@@ -376,7 +382,7 @@
       <li><label class="task"><input type="checkbox"><span class="tick">✓</span><span class="what">Créer mon compte OpenAI
         <small>Avec votre email ou <span class="btn">Continue with Google</span>. Un abonnement ChatGPT n'est <b>pas</b> nécessaire, c'est un autre service.<br><a class="go" href="https://platform.openai.com/signup" target="_blank" rel="noopener">Ouvrir OpenAI ↗</a></small></span></label></li>
       <li><label class="task"><input type="checkbox"><span class="tick">✓</span><span class="what">Mettre 5 $ de crédit
-        <small><span class="btn">Add payment details</span> → <span class="btn">Individual</span> → votre carte → 5 $. Laissez la recharge automatique <b>désactivée</b> : impossible de dépenser plus.<br><a class="go" href="https://platform.openai.com/settings/organization/billing" target="_blank" rel="noopener">Ouvrir la page crédit ↗</a></small></span></label></li>
+        <small><span class="btn">Add payment details</span> → <span class="btn">Individual</span> → votre carte → 5 $. Laissez la recharge automatique <b>désactivée</b> : impossible de dépenser plus. <b>Bon à savoir :</b> OpenAI fait expirer le crédit <b>un an</b> après l'achat. Le jour venu, Vocalink affichera « Crédit OpenAI épuisé ou expiré » : il suffira de racheter 5 $.<br><a class="go" href="https://platform.openai.com/settings/organization/billing" target="_blank" rel="noopener">Ouvrir la page crédit ↗</a></small></span></label></li>
       <li><label class="task"><input type="checkbox"><span class="tick">✓</span><span class="what">Fabriquer ma clé et la coller dans ma note
         <small><span class="btn">Create new secret key</span> → nom : <i>Vocalink</i> → si un champ d'<b>expiration</b> apparaît, choisissez <b>Jamais</b> (<i>Never</i>) → <span class="btn">Create secret key</span> → <span class="btn">Copy</span>. Elle commence par <span class="secret">sk-</span>. <span class="ic"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></svg></span> Elle ne s'affiche <b>qu'une fois</b> : collez-la tout de suite.<br><a class="go" href="https://platform.openai.com/api-keys" target="_blank" rel="noopener">Ouvrir la page des clés ↗</a></small></span></label></li>
       <li><label class="task"><input type="checkbox"><span class="tick">✓</span><span class="what">Inventer mon mot de passe secret et le noter

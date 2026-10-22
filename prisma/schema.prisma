@@ -126,6 +126,10 @@ model Settings {
   vapidPrivateKey String?
   // Dernier brief envoyé : Vercel Cron peut appeler deux fois le même jour.
   lastBriefAt DateTime?
+  // Essais de mot de passe ratés d'affilée, et blocage temporaire qui en
+  // découle (voir lib/login-throttle.ts).
+  loginFailures     Int       @default(0)
+  loginBlockedUntil DateTime?
   updatedAt   DateTime  @updatedAt
 }
 

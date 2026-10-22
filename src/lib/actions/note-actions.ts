@@ -2,6 +2,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { isTranscriptionAvailable, transcribeAudio } from "@/lib/transcription";
+import { openAIFailureMessage } from "@/lib/openai-errors";
 import { cleanNoteText } from "@/lib/note-text";
 import { isAction, statusForStage } from "@/lib/idea-kind";
 import type { IdeaNote } from "@prisma/client";
@@ -31,9 +32,9 @@ async function createNote(ideaId: string, rawText: string, source: "voice" | "te
 
 export async function addVoiceNote(ideaId: string, audio: Blob): Promise<AddNoteResult> {
   if (!isTranscriptionAvailable()) return { ok: false, error: "Transcription indisponible — clé OPENAI_API_KEY manquante." };
-  const transcript = await transcribeAudio(audio);
-  if (!transcript?.trim()) return { ok: false, error: "La transcription a échoué — réessayez." };
-  return createNote(ideaId, transcript, "voice");
+  const transcription = await transcribeAudio(audio);
+  if (!transcription.ok) return { ok: false, error: openAIFailureMessage(transcription.failure) };
+  return createNote(ideaId, transcription.text, "voice");
 }
 
 export async function addTextNote(ideaId: string, text: string): Promise<AddNoteResult> {

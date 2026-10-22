@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Mic, RotateCcw } from "lucide-react";
 import { processIdea } from "@/lib/actions/idea-actions";
-import { formatDuration, useVoiceRecorder } from "@/components/use-voice-recorder";
+import { AUDIO_TOO_LARGE_MESSAGE, formatDuration, MAX_AUDIO_BYTES, useVoiceRecorder } from "@/components/use-voice-recorder";
 import type { IdeaExtraction } from "@/lib/classification";
 
 /**
@@ -30,9 +30,20 @@ export function IdeaRecorder({
   async function transcribe() {
     const blob = blobRef.current;
     if (!blob) return;
+    if (blob.size > MAX_AUDIO_BYTES) {
+      blobRef.current = null;
+      setProcessError(AUDIO_TOO_LARGE_MESSAGE);
+      return;
+    }
     setProcessing(true);
     setProcessError(null);
-    const result = await processIdea(blob);
+    let result: Awaited<ReturnType<typeof processIdea>>;
+    try {
+      result = await processIdea(blob);
+    } catch {
+      // Réseau coupé, serveur injoignable… : l'audio reste là pour réessayer.
+      result = { ok: false, error: "Envoi impossible — vérifiez la connexion puis réessayez." };
+    }
     setProcessing(false);
     if (!result.ok) {
       setProcessError(result.error);
@@ -121,7 +132,7 @@ export function IdeaRecorder({
         {!recording && !processing && errorMessage ? (
           <div className="flex flex-col items-center gap-3">
             <p className="text-sm text-danger">{errorMessage}</p>
-            {processError ? (
+            {processError && processError !== AUDIO_TOO_LARGE_MESSAGE ? (
               <button type="button" onClick={() => void transcribe()} className="btn btn-secondary">
                 <RotateCcw size={16} aria-hidden="true" />
                 Réessayer la transcription

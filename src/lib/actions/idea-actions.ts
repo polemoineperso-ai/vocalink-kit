@@ -2,6 +2,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { isTranscriptionAvailable, transcribeAudio } from "@/lib/transcription";
+import { openAIFailureMessage } from "@/lib/openai-errors";
 import { classifyAndExtractIdea, isClassificationAvailable, type IdeaExtraction } from "@/lib/classification";
 import { isNotionAvailable, upsertProjectPage } from "@/lib/notion";
 import { isGoogleTasksAvailable, upsertTask } from "@/lib/google-tasks";
@@ -30,10 +31,9 @@ export async function processIdea(audio: Blob): Promise<ProcessIdeaResult> {
     return { ok: false, error: "Transcription indisponible — clé OPENAI_API_KEY manquante." };
   }
 
-  const transcript = await transcribeAudio(audio);
-  if (!transcript || transcript.trim().length === 0) {
-    return { ok: false, error: "La transcription a échoué — réessayez." };
-  }
+  const transcription = await transcribeAudio(audio);
+  if (!transcription.ok) return { ok: false, error: openAIFailureMessage(transcription.failure) };
+  const transcript = transcription.text;
 
   if (!isClassificationAvailable()) {
     return { ok: true, transcript, extraction: null };

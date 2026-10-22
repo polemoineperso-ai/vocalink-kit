@@ -1,5 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { normalizeNextStep, type NextStep } from "@/lib/next-step";
+import { classifyOpenAIError, modelChain } from "@/lib/openai-errors";
 
 /**
  * Classification + extraction d'une idée dictée, en un seul appel LLM
@@ -19,8 +20,9 @@ import { normalizeNextStep, type NextStep } from "@/lib/next-step";
 
 const MODEL = "claude-haiku-4-5-20251001";
 const OPENAI_CHAT_URL = "https://api.openai.com/v1/chat/completions";
-// Surchargeable sans redéployer le code si OpenAI retire ce modèle.
-const OPENAI_MODEL = process.env.OPENAI_CLASSIFICATION_MODEL || "gpt-4.1-mini";
+// Plan B si OpenAI retire un modèle : le suivant prend le relais.
+// OPENAI_CLASSIFICATION_MODEL permet d'en imposer un autre sans toucher au code.
+const OPENAI_FALLBACK_MODELS = ["gpt-4.1-mini", "gpt-4o-mini", "gpt-5-mini"];
 const MIN_TEXT_LENGTH = 10;
 const MAX_TEXT_LENGTH = 4000;
 
@@ -69,16 +71,39 @@ function callTool(params: ToolCallParams): Promise<Record<string, unknown> | nul
   return process.env.ANTHROPIC_API_KEY ? callClaudeTool(params) : callOpenAITool(params);
 }
 
+/**
+ * Limite de réponse selon la famille de modèle : les modèles « qui
+ * réfléchissent » (gpt-5, o…) comptent leur réflexion dans la limite et
+ * refusent l'ancien paramètre max_tokens.
+ */
+export function openAIOutputParams(model: string, maxTokens: number): Record<string, unknown> {
+  return /^(gpt-5|o\d)/.test(model)
+    ? { max_completion_tokens: maxTokens * 4, reasoning_effort: "minimal" }
+    : { max_completion_tokens: maxTokens };
+}
+
 async function callOpenAITool(params: ToolCallParams): Promise<Record<string, unknown> | null> {
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) return null;
+  for (const model of modelChain(process.env.OPENAI_CLASSIFICATION_MODEL, OPENAI_FALLBACK_MODELS)) {
+    const result = await callOpenAIToolWith(model, apiKey, params);
+    if (result !== "model-unavailable") return result;
+  }
+  return null;
+}
+
+async function callOpenAIToolWith(
+  model: string,
+  apiKey: string,
+  params: ToolCallParams,
+): Promise<Record<string, unknown> | null | "model-unavailable"> {
   try {
     const res = await fetch(OPENAI_CHAT_URL, {
       method: "POST",
       headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify({
-        model: OPENAI_MODEL,
-        max_tokens: params.maxTokens ?? 800,
+        model,
+        ...openAIOutputParams(model, params.maxTokens ?? 800),
         tools: [
           {
             type: "function",
@@ -90,8 +115,9 @@ async function callOpenAITool(params: ToolCallParams): Promise<Record<string, un
       }),
     });
     if (!res.ok) {
-      console.error("[classification] échec OpenAI", res.status, await res.text().catch(() => ""));
-      return null;
+      const body = await res.text().catch(() => "");
+      console.error("[classification] échec OpenAI", model, res.status, body);
+      return classifyOpenAIError(res.status, body) === "model" ? "model-unavailable" : null;
     }
     const data = (await res.json()) as {
       choices?: { message?: { tool_calls?: { function?: { arguments?: string } }[] } }[];

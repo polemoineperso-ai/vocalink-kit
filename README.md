@@ -62,6 +62,7 @@ La « clé » est un code secret qui autorise votre Vocalink à utiliser OpenAI 
 2. Cliquez sur **Add payment details** (ajouter un moyen de paiement), puis **Individual** (particulier), et saisissez votre carte.
 3. Achetez du crédit : **5 $** suffisent largement pour commencer (le minimum accepté).
 4. **Recommandé** : laissez la recharge automatique (**auto recharge**) **désactivée**. Ainsi, vous ne pouvez jamais dépenser plus que le crédit acheté.
+5. **Bon à savoir** : OpenAI fait expirer le crédit **un an** après l'achat. Le jour venu, Vocalink affichera « Crédit OpenAI épuisé ou expiré » : il suffira de racheter 5 $.
 
 ### 2.c — Créer la clé
 
@@ -164,9 +165,10 @@ L'icône 🎙️ Vocalink apparaît avec vos autres applications. Ouvrez-la : Vo
 
 ## Problèmes fréquents
 
-**« Transcription indisponible » ou « La transcription a échoué »**
-La clé OpenAI a expiré (colonne « Expire » sur la page des clés OpenAI), est mal copiée, ou votre crédit OpenAI est épuisé.
-→ Vérifiez votre crédit sur [platform.openai.com/settings/organization/billing](https://platform.openai.com/settings/organization/billing). Si besoin, créez une nouvelle clé et remplacez-la (voir ci-dessous).
+**La dictée ne marche plus (« Crédit épuisé », « Clé refusée »…)**
+Dans Vocalink : **Réglages → Tout fonctionne ?** dit ce qui coince.
+→ **Crédit OpenAI épuisé ou expiré** (le crédit expire un an après l'achat) : rachetez du crédit sur [platform.openai.com/settings/organization/billing](https://platform.openai.com/settings/organization/billing). Rien d'autre à faire.
+→ **Clé OpenAI refusée** : elle a expiré ou a été supprimée. Créez-en une nouvelle et remplacez-la (voir ci-dessous).
 
 **Changer la clé OpenAI ou le mot de passe**
 1. Allez sur [vercel.com](https://vercel.com) → votre projet **mon-vocalink** → **Settings** → **Environment Variables**.
@@ -214,5 +216,6 @@ Votre Vocalink n'est pas l'appli d'une entreprise : c'est **le vôtre**, install
 ## Bon à savoir
 
 - **Usage** : l'offre gratuite de Vercel (Hobby) est prévue pour un usage **personnel, non commercial**.
+- **Licence** : Vocalink est un logiciel libre ([licence MIT](LICENSE)) de Pierre-Olivier Lemoine, fourni tel quel, **sans garantie** : vous l'installez et l'utilisez sous votre responsabilité.
 - **Mises à jour** : votre Vocalink est une copie indépendante. Il ne change jamais tout seul : c'est vous qui décidez de le mettre à jour (voir plus haut). Pour vérifier s'il existe une nouvelle version, l'app consulte une fois par jour le site du guide, sans rien envoyer de vos données.
 - **Options avancées** (facultatives, plus techniques) : synchronisation Notion, Google Tasks, email récapitulatif quotidien — voir [docs/OPTIONS-AVANCEES.md](docs/OPTIONS-AVANCEES.md).

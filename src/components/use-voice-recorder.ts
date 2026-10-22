@@ -13,6 +13,24 @@ export type RecorderPhase = "idle" | "requesting" | "recording" | "error";
 // Au-delà, le fichier devient lourd pour la transcription (limite Whisper : 25 Mo).
 export const MAX_RECORDING_SECONDS = 5 * 60;
 
+// 32 kbit/s suffisent pour la voix : 5 minutes ≈ 1,2 Mo. Sans ce réglage, le
+// navigateur choisit souvent 128 kbit/s et une dictée d'une minute dépasse
+// déjà 1 Mo (constaté sur iPhone).
+const AUDIO_BITS_PER_SECOND = 32_000;
+
+// Taille maximale envoyée au serveur (limite de 4 Mo dans next.config.ts,
+// moins une marge pour l'enveloppe de la requête).
+export const MAX_AUDIO_BYTES = 3.8 * 1024 * 1024;
+export const AUDIO_TOO_LARGE_MESSAGE = "Enregistrement trop long pour être envoyé — dictez en plusieurs fois.";
+
+function createRecorder(stream: MediaStream): MediaRecorder {
+  try {
+    return new MediaRecorder(stream, { audioBitsPerSecond: AUDIO_BITS_PER_SECOND });
+  } catch {
+    return new MediaRecorder(stream);
+  }
+}
+
 export function formatDuration(seconds: number): string {
   return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
 }
@@ -88,7 +106,7 @@ export function useVoiceRecorder({ onRecorded, bars = 28 }: { onRecorded: (audio
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
         chunksRef.current = [];
-        const recorder = new MediaRecorder(stream);
+        const recorder = createRecorder(stream);
         recorder.ondataavailable = (e) => {
           if (e.data.size > 0) chunksRef.current.push(e.data);
         };

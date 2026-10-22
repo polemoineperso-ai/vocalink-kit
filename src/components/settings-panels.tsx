@@ -2,8 +2,9 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Check, Copy } from "lucide-react";
+import { Check, CircleAlert, CircleCheck, Copy, Stethoscope } from "lucide-react";
 import { saveFirstName } from "@/lib/actions/settings-actions";
+import { checkHealth, type HealthItem } from "@/lib/actions/health-actions";
 import { useToast } from "@/components/toast";
 
 /** Parties interactives de la page Réglages. */
@@ -72,5 +73,50 @@ export function CopyShortcutUrl() {
         <span className="row-sub block">Ouvre Vocalink micro déjà lancé</span>
       </span>
     </button>
+  );
+}
+
+/** « Tout fonctionne ? » : base de données, clé et crédit OpenAI. */
+export function HealthCheck() {
+  const [items, setItems] = useState<HealthItem[] | null>(null);
+  const [isPending, startTransition] = useTransition();
+
+  function run() {
+    startTransition(async () => {
+      try {
+        setItems(await checkHealth());
+      } catch {
+        setItems([{ label: "Vocalink", ok: false, detail: "Serveur injoignable — vérifiez la connexion." }]);
+      }
+    });
+  }
+
+  return (
+    <>
+      <button type="button" onClick={run} disabled={isPending} className="row w-full text-left">
+        <span className="icon-btn bg-ok-soft text-ok" aria-hidden="true">
+          <Stethoscope size={17} className={isPending ? "animate-pulse" : ""} />
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="row-title block">{isPending ? "Vérification…" : "Tout fonctionne ?"}</span>
+          <span className="row-sub block">Vérifie la base de données, la clé et le crédit OpenAI</span>
+        </span>
+      </button>
+      {items && !isPending
+        ? items.map((item) => (
+            <div key={item.label} className="row items-start">
+              {item.ok ? (
+                <CircleCheck size={20} className="mt-0.5 shrink-0 text-ok" aria-hidden="true" />
+              ) : (
+                <CircleAlert size={20} className="mt-0.5 shrink-0 text-danger" aria-hidden="true" />
+              )}
+              <span className="min-w-0 flex-1">
+                <span className="row-title block">{item.label}</span>
+                <span className={`row-sub block ${item.ok ? "" : "!text-danger"}`}>{item.detail}</span>
+              </span>
+            </div>
+          ))
+        : null}
+    </>
   );
 }

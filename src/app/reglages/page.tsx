@@ -3,7 +3,7 @@ import { ChevronLeft, ExternalLink, LogOut } from "lucide-react";
 import { logout } from "@/lib/actions/auth-actions";
 import { getAppSettings } from "@/lib/actions/settings-actions";
 import { NotificationsToggle } from "@/components/notifications-toggle";
-import { CopyShortcutUrl, FirstNameField } from "@/components/settings-panels";
+import { CopyShortcutUrl, FirstNameField, HealthCheck } from "@/components/settings-panels";
 import { AboutPanel } from "@/components/update-check";
 
 export const dynamic = "force-dynamic";
@@ -56,6 +56,11 @@ export default async function SettingsPage() {
           </div>
         </>
       ) : null}
+
+      <h2 className="group-label">Dépannage</h2>
+      <div className="group">
+        <HealthCheck />
+      </div>
 
       <h2 className="group-label">À propos</h2>
       <AboutPanel />

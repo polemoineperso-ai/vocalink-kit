@@ -1,12 +1,14 @@
 import { login } from "@/lib/actions/auth-actions";
 import { BrandMark } from "@/lib/brand-mark";
+import { formatWait } from "@/lib/login-throttle";
 
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ next?: string; error?: string }>;
+  searchParams: Promise<{ next?: string; error?: string; attente?: string }>;
 }) {
-  const { next, error } = await searchParams;
+  const { next, error, attente } = await searchParams;
+  const waitMinutes = Number(attente) > 0 ? Math.ceil(Number(attente)) : 0;
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-sm flex-col justify-center gap-8 px-4 py-12">
@@ -26,7 +28,13 @@ export default async function LoginPage({
           Mot de passe
           <input type="password" name="password" autoFocus autoComplete="current-password" />
         </label>
-        {error ? <p className="rounded-xl bg-danger-soft px-3 py-2 text-sm text-danger">Mot de passe incorrect.</p> : null}
+        {waitMinutes ? (
+          <p className="rounded-xl bg-danger-soft px-3 py-2 text-sm text-danger">
+            Trop d&apos;essais ratés : par sécurité, la connexion est bloquée. Réessayez dans {formatWait(waitMinutes)}.
+          </p>
+        ) : error ? (
+          <p className="rounded-xl bg-danger-soft px-3 py-2 text-sm text-danger">Mot de passe incorrect.</p>
+        ) : null}
         <button type="submit" className="btn btn-primary w-full py-3.5">
           Se connecter
         </button>
