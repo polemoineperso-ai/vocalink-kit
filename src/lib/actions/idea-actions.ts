@@ -5,7 +5,8 @@ import { isTranscriptionAvailable, transcribeAudio } from "@/lib/transcription";
 import { classifyAndExtractIdea, isClassificationAvailable, type IdeaExtraction } from "@/lib/classification";
 import { isNotionAvailable, upsertProjectPage } from "@/lib/notion";
 import { isGoogleTasksAvailable, upsertTask } from "@/lib/google-tasks";
-import { resolveDueAt, todayInParis } from "@/lib/due-date";
+import { fromZonedTime } from "date-fns-tz";
+import { APP_TIMEZONE, resolveDueAt, todayInParis } from "@/lib/due-date";
 import { normalizeContact, type ContactInput } from "@/lib/contact";
 import { IdeaCategory, IdeaStatus, IdeaPriority, type Idea } from "@prisma/client";
 
@@ -175,6 +176,19 @@ export async function deleteIdea(id: string): Promise<void> {
 
 export async function listIdeas(): Promise<Idea[]> {
   return prisma.idea.findMany({ orderBy: { createdAt: "desc" } });
+}
+
+export type HomeStats = { pending: number; dueToday: number; overdue: number };
+
+/** Compteurs de l'accueil — idées en attente, à faire aujourd'hui (heure de Paris), en retard. */
+export async function getHomeStats(now: Date = new Date()): Promise<HomeStats> {
+  const endOfToday = fromZonedTime(`${todayInParis(now)}T23:59:59`, APP_TIMEZONE);
+  const [pending, dueToday, overdue] = await Promise.all([
+    prisma.idea.count({ where: { status: IdeaStatus.PENDING } }),
+    prisma.idea.count({ where: { status: IdeaStatus.PENDING, dueAt: { gte: now, lte: endOfToday } } }),
+    prisma.idea.count({ where: { status: IdeaStatus.PENDING, dueAt: { lt: now } } }),
+  ]);
+  return { pending, dueToday, overdue };
 }
 
 export async function getIdea(id: string): Promise<Idea | null> {

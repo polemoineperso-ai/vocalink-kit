@@ -1,7 +1,7 @@
 /**
  * Visuel commun des icônes générées (app/icon.tsx, app/apple-icon.tsx) :
- * un micro blanc sur fond noir, dessiné en SVG pour rester net à toutes les
- * tailles — pas de fichier image à maintenir.
+ * un micro blanc sur fond corail (couleur de l'app), dessiné en SVG pour
+ * rester net à toutes les tailles — pas de fichier image à maintenir.
  */
 export function AppIconImage({ size }: { size: number }) {
   return (
@@ -12,7 +12,7 @@ export function AppIconImage({ size }: { size: number }) {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        background: "#000000",
+        background: "#e4572e",
       }}
     >
       <svg width={size * 0.55} height={size * 0.55} viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

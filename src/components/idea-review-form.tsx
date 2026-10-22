@@ -4,21 +4,9 @@ import { useEffect, useState, useTransition } from "react";
 import { saveIdea, updateIdea, listIdeas } from "@/lib/actions/idea-actions";
 import { getSelfAndDescendantIds } from "@/lib/idea-tree";
 import { formatContactIdentity } from "@/lib/contact";
+import { CATEGORY_ORDER, CATEGORY_STYLE, PRIORITY_ORDER, PRIORITY_STYLE, initials } from "@/lib/category-style";
 import type { IdeaExtraction } from "@/lib/classification";
 import type { Idea, IdeaPriority } from "@prisma/client";
-
-const CATEGORY_OPTIONS: { value: IdeaExtraction["category"]; label: string }[] = [
-  { value: "PROJET", label: "Projet" },
-  { value: "EMAIL", label: "Email" },
-  { value: "APPEL_RAPPEL", label: "Appel / Rappel" },
-  { value: "IDEE_PURE", label: "Idée pure" },
-];
-
-const PRIORITY_OPTIONS: { value: IdeaPriority; label: string }[] = [
-  { value: "LOW", label: "Basse" },
-  { value: "MEDIUM", label: "Moyenne" },
-  { value: "HIGH", label: "Haute" },
-];
 
 /**
  * Formulaire éditable pré-rempli depuis l'extraction IA (ou vide si
@@ -33,6 +21,7 @@ export function IdeaReviewForm({
   initialParentId,
   initialPriority,
   onSaved,
+  onCancel,
 }: {
   /** Présent en mode édition (met à jour une idée existante) ; absent en mode création. */
   ideaId?: string;
@@ -41,6 +30,8 @@ export function IdeaReviewForm({
   initialParentId?: string | null;
   initialPriority?: IdeaPriority;
   onSaved: (idea: Idea) => void;
+  /** Retour à l'enregistrement (création uniquement). */
+  onCancel?: () => void;
 }) {
   const [category, setCategory] = useState<IdeaExtraction["category"]>(extraction?.category ?? "IDEE_PURE");
   const [priority, setPriority] = useState<IdeaPriority>(initialPriority ?? "MEDIUM");
@@ -121,212 +112,194 @@ export function IdeaReviewForm({
     });
   }
 
+  const contactIdentity = formatContactIdentity({ contactName, contactPhone, contactEmail, contactCompany, contactRole });
+
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4 rounded-lg border p-4">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       {!extraction && !ideaId ? (
-        <p className="text-sm text-amber-600">
+        <p className="rounded-xl bg-warn-soft px-4 py-3 text-sm text-warn">
           Extraction indisponible — la transcription brute a été placée dans le résumé, complétez le reste à la main.
         </p>
       ) : null}
 
-      <button
-        type="button"
-        onClick={speakSummary}
-        className="w-fit rounded-md border border-black px-4 py-2 text-sm font-medium"
-      >
-        {isSpeaking ? "🔊 Lecture…" : "🔊 Écouter le résumé"}
-      </button>
-
       {transcript ? (
-        <div className="flex flex-col gap-1 rounded-md bg-gray-50 p-3 text-sm">
-          <p className="font-medium text-gray-700">Transcription — relisez plutôt que de réécouter l&apos;audio</p>
-          <p className="whitespace-pre-wrap text-gray-600">{transcript}</p>
+        <div className="card flex flex-col gap-3 p-5">
+          <div className="flex items-center justify-between gap-3">
+            <p className="section-title">Vous avez dit</p>
+            <button type="button" onClick={speakSummary} className="btn btn-ghost">
+              {isSpeaking ? "🔊 Lecture…" : "🔊 Écouter le résumé"}
+            </button>
+          </div>
+          <p className="whitespace-pre-wrap leading-relaxed text-muted">« {transcript} »</p>
         </div>
       ) : null}
 
-      <label className="flex flex-col gap-1 text-sm">
-        Catégorie
-        <select
-          value={category}
-          onChange={(e) => setCategory(e.target.value as IdeaExtraction["category"])}
-          className="rounded-md border px-2 py-1.5"
-        >
-          {CATEGORY_OPTIONS.map((opt) => (
-            <option key={opt.value} value={opt.value}>
-              {opt.label}
-            </option>
-          ))}
-        </select>
-      </label>
-
-      <label className="flex flex-col gap-1 text-sm">
-        Priorité
-        <select
-          value={priority}
-          onChange={(e) => setPriority(e.target.value as IdeaPriority)}
-          className="rounded-md border px-2 py-1.5"
-        >
-          {PRIORITY_OPTIONS.map((opt) => (
-            <option key={opt.value} value={opt.value}>
-              {opt.label}
-            </option>
-          ))}
-        </select>
-      </label>
-
-      <label className="flex flex-col gap-1 text-sm">
-        Titre
-        <input value={title} onChange={(e) => setTitle(e.target.value)} className="rounded-md border px-2 py-1.5" />
-      </label>
-
-      <label className="flex flex-col gap-1 text-sm">
-        Résumé
-        <textarea
-          value={summary}
-          onChange={(e) => setSummary(e.target.value)}
-          rows={3}
-          className="rounded-md border px-2 py-1.5"
-        />
-      </label>
-
-      <label className="flex flex-col gap-1 text-sm">
-        Tags (séparés par des virgules)
-        <input value={tags} onChange={(e) => setTags(e.target.value)} className="rounded-md border px-2 py-1.5" />
-      </label>
-
-      <label className="flex flex-col gap-1 text-sm">
-        Projet parent (optionnel)
-        <select
-          value={parentId}
-          onChange={(e) => setParentId(e.target.value)}
-          className="rounded-md border px-2 py-1.5"
-        >
-          <option value="">— Aucun (idée indépendante) —</option>
-          {availableParents.map((i) => (
-            <option key={i.id} value={i.id}>
-              {i.title}
-            </option>
-          ))}
-        </select>
-      </label>
-
-      <div className="flex flex-col gap-3 rounded-md bg-gray-50 p-3">
-        <p className="text-sm font-medium">
-          Contact <span className="font-normal text-gray-500">(optionnel)</span>
-        </p>
-        <label className="flex flex-col gap-1 text-sm">
-          Nom et prénom
-          <input
-            value={contactName}
-            onChange={(e) => setContactName(e.target.value)}
-            autoComplete="off"
-            className="rounded-md border px-2 py-1.5"
-          />
-        </label>
-        <div className="flex gap-3">
-          <label className="flex flex-1 flex-col gap-1 text-sm">
-            Téléphone
-            <input
-              type="tel"
-              value={contactPhone}
-              onChange={(e) => setContactPhone(e.target.value)}
-              autoComplete="off"
-              className="rounded-md border px-2 py-1.5"
-            />
-          </label>
-          <label className="flex flex-1 flex-col gap-1 text-sm">
-            Email
-            <input
-              type="email"
-              value={contactEmail}
-              onChange={(e) => setContactEmail(e.target.value)}
-              autoComplete="off"
-              className="rounded-md border px-2 py-1.5"
-            />
-          </label>
+      <div className="card flex flex-col gap-5 p-5">
+        <div className="flex flex-col gap-2">
+          <p className="section-title">Catégorie</p>
+          <div className="flex flex-wrap gap-2" role="group" aria-label="Catégorie">
+            {CATEGORY_ORDER.map((value) => {
+              const style = CATEGORY_STYLE[value];
+              const selected = category === value;
+              return (
+                <button
+                  key={value}
+                  type="button"
+                  aria-pressed={selected}
+                  onClick={() => setCategory(value)}
+                  className={`pill ${selected ? style.selected : ""}`}
+                >
+                  <span aria-hidden="true">{style.icon}</span>
+                  {style.label}
+                </button>
+              );
+            })}
+          </div>
         </div>
-        <div className="flex gap-3">
-          <label className="flex flex-1 flex-col gap-1 text-sm">
-            Société
-            <input
-              value={contactCompany}
-              onChange={(e) => setContactCompany(e.target.value)}
-              autoComplete="off"
-              className="rounded-md border px-2 py-1.5"
-            />
+
+        <label className="field-label">
+          Titre
+          <input value={title} onChange={(e) => setTitle(e.target.value)} className="text-lg font-semibold" />
+        </label>
+
+        <label className="field-label">
+          Résumé
+          <textarea value={summary} onChange={(e) => setSummary(e.target.value)} rows={3} />
+        </label>
+
+        <div className="flex flex-col gap-2">
+          <p className="section-title">Priorité</p>
+          <div className="flex flex-wrap gap-2" role="group" aria-label="Priorité">
+            {PRIORITY_ORDER.map((value) => {
+              const style = PRIORITY_STYLE[value];
+              const selected = priority === value;
+              return (
+                <button
+                  key={value}
+                  type="button"
+                  aria-pressed={selected}
+                  onClick={() => setPriority(value)}
+                  className={`pill ${selected ? style.selected : ""}`}
+                >
+                  {style.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      <div className="card flex flex-col gap-4 p-5">
+        <div className="flex items-center gap-3">
+          <div
+            className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-brand-soft text-sm font-semibold text-brand-ink"
+            aria-hidden="true"
+          >
+            {contactName ? initials(contactName) : "👤"}
+          </div>
+          <div className="min-w-0">
+            <p className="section-title">Contact</p>
+            <p className="truncate text-sm text-muted">{contactIdentity ?? "Optionnel — personne à contacter"}</p>
+          </div>
+        </div>
+        <label className="field-label">
+          Nom et prénom
+          <input value={contactName} onChange={(e) => setContactName(e.target.value)} autoComplete="off" />
+        </label>
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <label className="field-label">
+            Téléphone
+            <input type="tel" value={contactPhone} onChange={(e) => setContactPhone(e.target.value)} autoComplete="off" />
           </label>
-          <label className="flex flex-1 flex-col gap-1 text-sm">
+          <label className="field-label">
+            Email
+            <input type="email" value={contactEmail} onChange={(e) => setContactEmail(e.target.value)} autoComplete="off" />
+          </label>
+          <label className="field-label">
+            Société
+            <input value={contactCompany} onChange={(e) => setContactCompany(e.target.value)} autoComplete="off" />
+          </label>
+          <label className="field-label">
             Fonction
-            <input
-              value={contactRole}
-              onChange={(e) => setContactRole(e.target.value)}
-              autoComplete="off"
-              className="rounded-md border px-2 py-1.5"
-            />
+            <input value={contactRole} onChange={(e) => setContactRole(e.target.value)} autoComplete="off" />
           </label>
         </div>
       </div>
 
       {category === "EMAIL" ? (
-        <div className="flex flex-col gap-3 rounded-md bg-gray-50 p-3">
-          <p className="text-xs text-gray-500">Le message sera adressé à l&apos;email du contact ci-dessus.</p>
-          <label className="flex flex-col gap-1 text-sm">
+        <div className="card flex flex-col gap-4 p-5">
+          <div>
+            <p className="section-title">Email à envoyer</p>
+            <p className="mt-1 text-sm text-muted">Le message sera adressé à l&apos;email du contact ci-dessus.</p>
+          </div>
+          <label className="field-label">
             Objet
-            <input
-              value={emailSubject}
-              onChange={(e) => setEmailSubject(e.target.value)}
-              className="rounded-md border px-2 py-1.5"
-            />
+            <input value={emailSubject} onChange={(e) => setEmailSubject(e.target.value)} />
           </label>
-          <label className="flex flex-col gap-1 text-sm">
+          <label className="field-label">
             Message
-            <textarea
-              value={emailBody}
-              onChange={(e) => setEmailBody(e.target.value)}
-              rows={4}
-              className="rounded-md border px-2 py-1.5"
-            />
+            <textarea value={emailBody} onChange={(e) => setEmailBody(e.target.value)} rows={4} />
           </label>
         </div>
       ) : null}
 
-      <div className="flex flex-col gap-3 rounded-md bg-gray-50 p-3">
-        <p className="text-xs text-gray-500">
-          {category === "APPEL_RAPPEL"
-            ? "Laissez vide pour un créneau par défaut (demain 9h) — clairement signalé comme estimé."
-            : "Échéance optionnelle — laissez vide si aucune date ne s'applique."}
-        </p>
-        <div className="flex gap-3">
-          <label className="flex flex-1 flex-col gap-1 text-sm">
+      <div className="card flex flex-col gap-4 p-5">
+        <div>
+          <p className="section-title">Échéance</p>
+          <p className="mt-1 text-sm text-muted">
+            {category === "APPEL_RAPPEL"
+              ? "Laissez vide pour un créneau par défaut (demain 9h), signalé comme estimé."
+              : "Optionnelle — laissez vide si aucune date ne s'applique."}
+          </p>
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <label className="field-label">
             Date
-            <input
-              type="date"
-              value={dueDate}
-              onChange={(e) => setDueDate(e.target.value)}
-              className="rounded-md border px-2 py-1.5"
-            />
+            <input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} />
           </label>
-          <label className="flex flex-1 flex-col gap-1 text-sm">
+          <label className="field-label">
             Heure
-            <input
-              type="time"
-              value={dueTime}
-              onChange={(e) => setDueTime(e.target.value)}
-              className="rounded-md border px-2 py-1.5"
-            />
+            <input type="time" value={dueTime} onChange={(e) => setDueTime(e.target.value)} />
           </label>
         </div>
       </div>
 
-      {error ? <p className="text-sm text-red-600">{error}</p> : null}
+      <details className="card group p-5">
+        <summary className="cursor-pointer list-none text-sm font-medium text-muted">
+          <span className="group-open:hidden">＋</span>
+          <span className="hidden group-open:inline">−</span> Tags et projet parent
+        </summary>
+        <div className="mt-4 flex flex-col gap-4">
+          <label className="field-label">
+            Tags (séparés par des virgules)
+            <input value={tags} onChange={(e) => setTags(e.target.value)} />
+          </label>
+          <label className="field-label">
+            Projet parent
+            <select value={parentId} onChange={(e) => setParentId(e.target.value)}>
+              <option value="">— Aucun (idée indépendante) —</option>
+              {availableParents.map((i) => (
+                <option key={i.id} value={i.id}>
+                  {i.title}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
+      </details>
 
-      <button
-        type="submit"
-        disabled={isPending}
-        className="w-fit rounded-md bg-black px-4 py-2 text-sm text-white disabled:opacity-50"
-      >
-        {isPending ? "Enregistrement…" : ideaId ? "Mettre à jour" : "Enregistrer"}
-      </button>
+      {error ? <p className="rounded-xl bg-danger-soft px-4 py-3 text-sm text-danger">{error}</p> : null}
+
+      <div className="sticky bottom-3 flex gap-2">
+        <button type="submit" disabled={isPending} className="btn btn-primary flex-1 py-4 text-base shadow-lg">
+          {isPending ? "Enregistrement…" : ideaId ? "Mettre à jour" : "Enregistrer"}
+        </button>
+        {onCancel ? (
+          <button type="button" onClick={onCancel} disabled={isPending} className="btn btn-secondary py-4">
+            Annuler
+          </button>
+        ) : null}
+      </div>
     </form>
   );
 }

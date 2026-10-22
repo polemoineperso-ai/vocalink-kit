@@ -30,8 +30,11 @@ export function normalizeContact(input: ContactInput): ContactFields {
   };
 }
 
+/** Ne regarde que les champs contact — l'appelant passe souvent l'idée entière. */
 export function hasContact(contact: ContactFields): boolean {
-  return Object.values(contact).some(Boolean);
+  return Boolean(
+    contact.contactName || contact.contactPhone || contact.contactEmail || contact.contactCompany || contact.contactRole,
+  );
 }
 
 /** "Jean Dupont — Directeur, ACME" — null si ni nom, ni fonction, ni société. */

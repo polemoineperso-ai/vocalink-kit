@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -17,6 +17,14 @@ export const metadata: Metadata = {
   description: "Dites une idée, elle se transforme en action.",
   // Ouverture plein écran une fois ajoutée à l'écran d'accueil iOS (voir manifest.ts).
   appleWebApp: { capable: true, title: "Vocalink", statusBarStyle: "default" },
+};
+
+// Barre d'état du téléphone assortie au fond de l'app (clair / sombre).
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#fbf7f0" },
+    { media: "(prefers-color-scheme: dark)", color: "#171512" },
+  ],
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

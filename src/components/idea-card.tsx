@@ -6,26 +6,8 @@ import Link from "next/link";
 import { updateIdeaStatus, deleteIdea } from "@/lib/actions/idea-actions";
 import { buildMailtoLink, buildGoogleCalendarLink, buildTelLink } from "@/lib/links";
 import { formatContactIdentity, hasContact } from "@/lib/contact";
+import { CATEGORY_STYLE, PRIORITY_STYLE } from "@/lib/category-style";
 import type { Idea } from "@prisma/client";
-
-const CATEGORY_LABELS: Record<Idea["category"], string> = {
-  PROJET: "Projet",
-  EMAIL: "Email",
-  APPEL_RAPPEL: "Appel / Rappel",
-  IDEE_PURE: "Idée pure",
-};
-
-const PRIORITY_LABELS: Record<Idea["priority"], string> = {
-  LOW: "Basse",
-  MEDIUM: "Moyenne",
-  HIGH: "Haute",
-};
-
-const PRIORITY_STYLES: Record<Idea["priority"], string> = {
-  LOW: "border-gray-200 text-gray-500",
-  MEDIUM: "border-gray-300 text-gray-600",
-  HIGH: "border-red-300 text-red-600",
-};
 
 export function IdeaCard({
   idea,
@@ -39,10 +21,13 @@ export function IdeaCard({
 }) {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
+  const style = CATEGORY_STYLE[idea.category];
+  const done = idea.status === "ACTIONED";
+  const overdue = !done && idea.dueAt !== null && new Date(idea.dueAt) < new Date();
 
   function toggleStatus() {
     startTransition(async () => {
-      await updateIdeaStatus(idea.id, idea.status === "PENDING" ? "ACTIONED" : "PENDING");
+      await updateIdeaStatus(idea.id, done ? "PENDING" : "ACTIONED");
       router.refresh();
     });
   }
@@ -61,106 +46,99 @@ export function IdeaCard({
       : idea.category === "APPEL_RAPPEL" && idea.dueAt
         ? buildGoogleCalendarLink({ title: idea.title, details: idea.summary, start: new Date(idea.dueAt) })
         : null;
+  const actionLabel = idea.category === "EMAIL" ? "Écrire l'email" : "Agenda";
 
   const contactIdentity = formatContactIdentity(idea);
   const telLink = buildTelLink(idea.contactPhone);
 
   return (
-    <div className={`flex flex-col gap-2 rounded-lg border p-4 ${isChild ? "ml-6 border-dashed" : ""}`}>
-      <div className="flex items-start justify-between gap-2">
-        <div>
-          {isChild && parentTitle ? <p className="text-xs text-gray-400">↳ rattaché à : {parentTitle}</p> : null}
-          <p className="font-medium">{idea.title}</p>
-          <p className="text-sm text-gray-500">{idea.summary}</p>
-        </div>
-        <div className="flex shrink-0 gap-1.5">
-          {idea.priority !== "MEDIUM" ? (
-            <span className={`rounded-full border px-2 py-0.5 text-xs ${PRIORITY_STYLES[idea.priority]}`}>
-              {PRIORITY_LABELS[idea.priority]}
+    <article className={`card relative flex overflow-hidden ${isChild ? "ml-6" : ""} ${done ? "opacity-70" : ""}`}>
+      <div className={`w-1.5 shrink-0 ${done ? "bg-line" : style.stripe}`} aria-hidden="true" />
+      <div className="flex min-w-0 flex-1 flex-col gap-3 p-4">
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            {isChild && parentTitle ? <p className="mb-1 text-xs text-muted">↳ {parentTitle}</p> : null}
+            <h2 className={`font-semibold leading-snug ${done ? "text-muted line-through" : ""}`}>{idea.title}</h2>
+            {idea.summary ? <p className="mt-1 text-sm leading-relaxed text-muted">{idea.summary}</p> : null}
+          </div>
+          <div className="flex shrink-0 flex-col items-end gap-1.5">
+            <span className={`chip ${style.chip}`}>
+              <span aria-hidden="true">{style.icon}</span>
+              {style.label}
             </span>
-          ) : null}
-          <span className="rounded-full border px-2 py-0.5 text-xs text-gray-600">
-            {CATEGORY_LABELS[idea.category]}
-          </span>
+            {idea.priority === "HIGH" ? <span className={`chip ${PRIORITY_STYLE.HIGH.chip}`}>Haute</span> : null}
+            {idea.priority === "LOW" ? <span className={`chip ${PRIORITY_STYLE.LOW.chip}`}>Basse</span> : null}
+          </div>
         </div>
-      </div>
 
-      {idea.tags ? (
-        <div className="flex flex-wrap gap-1">
-          {idea.tags.split(",").map((t) => (
-            <span key={t} className="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-600">
-              {t.trim()}
-            </span>
-          ))}
-        </div>
-      ) : null}
-
-      {hasContact(idea) ? (
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-600">
-          {contactIdentity ? <span>👤 {contactIdentity}</span> : null}
-          {idea.contactPhone ? (
-            telLink ? (
-              <a href={telLink} className="underline">
-                📞 {idea.contactPhone}
+        {hasContact(idea) ? (
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 rounded-xl bg-subtle px-3 py-2 text-sm">
+            {contactIdentity ? <span className="font-medium">👤 {contactIdentity}</span> : null}
+            {idea.contactPhone ? (
+              telLink ? (
+                <a href={telLink} className="font-medium text-appel-ink underline-offset-2 hover:underline">
+                  📞 {idea.contactPhone}
+                </a>
+              ) : (
+                <span>📞 {idea.contactPhone}</span>
+              )
+            ) : null}
+            {idea.contactEmail ? (
+              <a
+                href={buildMailtoLink({ recipient: idea.contactEmail, subject: null, body: null })}
+                className="font-medium text-email-ink underline-offset-2 hover:underline"
+              >
+                ✉ {idea.contactEmail}
               </a>
-            ) : (
-              <span>📞 {idea.contactPhone}</span>
-            )
-          ) : null}
-          {idea.contactEmail ? (
-            <a href={buildMailtoLink({ recipient: idea.contactEmail, subject: null, body: null })} className="underline">
-              ✉️ {idea.contactEmail}
-            </a>
-          ) : null}
-        </div>
-      ) : null}
+            ) : null}
+          </div>
+        ) : null}
 
-      {idea.dueAt ? (
-        <p className="text-xs text-gray-500">
-          Échéance : {new Date(idea.dueAt).toLocaleString("fr-FR", { dateStyle: "short", timeStyle: "short" })}
-          {idea.dueEstimated ? <span className="text-amber-600"> (estimée)</span> : null}
-        </p>
-      ) : null}
-
-      <div className="flex items-center justify-between text-xs text-gray-400">
-        <span>{new Date(idea.createdAt).toLocaleString("fr-FR")}</span>
-        <div className="flex items-center gap-3">
-          {idea.googleTaskId ? (
-            <span className="text-gray-400" title="Synchronisé avec Google Tasks">
-              ✓ Dans Google Tasks
+        <div className="flex flex-wrap items-center gap-2 text-xs text-muted">
+          {idea.dueAt ? (
+            <span className={`chip ${overdue ? "bg-warn-soft text-warn" : "bg-subtle text-muted"}`}>
+              🕑 {new Date(idea.dueAt).toLocaleString("fr-FR", { dateStyle: "short", timeStyle: "short" })}
+              {idea.dueEstimated ? " (estimée)" : ""}
+              {overdue ? " · en retard" : ""}
             </span>
           ) : null}
-          {idea.category === "PROJET" && idea.notionPageUrl ? (
-            <a
-              href={idea.notionPageUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-gray-600 underline"
-            >
-              Ouvrir dans Notion ↗
-            </a>
-          ) : null}
+          {idea.tags
+            ? idea.tags.split(",").map((t) => (
+                <span key={t} className="chip bg-subtle font-medium text-muted">
+                  #{t.trim()}
+                </span>
+              ))
+            : null}
+          {idea.googleTaskId ? <span title="Synchronisé avec Google Tasks">✓ Google Tasks</span> : null}
+        </div>
+
+        <div className="-mx-2 flex flex-wrap items-center gap-1 border-t border-line pt-2">
+          <button type="button" onClick={toggleStatus} disabled={isPending} className="btn btn-ghost font-semibold text-ok">
+            {done ? "↺ Remettre en attente" : "✓ Traité"}
+          </button>
           {actionLink ? (
             <a
               href={actionLink}
               target={idea.category === "APPEL_RAPPEL" ? "_blank" : undefined}
               rel="noopener noreferrer"
-              className="text-gray-600 underline"
+              className="btn btn-ghost"
             >
-              Ouvrir
+              {actionLabel}
             </a>
           ) : null}
-          <Link href={`/ideas/${idea.id}/edit`} className="text-gray-600 underline">
+          {idea.category === "PROJET" && idea.notionPageUrl ? (
+            <a href={idea.notionPageUrl} target="_blank" rel="noopener noreferrer" className="btn btn-ghost">
+              Notion ↗
+            </a>
+          ) : null}
+          <Link href={`/ideas/${idea.id}/edit`} className="btn btn-ghost">
             Modifier
           </Link>
-          <button type="button" onClick={toggleStatus} disabled={isPending} className="text-gray-600 underline">
-            {idea.status === "PENDING" ? "Marquer traité" : "Marquer en attente"}
-          </button>
-          <button type="button" onClick={handleDelete} disabled={isPending} className="text-red-600 underline">
+          <button type="button" onClick={handleDelete} disabled={isPending} className="btn btn-ghost ml-auto text-danger">
             Supprimer
           </button>
         </div>
       </div>
-    </div>
+    </article>
   );
 }

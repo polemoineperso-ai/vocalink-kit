@@ -4,27 +4,13 @@ import { useState } from "react";
 import { IdeaCard } from "@/components/idea-card";
 import { filterIdeas } from "@/lib/idea-filter";
 import { groupIdeasByRoot } from "@/lib/idea-tree";
+import { CATEGORY_ORDER, CATEGORY_STYLE, PRIORITY_ORDER, PRIORITY_STYLE } from "@/lib/category-style";
 import type { Idea, IdeaCategory, IdeaStatus, IdeaPriority } from "@prisma/client";
 
-const CATEGORY_OPTIONS: { value: IdeaCategory | ""; label: string }[] = [
-  { value: "", label: "Toutes les catégories" },
-  { value: "PROJET", label: "Projet" },
-  { value: "EMAIL", label: "Email" },
-  { value: "APPEL_RAPPEL", label: "Appel / Rappel" },
-  { value: "IDEE_PURE", label: "Idée pure" },
-];
-
 const STATUS_OPTIONS: { value: IdeaStatus | ""; label: string }[] = [
-  { value: "", label: "Tous les statuts" },
+  { value: "", label: "Toutes" },
   { value: "PENDING", label: "En attente" },
-  { value: "ACTIONED", label: "Traité" },
-];
-
-const PRIORITY_OPTIONS: { value: IdeaPriority | ""; label: string }[] = [
-  { value: "", label: "Toutes les priorités" },
-  { value: "LOW", label: "Basse" },
-  { value: "MEDIUM", label: "Moyenne" },
-  { value: "HIGH", label: "Haute" },
+  { value: "ACTIONED", label: "Traitées" },
 ];
 
 /** Recherche/filtres côté client — usage personnel, quelques dizaines/centaines d'idées, pas besoin d'aller-retour serveur. */
@@ -38,59 +24,102 @@ export function IdeasFilterList({ ideas }: { ideas: Idea[] }) {
   const groups = groupIdeasByRoot(filtered);
   const hasActiveFilters = search.trim() !== "" || category !== "" || status !== "" || priority !== "";
 
+  function resetFilters() {
+    setSearch("");
+    setCategory("");
+    setStatus("");
+    setPriority("");
+  }
+
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex flex-col gap-2">
-        <input
-          type="search"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Rechercher (titre, résumé, tags)…"
-          className="rounded-md border px-2 py-1.5 text-sm"
-        />
-        <div className="flex flex-wrap gap-2">
-          <select
-            value={category}
-            onChange={(e) => setCategory(e.target.value as IdeaCategory | "")}
-            className="rounded-md border px-2 py-1 text-xs"
-          >
-            {CATEGORY_OPTIONS.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
-          <select
-            value={status}
-            onChange={(e) => setStatus(e.target.value as IdeaStatus | "")}
-            className="rounded-md border px-2 py-1 text-xs"
-          >
+    <div className="flex flex-col gap-5">
+      <div className="flex flex-col gap-3">
+        <div className="relative">
+          <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-muted" aria-hidden="true">
+            🔍
+          </span>
+          <input
+            type="search"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Rechercher une idée, un contact, une société…"
+            className="pl-10"
+            aria-label="Rechercher"
+          />
+        </div>
+
+        <div className="scroll-row -mx-4 flex gap-2 overflow-x-auto px-4 pb-1" role="group" aria-label="Catégorie">
+          <button type="button" aria-pressed={category === ""} onClick={() => setCategory("")} className={`pill shrink-0 ${category === "" ? "bg-brand text-white" : ""}`}>
+            Toutes
+          </button>
+          {CATEGORY_ORDER.map((value) => {
+            const style = CATEGORY_STYLE[value];
+            const selected = category === value;
+            return (
+              <button
+                key={value}
+                type="button"
+                aria-pressed={selected}
+                onClick={() => setCategory(selected ? "" : value)}
+                className={`pill shrink-0 ${selected ? style.selected : ""}`}
+              >
+                <span aria-hidden="true">{style.icon}</span>
+                {style.label}
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2 text-sm">
+          <div className="flex rounded-full border border-line bg-surface p-0.5" role="group" aria-label="Statut">
             {STATUS_OPTIONS.map((opt) => (
-              <option key={opt.value} value={opt.value}>
+              <button
+                key={opt.value}
+                type="button"
+                aria-pressed={status === opt.value}
+                onClick={() => setStatus(opt.value)}
+                className={`rounded-full px-3 py-1 font-medium transition ${status === opt.value ? "bg-subtle text-ink" : "text-muted"}`}
+              >
                 {opt.label}
-              </option>
+              </button>
             ))}
-          </select>
-          <select
-            value={priority}
-            onChange={(e) => setPriority(e.target.value as IdeaPriority | "")}
-            className="rounded-md border px-2 py-1 text-xs"
-          >
-            {PRIORITY_OPTIONS.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
+          </div>
+          <div className="flex rounded-full border border-line bg-surface p-0.5" role="group" aria-label="Priorité">
+            {PRIORITY_ORDER.map((value) => (
+              <button
+                key={value}
+                type="button"
+                aria-pressed={priority === value}
+                onClick={() => setPriority(priority === value ? "" : value)}
+                className={`rounded-full px-3 py-1 font-medium transition ${priority === value ? PRIORITY_STYLE[value].selected : "text-muted"}`}
+              >
+                {PRIORITY_STYLE[value].label}
+              </button>
             ))}
-          </select>
+          </div>
+          {hasActiveFilters ? (
+            <button type="button" onClick={resetFilters} className="btn btn-ghost">
+              Effacer
+            </button>
+          ) : null}
         </div>
       </div>
 
       {filtered.length === 0 ? (
-        <p className="text-sm text-gray-500">
-          {hasActiveFilters ? "Aucune idée ne correspond à ces critères." : "Aucune idée enregistrée pour l'instant."}
-        </p>
+        <div className="card flex flex-col items-center gap-2 p-8 text-center">
+          <p className="text-3xl" aria-hidden="true">
+            {hasActiveFilters ? "🔍" : "💡"}
+          </p>
+          <p className="font-medium">{hasActiveFilters ? "Aucune idée ne correspond" : "Votre première idée vous attend"}</p>
+          <p className="text-sm text-muted">
+            {hasActiveFilters ? "Essayez d'autres filtres." : "Touchez le micro sur l'accueil et dites-la à voix haute."}
+          </p>
+        </div>
       ) : (
         <div className="flex flex-col gap-3">
+          <p className="text-sm text-muted">
+            {filtered.length} idée{filtered.length > 1 ? "s" : ""}
+          </p>
           {groups.map((group) => (
             <div key={group.root.id} className="flex flex-col gap-3">
               <IdeaCard idea={group.root} />

@@ -20,6 +20,11 @@ describe("hasContact", () => {
     expect(hasContact(EMPTY)).toBe(false);
     expect(hasContact({ ...EMPTY, contactPhone: "0612345678" })).toBe(true);
   });
+
+  it("ignore les autres champs quand on lui passe une idée entière", () => {
+    const idea = { ...EMPTY, id: "abc", title: "Titre", summary: "Résumé", dueEstimated: true };
+    expect(hasContact(idea)).toBe(false);
+  });
 });
 
 describe("formatContactIdentity", () => {

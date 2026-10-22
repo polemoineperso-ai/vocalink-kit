@@ -115,9 +115,9 @@ Votre Vocalink sera accessible sur Internet : ce mot de passe empêche quiconque
 
 1. Ouvrez votre adresse **`https://mon-vocalink-xxxx.vercel.app`**.
 2. Saisissez votre **mot de passe** (étape 3).
-3. Cliquez sur **Enregistrer une idée**, puis **Démarrer l'enregistrement**, autorisez le **micro**, et dites par exemple :
+3. Touchez le **gros bouton micro orange**, autorisez le **micro**, et dites par exemple :
    > « Rappeler Jean Dupont, directeur chez ACME, au 06 12 34 56 78, jeudi à 10 h. »
-4. Cliquez sur **Arrêter**. Après quelques secondes, Vocalink affiche la transcription, la catégorie **Appel / Rappel**, le contact et la date. Corrigez si besoin, puis **Enregistrer**.
+4. Touchez à nouveau le bouton pour arrêter, puis **Transcrire et classer**. Après quelques secondes, Vocalink affiche la transcription, la catégorie **Appel / Rappel**, le contact et la date. Corrigez si besoin, puis **Enregistrer**.
 
 ✅ **Bravo, tout fonctionne.**
 
@@ -145,10 +145,10 @@ L'icône 🎙️ Vocalink apparaît avec vos autres applications. À la premièr
 
 ## Au quotidien
 
-- **Dicter** : *Enregistrer une idée* → *Démarrer l'enregistrement* → parlez → *Arrêter* → relisez → *Enregistrer*.
-- **Retrouver** : *Voir mes idées* permet de chercher (y compris par nom de contact ou société) et de filtrer par catégorie, statut ou priorité.
-- **Agir** : sur chaque idée, *Ouvrir* prépare l'email ou l'événement d'agenda ; le numéro de téléphone d'un contact se touche pour appeler.
-- **Ranger** : *Marquer traité* quand c'est fait.
+- **Dicter** : touchez le micro → parlez → touchez pour arrêter → *Transcrire et classer* → relisez → *Enregistrer*.
+- **Retrouver** : *Mes idées* permet de chercher (y compris par nom de contact ou société) et de filtrer par catégorie, statut ou priorité.
+- **Agir** : sur chaque idée, *Écrire l'email* ou *Agenda* prépare le message ou l'événement ; le numéro de téléphone d'un contact se touche pour appeler.
+- **Ranger** : *✓ Traité* quand c'est fait.
 
 ---
 

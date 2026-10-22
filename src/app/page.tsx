@@ -1,5 +1,10 @@
 import Link from "next/link";
 import { logout } from "@/lib/actions/auth-actions";
+import { getHomeStats } from "@/lib/actions/idea-actions";
+import { AppHeader } from "@/components/app-header";
+import { CaptureFlow } from "@/components/capture-flow";
+
+export const dynamic = "force-dynamic";
 
 function getNotionUrl(): string | null {
   const databaseId = process.env.NOTION_DATABASE_ID;
@@ -7,33 +12,63 @@ function getNotionUrl(): string | null {
   return `https://www.notion.so/${databaseId.replace(/-/g, "")}`;
 }
 
-export default function Home() {
+function pluralize(n: number, one: string, many: string): string {
+  return `${n} ${n > 1 ? many : one}`;
+}
+
+export default async function Home() {
   const notionUrl = getNotionUrl();
+  const stats = await getHomeStats();
 
   return (
-    <main className="mx-auto flex max-w-xl flex-col items-start gap-4 p-6">
-      <h1 className="text-2xl font-semibold">Vocalink</h1>
-      <p className="text-sm text-gray-500">Dites une idée, elle se transforme en projet, email, appel ou rappel.</p>
-      <div className="flex gap-3">
-        <Link href="/capture" className="rounded-md bg-black px-4 py-2 text-sm text-white">
-          Enregistrer une idée
-        </Link>
-        <Link href="/ideas" className="rounded-md border px-4 py-2 text-sm">
-          Voir mes idées
-        </Link>
+    <main className="mx-auto flex w-full max-w-xl flex-col gap-6 px-4 pb-12 pt-4">
+      <AppHeader />
+
+      <section className="pt-4 text-center">
+        <h1 className="text-3xl font-semibold tracking-tight">Une idée ?</h1>
+        <p className="mt-2 text-muted">
+          {stats.pending === 0
+            ? "Aucune idée en attente. Tout est rangé."
+            : `${pluralize(stats.pending, "idée vous attend", "idées vous attendent")}.`}
+        </p>
+      </section>
+
+      <CaptureFlow />
+
+      {stats.pending > 0 ? (
+        <section className="grid grid-cols-3 gap-3">
+          <Link href="/ideas" className="card flex flex-col items-center gap-0.5 p-4 text-center transition hover:border-appel">
+            <span className="text-2xl font-semibold text-appel-ink">{stats.dueToday}</span>
+            <span className="text-xs text-muted">aujourd&apos;hui</span>
+          </Link>
+          <Link
+            href="/ideas"
+            className={`card flex flex-col items-center gap-0.5 p-4 text-center transition ${stats.overdue > 0 ? "bg-warn-soft" : ""}`}
+          >
+            <span className={`text-2xl font-semibold ${stats.overdue > 0 ? "text-warn" : ""}`}>{stats.overdue}</span>
+            <span className="text-xs text-muted">en retard</span>
+          </Link>
+          <Link href="/ideas" className="card flex flex-col items-center gap-0.5 p-4 text-center transition hover:border-brand">
+            <span className="text-2xl font-semibold">{stats.pending}</span>
+            <span className="text-xs text-muted">en attente</span>
+          </Link>
+        </section>
+      ) : null}
+
+      <footer className="mt-4 flex flex-wrap items-center justify-center gap-2 text-sm">
         {notionUrl ? (
-          <a href={notionUrl} target="_blank" rel="noopener noreferrer" className="rounded-md border px-4 py-2 text-sm">
+          <a href={notionUrl} target="_blank" rel="noopener noreferrer" className="btn btn-ghost">
             Ouvrir Notion ↗
           </a>
         ) : null}
-      </div>
-      {process.env.APP_PASSWORD ? (
-        <form action={logout}>
-          <button type="submit" className="text-sm text-gray-400 underline">
-            Se déconnecter
-          </button>
-        </form>
-      ) : null}
+        {process.env.APP_PASSWORD ? (
+          <form action={logout}>
+            <button type="submit" className="btn btn-ghost">
+              Se déconnecter
+            </button>
+          </form>
+        ) : null}
+      </footer>
     </main>
   );
 }

@@ -1,26 +1,258 @@
 @import "tailwindcss";
 
+/*
+ * Identité visuelle de Vocalink — mêmes couleurs que le guide
+ * d'installation : fond crème chaud, une seule couleur forte (corail) pour
+ * l'action principale, une couleur par catégorie d'idée. Tous les tons sont
+ * des variables pour basculer proprement en mode sombre.
+ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+  --canvas: #fbf7f0;
+  --surface: #ffffff;
+  --subtle: #f4eee4;
+  --ink: #1f1d1a;
+  --muted: #6b665d;
+  --line: #ebe4d8;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --brand: #e4572e;
+  --brand-hover: #cc4a24;
+  --brand-soft: #fdeee7;
+  --brand-ink: #8a2e12;
+
+  --ok: #1f8a52;
+  --ok-soft: #e4f4ea;
+  --warn: #9a5b00;
+  --warn-soft: #fbf0d9;
+  --danger: #c0392b;
+  --danger-soft: #fbe9e7;
+
+  /* Catégories : liseré (couleur), pastille (soft + ink). */
+  --projet: #7f77dd;
+  --projet-soft: #eeedfe;
+  --projet-ink: #3c3489;
+  --email: #1d9e75;
+  --email-soft: #e1f5ee;
+  --email-ink: #085041;
+  --appel: #378add;
+  --appel-soft: #e6f1fb;
+  --appel-ink: #0c447c;
+  --idee: #b4b2a9;
+  --idee-soft: #f1efe8;
+  --idee-ink: #444441;
+
+  --shadow: 0 1px 2px rgba(60, 40, 10, 0.04), 0 8px 24px rgba(60, 40, 10, 0.06);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --canvas: #171512;
+    --surface: #221f1b;
+    --subtle: #2c2823;
+    --ink: #f4efe7;
+    --muted: #a8a093;
+    --line: #38332c;
+
+    --brand: #ff7a4d;
+    --brand-hover: #ff8f68;
+    --brand-soft: #3a2419;
+    --brand-ink: #ffc4ad;
+
+    --ok: #4fd08d;
+    --ok-soft: #183026;
+    --warn: #f0c060;
+    --warn-soft: #30281a;
+    --danger: #ff8a7a;
+    --danger-soft: #3a1f1b;
+
+    --projet: #9d96ec;
+    --projet-soft: #2a2748;
+    --projet-ink: #cecbf6;
+    --email: #4ccaa0;
+    --email-soft: #12322a;
+    --email-ink: #9fe1cb;
+    --appel: #6aa9ea;
+    --appel-soft: #142a42;
+    --appel-ink: #b5d4f4;
+    --idee: #888780;
+    --idee-soft: #2c2c2a;
+    --idee-ink: #d3d1c7;
+
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.25);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@theme inline {
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-subtle: var(--subtle);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-brand: var(--brand);
+  --color-brand-hover: var(--brand-hover);
+  --color-brand-soft: var(--brand-soft);
+  --color-brand-ink: var(--brand-ink);
+  --color-ok: var(--ok);
+  --color-ok-soft: var(--ok-soft);
+  --color-warn: var(--warn);
+  --color-warn-soft: var(--warn-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-projet: var(--projet);
+  --color-projet-soft: var(--projet-soft);
+  --color-projet-ink: var(--projet-ink);
+  --color-email: var(--email);
+  --color-email-soft: var(--email-soft);
+  --color-email-ink: var(--email-ink);
+  --color-appel: var(--appel);
+  --color-appel-soft: var(--appel-soft);
+  --color-appel-ink: var(--appel-ink);
+  --color-idee: var(--idee);
+  --color-idee-soft: var(--idee-soft);
+  --color-idee-ink: var(--idee-ink);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@layer base {
+  body {
+    background: var(--canvas);
+    color: var(--ink);
+    font-family: var(--font-geist-sans), system-ui, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  input:not([type="checkbox"]):not([type="radio"]),
+  select,
+  textarea {
+    width: 100%;
+    border: 1px solid var(--line);
+    border-radius: 0.75rem;
+    background: var(--surface);
+    color: var(--ink);
+    padding: 0.6rem 0.8rem;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  input:focus,
+  select:focus,
+  textarea:focus {
+    border-color: var(--brand);
+    box-shadow: 0 0 0 3px var(--brand-soft);
+  }
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--muted);
+    opacity: 0.8;
+  }
+}
+
+@layer components {
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 1.25rem;
+    box-shadow: var(--shadow);
+  }
+  .field-label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--muted);
+  }
+  .section-title {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 0.9rem;
+    padding: 0.7rem 1.2rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: background-color 0.15s, transform 0.1s, opacity 0.15s;
+    cursor: pointer;
+    text-decoration: none;
+  }
+  .btn:active {
+    transform: scale(0.98);
+  }
+  .btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .btn-primary {
+    background: var(--brand);
+    color: #ffffff;
+  }
+  .btn-primary:hover {
+    background: var(--brand-hover);
+  }
+  .btn-secondary {
+    background: var(--surface);
+    color: var(--ink);
+    border: 1px solid var(--line);
+  }
+  .btn-secondary:hover {
+    background: var(--subtle);
+  }
+  .btn-ghost {
+    color: var(--muted);
+    padding: 0.4rem 0.6rem;
+    font-weight: 500;
+    font-size: 0.85rem;
+  }
+  .btn-ghost:hover {
+    background: var(--subtle);
+    color: var(--ink);
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    border-radius: 999px;
+    padding: 0.2rem 0.65rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  /* Pastille sélectionnable (catégorie, priorité, filtres). */
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    border-radius: 999px;
+    padding: 0.45rem 0.9rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .pill:hover {
+    color: var(--ink);
+  }
+  .pill[aria-pressed="true"] {
+    border-color: transparent;
+  }
+  /* Rangée défilante horizontalement sans barre visible (filtres sur téléphone). */
+  .scroll-row {
+    scrollbar-width: none;
+  }
+  .scroll-row::-webkit-scrollbar {
+    display: none;
+  }
 }

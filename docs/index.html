@@ -13,7 +13,7 @@
     --text: #1f1d1a;
     --muted: #6b665d;
     --line: #ebe4d8;
-    --brand: #ff6b3d;
+    --brand: #e4572e;
     --brand-soft: #fff0e9;
     --brand-text: #ffffff;
     --ok: #1f9d5c;
@@ -47,7 +47,7 @@
   .hero { text-align: center; padding: 56px 0 24px; }
   .mic {
     width: 88px; height: 88px; margin: 0 auto 24px; border-radius: 26px; background: var(--brand);
-    display: grid; place-items: center; box-shadow: 0 12px 30px rgba(255, 107, 61, 0.35);
+    display: grid; place-items: center; box-shadow: 0 12px 30px rgba(228, 87, 46, 0.35);
     animation: pulse 2.4s ease-in-out infinite;
   }
   @keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.06); } }
@@ -67,7 +67,7 @@
     display: inline-flex; align-items: center; justify-content: center; gap: 10px; border: 0; cursor: pointer;
     background: var(--brand); color: var(--brand-text); font-weight: 700; font-size: 20px;
     padding: 18px 32px; border-radius: 16px; text-decoration: none; margin-top: 28px;
-    box-shadow: 0 8px 20px rgba(255, 107, 61, 0.3); transition: transform .15s;
+    box-shadow: 0 8px 20px rgba(228, 87, 46, 0.3); transition: transform .15s;
   }
   .big:hover { transform: translateY(-2px); }
   .big:disabled { background: var(--lock); box-shadow: none; cursor: not-allowed; transform: none; }
@@ -349,7 +349,7 @@
       <li><label class="task"><input type="checkbox"><span class="tick">✓</span><span class="what">L'ajouter à mon écran d'accueil
         <small><b>iPhone</b> : bouton <b>Partager</b> (carré avec une flèche) → <b>Sur l'écran d'accueil</b> → <b>Ajouter</b>.<br><b>Android</b> : menu <b>⋮</b> → <b>Installer l'application</b>.</small></span></label></li>
       <li><label class="task"><input type="checkbox"><span class="tick">✓</span><span class="what">Confier ma première idée
-        <small>Touchez l'icône, <span class="btn">Enregistrer une idée</span> → <span class="btn">Démarrer l'enregistrement</span> (autorisez le micro), puis dites par exemple : <i>« Rappeler Jean Dupont, directeur chez ACME, au 06 12 34 56 78, jeudi à 10 heures »</i>. <span class="btn">Arrêter</span>, vérifiez, <span class="btn">Enregistrer</span>.</small></span></label></li>
+        <small>Touchez l'icône, puis le <b>gros bouton micro orange</b> (autorisez le micro) et dites par exemple : <i>« Rappeler Jean Dupont, directeur chez ACME, au 06 12 34 56 78, jeudi à 10 heures »</i>. Touchez-le à nouveau pour arrêter, puis <span class="btn">Transcrire et classer</span>. Vérifiez, et <span class="btn">Enregistrer</span>.</small></span></label></li>
     </ul>
     <details class="stuck"><summary>😕 Je bloque</summary><div>
       <p><b>Le micro ne réagit pas</b> : autorisez le micro dans les réglages du téléphone (Safari ou Chrome), ou ouvrez votre adresse directement dans le navigateur.</p>
