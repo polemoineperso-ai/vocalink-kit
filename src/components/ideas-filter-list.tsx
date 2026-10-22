@@ -31,10 +31,16 @@ export function IdeasFilterList({
   const [status, setStatus] = useState<IdeaStatus | "">(initialStatus);
   const [priority, setPriority] = useState<IdeaPriority | "">("");
   const [due, setDue] = useState<DueView | "">(initialDue);
+  const [tag, setTag] = useState("");
 
-  const filtered = filterIdeas(ideas, { search, category, status, priority, due });
+  function selectTag(value: string) {
+    setTag(value);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  const filtered = filterIdeas(ideas, { search, category, status, priority, due, tag });
   const groups = groupIdeasByRoot(filtered);
-  const hasActiveFilters = search.trim() !== "" || category !== "" || status !== "" || priority !== "" || due !== "";
+  const hasActiveFilters = search.trim() !== "" || category !== "" || status !== "" || priority !== "" || due !== "" || tag !== "";
 
   function resetFilters() {
     setSearch("");
@@ -42,6 +48,7 @@ export function IdeasFilterList({
     setStatus("");
     setPriority("");
     setDue("");
+    setTag("");
   }
 
   return (
@@ -51,6 +58,14 @@ export function IdeasFilterList({
           <div className="flex items-center justify-between gap-3 rounded-2xl bg-warn-soft px-4 py-3">
             <p className="font-semibold text-warn">{DUE_LABELS[due]}</p>
             <button type="button" onClick={() => setDue("")} className="btn btn-ghost">
+              Tout voir ✕
+            </button>
+          </div>
+        ) : null}
+        {tag ? (
+          <div className="flex items-center justify-between gap-3 rounded-2xl bg-projet-soft px-4 py-3">
+            <p className="font-semibold text-projet-ink">🏷 #{tag}</p>
+            <button type="button" onClick={() => setTag("")} className="btn btn-ghost">
               Tout voir ✕
             </button>
           </div>
@@ -143,11 +158,11 @@ export function IdeasFilterList({
           </p>
           {groups.map((group) => (
             <div key={group.root.id} className="flex flex-col gap-3">
-              <IdeaCard idea={group.root} />
+              <IdeaCard idea={group.root} onTagClick={selectTag} />
               {group.members
                 .filter((m) => m.id !== group.root.id)
                 .map((child) => (
-                  <IdeaCard key={child.id} idea={child} isChild parentTitle={group.root.title} />
+                  <IdeaCard key={child.id} idea={child} isChild parentTitle={group.root.title} onTagClick={selectTag} />
                 ))}
             </div>
           ))}

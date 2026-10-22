@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { filterIdeas } from "@/lib/idea-filter";
+import { filterIdeas, splitTags } from "@/lib/idea-filter";
 import type { Idea } from "@prisma/client";
 
 function makeIdea(overrides: Partial<Idea> & { id: string }): Idea {
@@ -90,5 +90,22 @@ describe("filterIdeas — vues aujourd'hui / en retard", () => {
 
   it("aujourd'hui : en attente, prévue plus tard dans la journée (Paris)", () => {
     expect(filterIdeas(ideas, { due: "today" }, NOW).map((i) => i.id)).toEqual(["ce-soir"]);
+  });
+});
+
+describe("filterIdeas — par tag", () => {
+  const ideas = [
+    makeIdea({ id: "a", tags: "appel, Acme, Jean Dupont" }),
+    makeIdea({ id: "b", tags: "acme" }),
+    makeIdea({ id: "c", tags: "acmeco, devis" }),
+    makeIdea({ id: "d", tags: "" }),
+  ];
+
+  it("tag exact, sans tenir compte des majuscules (pas « acmeco »)", () => {
+    expect(filterIdeas(ideas, { tag: "ACME" }).map((i) => i.id)).toEqual(["a", "b"]);
+  });
+
+  it("splitTags nettoie la liste", () => {
+    expect(splitTags(" appel ,, Acme ,")).toEqual(["appel", "Acme"]);
   });
 });

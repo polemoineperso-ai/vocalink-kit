@@ -167,6 +167,11 @@ export function IdeaReviewForm({
           <textarea value={summary} onChange={(e) => setSummary(e.target.value)} rows={3} />
         </label>
 
+        <label className="field-label">
+          Tags (séparés par des virgules)
+          <input value={tags} onChange={(e) => setTags(e.target.value)} placeholder="client, devis, urgent" />
+        </label>
+
         <div className="flex flex-col gap-2">
           <p className="section-title">Priorité</p>
           <div className="flex flex-wrap gap-2" role="group" aria-label="Priorité">
@@ -273,13 +278,9 @@ export function IdeaReviewForm({
       <details className="card group p-5">
         <summary className="cursor-pointer list-none text-sm font-medium text-muted">
           <span className="group-open:hidden">＋</span>
-          <span className="hidden group-open:inline">−</span> Tags et projet parent
+          <span className="hidden group-open:inline">−</span> Rattacher à un projet
         </summary>
         <div className="mt-4 flex flex-col gap-4">
-          <label className="field-label">
-            Tags (séparés par des virgules)
-            <input value={tags} onChange={(e) => setTags(e.target.value)} />
-          </label>
           <label className="field-label">
             Projet parent
             <select value={parentId} onChange={(e) => setParentId(e.target.value)}>

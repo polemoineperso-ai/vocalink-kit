@@ -8,17 +8,21 @@ import { buildMailtoLink, buildGoogleCalendarLink, buildTelLink, buildSmsLink, b
 import { SNOOZE_LABELS, todayInParis, type SnoozeOption } from "@/lib/due-date";
 import { formatContactIdentity, hasContact } from "@/lib/contact";
 import { CATEGORY_STYLE, PRIORITY_STYLE } from "@/lib/category-style";
+import { splitTags } from "@/lib/idea-filter";
 import type { Idea } from "@prisma/client";
 
 export function IdeaCard({
   idea,
   isChild,
   parentTitle,
+  onTagClick,
 }: {
   idea: Idea;
   /** Rendu indenté, rattaché visuellement à un parent (voir /ideas et lib/idea-tree.ts). */
   isChild?: boolean;
   parentTitle?: string;
+  /** Toucher un tag filtre la liste sur ce tag. */
+  onTagClick?: (tag: string) => void;
 }) {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
@@ -141,13 +145,22 @@ export function IdeaCard({
               {overdue ? " · en retard" : ""}
             </span>
           ) : null}
-          {idea.tags
-            ? idea.tags.split(",").map((t) => (
-                <span key={t} className="chip bg-subtle font-medium text-muted">
-                  #{t.trim()}
-                </span>
-              ))
-            : null}
+          {splitTags(idea.tags).map((tag) =>
+            onTagClick ? (
+              <button
+                key={tag}
+                type="button"
+                onClick={() => onTagClick(tag)}
+                className="chip bg-subtle font-medium text-muted transition hover:bg-line hover:text-ink active:scale-95"
+              >
+                #{tag}
+              </button>
+            ) : (
+              <span key={tag} className="chip bg-subtle font-medium text-muted">
+                #{tag}
+              </span>
+            ),
+          )}
           {idea.googleTaskId ? <span title="Synchronisé avec Google Tasks">✓ Google Tasks</span> : null}
         </div>
 
