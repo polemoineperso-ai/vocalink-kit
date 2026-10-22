@@ -1,5 +1,5 @@
 {
-  "version": "1.0.1",
-  "date": "2026-10-24",
-  "notes": "Sécurité renforcée, dictées longues fiables, messages d'erreur plus clairs et test « Tout fonctionne ? »."
+  "version": "1.0.2",
+  "date": "2026-10-23",
+  "notes": "Dictée gardée sur le téléphone si l'envoi échoue, sécurité renforcée, texte plus lisible."
 }

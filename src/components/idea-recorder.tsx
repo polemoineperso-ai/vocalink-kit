@@ -5,6 +5,7 @@ import { Mic, RotateCcw } from "lucide-react";
 import { processIdea } from "@/lib/actions/idea-actions";
 import { AUDIO_TOO_LARGE_MESSAGE, formatDuration, MAX_AUDIO_BYTES, useVoiceRecorder } from "@/components/use-voice-recorder";
 import type { IdeaExtraction } from "@/lib/classification";
+import { clearPendingAudio, loadPendingAudio, savePendingAudio } from "@/lib/pending-audio";
 
 /**
  * Dictée plein écran : démarre seule, onde sonore en direct, et transcription
@@ -17,15 +18,19 @@ import type { IdeaExtraction } from "@/lib/classification";
 export function IdeaRecorder({
   onExtracted,
   autoStart = false,
+  resumePending = false,
 }: {
   onExtracted: (transcript: string, extraction: IdeaExtraction | null) => void;
   /** Démarrage dès l'ouverture (bouton micro, raccourci « Dicter en un geste »). */
   autoStart?: boolean;
+  /** Reprend la dictée restée en attente sur le téléphone (carte de l'accueil). */
+  resumePending?: boolean;
 }) {
   const [processing, setProcessing] = useState(false);
   const [processError, setProcessError] = useState<string | null>(null);
   const blobRef = useRef<Blob | null>(null);
   const autoStarted = useRef(false);
+  const resumed = useRef(false);
 
   async function transcribe() {
     const blob = blobRef.current;
@@ -49,15 +54,34 @@ export function IdeaRecorder({
       setProcessError(result.error);
       return;
     }
+    void clearPendingAudio();
     onExtracted(result.transcript, result.extraction);
   }
 
   const recorder = useVoiceRecorder({
     onRecorded: (audio) => {
       blobRef.current = audio;
+      // Gardée sur le téléphone jusqu'à la transcription : rien n'est perdu si l'envoi échoue.
+      void savePendingAudio(audio);
       void transcribe();
     },
   });
+
+  // Dernière version de transcribe, pour la reprise ci-dessous (qui ne doit tourner qu'une fois).
+  const transcribeRef = useRef(transcribe);
+  useEffect(() => {
+    transcribeRef.current = transcribe;
+  });
+
+  useEffect(() => {
+    if (!resumePending || resumed.current) return;
+    resumed.current = true;
+    void loadPendingAudio().then((pending) => {
+      if (!pending) return;
+      blobRef.current = pending.blob;
+      void transcribeRef.current();
+    });
+  }, [resumePending]);
 
   useEffect(() => {
     if (!autoStart || autoStarted.current) return;

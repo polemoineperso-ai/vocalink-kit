@@ -9,6 +9,7 @@ import { greeting } from "@/lib/idea-sections";
 import { AppBadge } from "@/components/app-badge";
 import { IdeasBoard } from "@/components/ideas-board";
 import { NotificationsToggle } from "@/components/notifications-toggle";
+import { PendingDictation } from "@/components/pending-dictation";
 import { RediscoverCard } from "@/components/rediscover-card";
 import { Onboarding } from "@/components/onboarding";
 import { TabBar } from "@/components/tab-bar";
@@ -89,6 +90,8 @@ export default async function IdeasHomePage({ searchParams }: { searchParams: Pr
           <ChevronRight size={17} aria-hidden="true" />
         </Link>
       ) : null}
+
+      <PendingDictation />
 
       {rediscovery ? (
         <RediscoverCard

@@ -13,8 +13,12 @@ import { getRediscovery } from "@/lib/actions/idea-actions";
  * l'offre gratuite de Vercel, l'heure n'est garantie qu'à l'heure près
  * (6 h UTC = entre 8 h et 9 h à Paris en été, 7 h et 8 h en hiver).
  */
+// Créneau où Vercel déclenche le brief (vercel.json : 6 h UTC, à l'heure près
+// sur l'offre gratuite) : sans CRON_SECRET, un appel hors créneau est refusé.
+const BRIEF_WINDOW_UTC: [number, number] = [6, 8];
+
 export async function GET(request: NextRequest) {
-  if (!isAuthorizedCronCall(request, { allowVercelCronWithoutSecret: true })) {
+  if (!isAuthorizedCronCall(request, { vercelCronWindowUtc: BRIEF_WINDOW_UTC })) {
     return NextResponse.json({ error: "Non autorisé." }, { status: 401 });
   }
 

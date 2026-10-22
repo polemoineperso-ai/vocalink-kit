@@ -11,11 +11,11 @@ import { computeSessionToken, SESSION_COOKIE_NAME } from "@/lib/session";
  * formulaire HTML avec `autoComplete="current-password"` s'y intègre
  * normalement, comme n'importe quel site.
  *
- * Si APP_PASSWORD est absente (cas du développement local), le middleware
+ * Si APP_PASSWORD est absente (cas du développement local), le proxy
  * laisse tout passer — ne jamais laisser cette variable absente une fois en
  * production, sinon l'app reste ouverte à tout le monde.
  */
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const password = process.env.APP_PASSWORD;
   if (!password) return NextResponse.next();
 

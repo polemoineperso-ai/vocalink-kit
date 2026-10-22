@@ -3,7 +3,8 @@ import { X } from "lucide-react";
 import { CaptureFlow } from "@/components/capture-flow";
 
 /** Dictée plein écran, ouverte par le micro de la barre du bas ou le raccourci « Dicter en un geste ». */
-export default function CapturePage() {
+export default async function CapturePage({ searchParams }: { searchParams: Promise<{ reprendre?: string }> }) {
+  const { reprendre } = await searchParams;
   return (
     <main className="safe-top mx-auto flex min-h-dvh w-full max-w-xl flex-col px-4 pb-10">
       <nav className="flex items-center justify-between py-2">
@@ -13,7 +14,7 @@ export default function CapturePage() {
         <span className="text-sm font-semibold text-muted">Nouvelle idée</span>
         <span className="w-9" aria-hidden="true" />
       </nav>
-      <CaptureFlow />
+      <CaptureFlow resumePending={reprendre === "1"} />
     </main>
   );
 }

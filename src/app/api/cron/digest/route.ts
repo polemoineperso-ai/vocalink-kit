@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { runDigest } from "@/lib/digest";
+import { isAuthorizedCronCall } from "@/lib/cron-auth";
 
 /**
  * Point d'entrée du digest périodique (voir lib/digest.ts) — déclenché par
@@ -10,9 +11,8 @@ import { runDigest } from "@/lib/digest";
  *
  * Voir le README pour la configuration d'une tâche planifiée qui appelle
  * cette route quotidiennement (ou vercel.json une fois déployé sur Vercel —
- * Vercel Cron envoie automatiquement `Authorization: Bearer <CRON_SECRET>`,
- * accepté ici en plus de `?secret=`/`x-cron-secret` pour le déclenchement
- * manuel).
+ * Vercel Cron envoie automatiquement `Authorization: Bearer <CRON_SECRET>` ;
+ * pour un déclenchement manuel, le même en-tête ou `x-cron-secret`).
  */
 export async function GET(request: NextRequest) {
   const configuredSecret = process.env.CRON_SECRET;
@@ -20,10 +20,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "CRON_SECRET n'est pas configuré." }, { status: 501 });
   }
 
-  const bearerSecret = request.headers.get("authorization")?.replace(/^Bearer\s+/i, "");
-  const providedSecret =
-    request.nextUrl.searchParams.get("secret") ?? request.headers.get("x-cron-secret") ?? bearerSecret;
-  if (providedSecret !== configuredSecret) {
+  if (!isAuthorizedCronCall(request)) {
     return NextResponse.json({ error: "Non autorisé." }, { status: 401 });
   }
 

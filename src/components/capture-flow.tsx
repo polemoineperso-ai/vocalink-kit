@@ -13,7 +13,8 @@ type Step = { name: "record"; attempt: number } | { name: "review"; transcript: 
  * Parcours d'une idée : micro (démarre seul) → relecture → fiche de l'idée,
  * où l'action principale (Appeler, Écrire…) est sous le doigt.
  */
-export function CaptureFlow() {
+/** `resumePending` : envoie la dictée restée en attente sur le téléphone au lieu d'en démarrer une. */
+export function CaptureFlow({ resumePending = false }: { resumePending?: boolean }) {
   const [step, setStep] = useState<Step>({ name: "record", attempt: 0 });
   const router = useRouter();
   const toast = useToast();
@@ -36,7 +37,8 @@ export function CaptureFlow() {
   return (
     <IdeaRecorder
       key={step.attempt}
-      autoStart={step.attempt === 0}
+      autoStart={step.attempt === 0 && !resumePending}
+      resumePending={step.attempt === 0 && resumePending}
       onExtracted={(transcript, extraction) => setStep({ name: "review", transcript, extraction })}
     />
   );
