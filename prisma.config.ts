@@ -17,6 +17,10 @@ export default defineConfig({
   },
   engine: "classic",
   datasource: {
-    url: env("DATABASE_URL"),
+    // Commandes Prisma (migrate deploy au build) : connexion DIRECTE à Neon.
+    // Via le pooler, le verrou de migration peut rester pris après la
+    // commande et faire échouer le déploiement suivant (erreur P1002,
+    // constatée le 22/10/2026). L'app, elle, garde DATABASE_URL (poolée).
+    url: process.env.DATABASE_URL_UNPOOLED || env("DATABASE_URL"),
   },
 });
