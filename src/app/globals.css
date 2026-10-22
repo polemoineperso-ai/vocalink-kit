@@ -7,12 +7,13 @@
  * des variables pour basculer proprement en mode sombre.
  */
 :root {
-  --canvas: #fbf7f0;
+  --canvas: #f4f3f0;
   --surface: #ffffff;
-  --subtle: #f4eee4;
-  --ink: #1f1d1a;
-  --muted: #6b665d;
-  --line: #ebe4d8;
+  --subtle: #eeece8;
+  --ink: #1c1b19;
+  --muted: #6e6b65;
+  --faint: #a19d96;
+  --line: #e4e1dc;
 
   --brand: #e4572e;
   --brand-hover: #cc4a24;
@@ -45,12 +46,13 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --canvas: #171512;
-    --surface: #221f1b;
-    --subtle: #2c2823;
-    --ink: #f4efe7;
-    --muted: #a8a093;
-    --line: #38332c;
+    --canvas: #0e0e0d;
+    --surface: #1c1b1a;
+    --subtle: #272624;
+    --ink: #f3f1ed;
+    --muted: #a19d96;
+    --faint: #6e6b65;
+    --line: #2f2e2b;
 
     --brand: #ff7a4d;
     --brand-hover: #ff8f68;
@@ -87,6 +89,7 @@
   --color-subtle: var(--subtle);
   --color-ink: var(--ink);
   --color-muted: var(--muted);
+  --color-faint: var(--faint);
   --color-line: var(--line);
   --color-brand: var(--brand);
   --color-brand-hover: var(--brand-hover);
@@ -254,5 +257,154 @@
   }
   .scroll-row::-webkit-scrollbar {
     display: none;
+  }
+}
+
+/* ===== Interface « app » (v2) ===== */
+@layer components {
+  /* Zones de sécurité iPhone (encoche, barre d'accueil) en mode app installée. */
+  .safe-top {
+    padding-top: max(env(safe-area-inset-top), 0.75rem);
+  }
+  .safe-bottom-space {
+    padding-bottom: calc(env(safe-area-inset-bottom) + 6.5rem);
+  }
+
+  .large-title {
+    font-size: 2rem;
+    line-height: 1.1;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+  }
+  .eyebrow {
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--muted);
+  }
+  .group-label {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--muted);
+    padding: 0 0.25rem;
+    margin: 1.25rem 0 0.5rem;
+  }
+  /* Groupe de lignes façon Réglages / Rappels. */
+  .group {
+    background: var(--surface);
+    border-radius: 1rem;
+    overflow: hidden;
+  }
+  .group > * + * {
+    border-top: 1px solid var(--line);
+  }
+  .row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.8rem 0.9rem;
+    min-height: 3.25rem;
+    background: var(--surface);
+  }
+  a.row:active,
+  button.row:active {
+    background: var(--subtle);
+  }
+  .row-title {
+    font-size: 0.975rem;
+    font-weight: 500;
+    line-height: 1.3;
+  }
+  .row-sub {
+    font-size: 0.8125rem;
+    color: var(--muted);
+    line-height: 1.35;
+    margin-top: 0.1rem;
+  }
+  .num {
+    font-variant-numeric: tabular-nums;
+  }
+  .icon-btn {
+    display: grid;
+    place-items: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 999px;
+    flex: none;
+    transition: transform 0.1s;
+  }
+  .icon-btn:active {
+    transform: scale(0.92);
+  }
+  .segmented {
+    display: flex;
+    padding: 2px;
+    border-radius: 0.65rem;
+    background: var(--subtle);
+  }
+  .segmented > button {
+    flex: 1;
+    padding: 0.4rem 0;
+    border-radius: 0.55rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--muted);
+    transition: background 0.15s, color 0.15s;
+  }
+  .segmented > button[aria-pressed="true"] {
+    background: var(--surface);
+    color: var(--ink);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+  }
+  .tab-bar {
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: calc(env(safe-area-inset-bottom) + 0.75rem);
+    width: min(22rem, calc(100% - 2rem));
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 0.4rem 0.5rem;
+    border-radius: 1.75rem;
+    background: color-mix(in srgb, var(--surface) 82%, transparent);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    backdrop-filter: saturate(180%) blur(20px);
+    border: 1px solid var(--line);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    z-index: 40;
+  }
+  .toast {
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: calc(env(safe-area-inset-bottom) + 5.75rem);
+    width: min(22rem, calc(100% - 2rem));
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-radius: 0.9rem;
+    background: var(--ink);
+    color: var(--canvas);
+    font-size: 0.9rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    z-index: 50;
+    animation: toast-in 0.25s ease-out;
+  }
+  @keyframes toast-in {
+    from {
+      opacity: 0;
+      transform: translate(-50%, 0.75rem);
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
   }
 }

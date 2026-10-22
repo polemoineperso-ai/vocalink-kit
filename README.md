@@ -115,9 +115,9 @@ Votre Vocalink sera accessible sur Internet : ce mot de passe empêche quiconque
 
 1. Ouvrez votre adresse **`https://mon-vocalink-xxxx.vercel.app`**.
 2. Saisissez votre **mot de passe** (étape 3).
-3. Touchez le **gros bouton micro orange**, autorisez le **micro**, et dites par exemple :
+3. Touchez le **gros bouton micro orange** en bas de l'écran, autorisez le **micro**, et dites par exemple :
    > « Rappeler Jean Dupont, directeur chez ACME, au 06 12 34 56 78, jeudi à 10 h. »
-4. Touchez à nouveau le bouton pour arrêter, puis **Transcrire et classer**. Après quelques secondes, Vocalink affiche la transcription, la catégorie **Appel / Rappel**, le contact et la date. Corrigez si besoin, puis **Enregistrer**.
+4. Touchez le bouton rouge pour arrêter : Vocalink écrit et range l'idée tout seul. Après quelques secondes, Vocalink affiche la transcription, la catégorie **Appel / Rappel**, le contact et la date. Corrigez si besoin, puis **Enregistrer**.
 
 ✅ **Bravo, tout fonctionne.**
 
@@ -147,13 +147,14 @@ L'icône 🎙️ Vocalink apparaît avec vos autres applications. Ouvrez-la : Vo
 
 ## Au quotidien
 
-- **Dicter** : touchez le micro → parlez → touchez pour arrêter → *Transcrire et classer* → relisez → *Enregistrer*.
-- **Retrouver** : *Mes idées* permet de chercher (y compris par nom de contact ou société) et de filtrer par catégorie, statut ou priorité.
+- **Dicter** : touchez le micro (en bas, au centre) → parlez → touchez pour arrêter → relisez → *Enregistrer*.
+- **Aujourd'hui** : l'écran d'accueil montre le programme du jour, les retards et ce qui arrive bientôt.
+- **Retrouver** : l'onglet *Idées* permet de chercher (y compris par nom de contact ou société) et de filtrer par catégorie, statut ou priorité.
 - **Agir** : sur chaque idée, *Écrire l'email* ou *Agenda* prépare le message ou l'événement ; le numéro de téléphone d'un contact se touche pour appeler.
 - **Contacter** : sur une idée avec un contact, *Appeler*, *SMS*, *WhatsApp* ou *Email* en un toucher.
 - **Reporter** : une idée du jour ou en retard se reporte à *Demain*, *Lundi* ou *Dans 1 semaine*.
 - **Dicter en un geste** : l'adresse `https://votre-adresse.vercel.app/?dicter=1` ouvre Vocalink micro déjà lancé. Sur iPhone, mettez-la dans un raccourci (app *Raccourcis* → *Ouvrir les URL*), à lancer avec Siri ou le bouton Action. Sur Android, appui long sur l'icône → *Dicter*.
-- **Ranger** : *Marquer fait* quand c'est fait (l'idée reste dans l'historique, filtre *Faites*). Pour supprimer une idée : ✎ puis *Supprimer cette idée*.
+- **Ranger** : touchez le rond à gauche d'une idée quand c'est fait (*Annuler* apparaît quelques secondes). Glissez une idée vers la gauche pour la reporter. Pour supprimer : ouvrez l'idée, puis *Supprimer l'idée* tout en bas.
 
 ---
 

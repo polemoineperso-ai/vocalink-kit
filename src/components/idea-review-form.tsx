@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useTransition } from "react";
+import { BookUser, User, Volume2 } from "lucide-react";
 import { saveIdea, updateIdea, listIdeas } from "@/lib/actions/idea-actions";
 import { getSelfAndDescendantIds } from "@/lib/idea-tree";
 import { formatContactIdentity } from "@/lib/contact";
@@ -127,7 +128,8 @@ export function IdeaReviewForm({
           <div className="flex items-center justify-between gap-3">
             <p className="section-title">Vous avez dit</p>
             <button type="button" onClick={speakSummary} className="btn btn-ghost">
-              {isSpeaking ? "🔊 Lecture…" : "🔊 Écouter le résumé"}
+              <Volume2 size={16} aria-hidden="true" />
+              {isSpeaking ? "Lecture…" : "Écouter le résumé"}
             </button>
           </div>
           <p className="whitespace-pre-wrap leading-relaxed text-muted">« {transcript} »</p>
@@ -149,7 +151,7 @@ export function IdeaReviewForm({
                   onClick={() => setCategory(value)}
                   className={`pill ${selected ? style.selected : ""}`}
                 >
-                  <span aria-hidden="true">{style.icon}</span>
+                  <span className={`h-2 w-2 rounded-full ${style.stripe}`} aria-hidden="true" />
                   {style.label}
                 </button>
               );
@@ -200,7 +202,7 @@ export function IdeaReviewForm({
             className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-brand-soft text-sm font-semibold text-brand-ink"
             aria-hidden="true"
           >
-            {contactName ? initials(contactName) : "👤"}
+            {contactName ? initials(contactName) : <User size={18} />}
           </div>
           <div className="min-w-0">
             <p className="section-title">Contact</p>
@@ -209,7 +211,8 @@ export function IdeaReviewForm({
         </div>
         {extraction?.contactRecalled?.length && !ideaId ? (
           <p className="rounded-xl bg-appel-soft px-3 py-2 text-sm text-appel-ink">
-            📇 Déjà connu : {extraction.contactRecalled.join(", ")} retrouvé{extraction.contactRecalled.length > 1 ? "s" : ""} depuis
+            <BookUser size={15} className="mr-1 inline -translate-y-px" aria-hidden="true" />
+            Déjà connu : {extraction.contactRecalled.join(", ")} retrouvé{extraction.contactRecalled.length > 1 ? "s" : ""} depuis
             une idée précédente. Vérifiez.
           </p>
         ) : null}
@@ -297,7 +300,7 @@ export function IdeaReviewForm({
 
       {error ? <p className="rounded-xl bg-danger-soft px-4 py-3 text-sm text-danger">{error}</p> : null}
 
-      <div className="sticky bottom-3 flex gap-2">
+      <div className="sticky bottom-[calc(env(safe-area-inset-bottom)+0.75rem)] flex gap-2">
         <button type="submit" disabled={isPending} className="btn btn-primary flex-1 py-4 text-base shadow-lg">
           {isPending ? "Enregistrement…" : ideaId ? "Mettre à jour" : "Enregistrer"}
         </button>

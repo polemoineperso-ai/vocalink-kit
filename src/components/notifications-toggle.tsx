@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Bell } from "lucide-react";
 import { getPushPublicKey, sendTestPush, subscribePush, unsubscribePush } from "@/lib/actions/settings-actions";
 
 /**
@@ -133,11 +134,18 @@ export function NotificationsToggle({ hideWhenOn = false }: { hideWhenOn?: boole
   if (state === "loading" || (hideWhenOn && state === "on")) return null;
 
   return (
-    <div className="card flex flex-col gap-2 p-4">
-      <div className="flex items-center justify-between gap-3">
-        <div>
-          <p className="font-medium">🔔 Brief du matin</p>
-          <p className="text-sm text-muted">{state === "on" ? "Activé sur cet appareil." : "Votre programme du jour, chaque matin."}</p>
+    <div className="group">
+      <div className="row items-start">
+        <span className="icon-btn bg-brand-soft text-brand-ink" aria-hidden="true">
+          <Bell size={17} />
+        </span>
+        <div className="min-w-0 flex-1">
+          <p className="row-title">Brief du matin</p>
+          <p className="row-sub">{state === "on" ? "Activé sur cet appareil." : "Votre programme du jour, chaque matin."}</p>
+          <div className="mt-1.5">
+            <NotificationsHelp state={state} />
+          </div>
+          {error ? <p className="mt-1 text-sm text-danger">{error}</p> : null}
         </div>
         {state === "on" ? (
           <button type="button" onClick={disable} className="btn btn-ghost">
@@ -149,8 +157,6 @@ export function NotificationsToggle({ hideWhenOn = false }: { hideWhenOn?: boole
           </button>
         ) : null}
       </div>
-      <NotificationsHelp state={state} />
-      {error ? <p className="text-sm text-danger">{error}</p> : null}
     </div>
   );
 }

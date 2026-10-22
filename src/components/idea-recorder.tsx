@@ -1,31 +1,24 @@
 "use client";
 
-import { useEffect, useRef, useState, useTransition } from "react";
+import { useEffect, useRef, useState } from "react";
+import { Mic, RotateCcw } from "lucide-react";
 import { processIdea } from "@/lib/actions/idea-actions";
 import type { IdeaExtraction } from "@/lib/classification";
 
 /**
- * Enregistrement + transcription + classification d'une idée. Bouton
- * classique avec relecture audio avant envoi, pas de dictée continue en
- * direct (Whisper est une API fichier complet, pas du streaming).
+ * Dictée plein écran : démarre seule, onde sonore en direct, et transcription
+ * dès l'arrêt (plus d'étape « réécouter ») — la relecture du TEXTE avant
+ * d'enregistrer reste obligatoire (formulaire suivant).
  *
  * Ne remplit jamais le formulaire toute seule : `onExtracted` remonte le
- * résultat au parent, qui l'applique comme des valeurs par défaut
- * éditables — la relecture humaine avant "Enregistrer" reste obligatoire.
+ * résultat au parent, qui l'applique comme des valeurs par défaut éditables.
  */
 
-type RecorderState = "idle" | "requesting" | "recording" | "recorded" | "processing" | "done" | "error";
+type RecorderState = "idle" | "requesting" | "recording" | "processing" | "error";
 
-function MicIcon({ size = 44 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <rect x="9" y="2" width="6" height="12" rx="3" />
-      <path d="M5 10v1a7 7 0 0 0 14 0v-1" />
-      <line x1="12" y1="18" x2="12" y2="22" />
-      <line x1="8" y1="22" x2="16" y2="22" />
-    </svg>
-  );
-}
+const BAR_COUNT = 28;
+// Au-delà, le fichier devient lourd pour la transcription (limite Whisper : 25 Mo).
+const MAX_SECONDS = 5 * 60;
 
 function formatDuration(seconds: number): string {
   return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
@@ -36,39 +29,73 @@ export function IdeaRecorder({
   autoStart = false,
 }: {
   onExtracted: (transcript: string, extraction: IdeaExtraction | null) => void;
-  /** « Dicter en un geste » (/?dicter=1) : lance le micro dès l'ouverture. */
+  /** Démarrage dès l'ouverture (bouton micro, raccourci « Dicter en un geste »). */
   autoStart?: boolean;
 }) {
   const [state, setState] = useState<RecorderState>("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [elapsed, setElapsed] = useState(0);
-  const [isPending, startTransition] = useTransition();
+  const [levels, setLevels] = useState<number[]>(() => Array(BAR_COUNT).fill(0.08));
 
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const recorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
-  const audioBlobRef = useRef<Blob | null>(null);
+  const blobRef = useRef<Blob | null>(null);
+  const audioCtxRef = useRef<AudioContext | null>(null);
+  const frameRef = useRef<number | null>(null);
+  const autoStarted = useRef(false);
 
   useEffect(() => {
     if (state !== "recording") return;
     const startedAt = Date.now();
-    const timer = window.setInterval(() => setElapsed(Math.floor((Date.now() - startedAt) / 1000)), 250);
+    const timer = window.setInterval(() => {
+      const seconds = Math.floor((Date.now() - startedAt) / 1000);
+      setElapsed(seconds);
+      if (seconds >= MAX_SECONDS) recorderRef.current?.stop();
+    }, 250);
     return () => window.clearInterval(timer);
   }, [state]);
 
-  // Démarrage automatique : si le navigateur exige un toucher pour ouvrir le
-  // micro, on revient simplement au gros bouton, sans message d'erreur.
-  const autoStarted = useRef(false);
+  // Libère le micro si l'on quitte l'écran en cours d'enregistrement.
+  useEffect(
+    () => () => {
+      if (frameRef.current) cancelAnimationFrame(frameRef.current);
+      recorderRef.current?.stream.getTracks().forEach((t) => t.stop());
+      audioCtxRef.current?.close().catch(() => {});
+    },
+    [],
+  );
+
   useEffect(() => {
     if (!autoStart || autoStarted.current) return;
     autoStarted.current = true;
-    window.history.replaceState(null, "", window.location.pathname);
     void startRecording({ silentFailure: true });
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- une seule fois, à l'ouverture
   }, [autoStart]);
+
+  function startWaveform(stream: MediaStream) {
+    try {
+      const ctx = new AudioContext();
+      const analyser = ctx.createAnalyser();
+      analyser.fftSize = 64;
+      ctx.createMediaStreamSource(stream).connect(analyser);
+      audioCtxRef.current = ctx;
+      const data = new Uint8Array(analyser.frequencyBinCount);
+      const tick = () => {
+        analyser.getByteFrequencyData(data);
+        const avg = data.reduce((a, b) => a + b, 0) / data.length / 255;
+        setLevels((prev) => [...prev.slice(1), Math.max(0.08, Math.min(1, avg * 2.2))]);
+        frameRef.current = requestAnimationFrame(tick);
+      };
+      tick();
+    } catch {
+      // Onde sonore facultative : l'enregistrement marche sans.
+    }
+  }
 
   async function startRecording({ silentFailure = false }: { silentFailure?: boolean } = {}) {
     setErrorMessage(null);
     setElapsed(0);
+    setLevels(Array(BAR_COUNT).fill(0.08));
     setState("requesting");
     if (typeof window === "undefined" || !navigator.mediaDevices?.getUserMedia || typeof MediaRecorder === "undefined") {
       setErrorMessage("Ce navigateur ne permet pas l'enregistrement audio.");
@@ -83,132 +110,116 @@ export function IdeaRecorder({
         if (e.data.size > 0) chunksRef.current.push(e.data);
       };
       recorder.onstop = () => {
-        const blob = new Blob(chunksRef.current, { type: recorder.mimeType || "audio/webm" });
-        audioBlobRef.current = blob;
-        setAudioUrl(URL.createObjectURL(blob));
-        setState("recorded");
+        if (frameRef.current) cancelAnimationFrame(frameRef.current);
+        audioCtxRef.current?.close().catch(() => {});
         stream.getTracks().forEach((t) => t.stop());
+        blobRef.current = new Blob(chunksRef.current, { type: recorder.mimeType || "audio/webm" });
+        void transcribe();
       };
-      mediaRecorderRef.current = recorder;
+      recorderRef.current = recorder;
       recorder.start();
+      startWaveform(stream);
       setState("recording");
     } catch {
       if (silentFailure) {
+        // Le navigateur exige un toucher : on attend simplement le bouton.
         setState("idle");
         return;
       }
-      setErrorMessage("Micro indisponible — vérifiez l'autorisation donnée au navigateur.");
+      setErrorMessage("Micro indisponible — autorisez-le dans les réglages du navigateur.");
       setState("error");
     }
   }
 
-  function stopRecording() {
-    mediaRecorderRef.current?.stop();
-  }
-
-  function reset() {
-    if (audioUrl) URL.revokeObjectURL(audioUrl);
-    audioBlobRef.current = null;
-    setAudioUrl(null);
-    setErrorMessage(null);
-    setState("idle");
-  }
-
-  function transcribeAndClassify() {
-    const blob = audioBlobRef.current;
+  async function transcribe() {
+    const blob = blobRef.current;
     if (!blob) return;
     setState("processing");
     setErrorMessage(null);
-    startTransition(async () => {
-      const result = await processIdea(blob);
-      if (!result.ok) {
-        setErrorMessage(result.error);
-        setState("error");
-        return;
-      }
-      onExtracted(result.transcript, result.extraction);
-      setState("done");
-    });
+    const result = await processIdea(blob);
+    if (!result.ok) {
+      setErrorMessage(result.error);
+      setState("error");
+      return;
+    }
+    onExtracted(result.transcript, result.extraction);
   }
 
-  const showBigButton = state === "idle" || state === "requesting" || state === "recording" || state === "error";
+  const recording = state === "recording";
 
   return (
-    <div className="flex flex-col items-center gap-4">
-      {showBigButton ? (
-        <>
-          <div className="relative grid place-items-center py-2">
-            {state === "recording" ? (
-              <span className="absolute h-44 w-44 animate-ping rounded-full bg-danger-soft" aria-hidden="true" />
-            ) : (
-              <span className="absolute h-44 w-44 rounded-full bg-brand-soft" aria-hidden="true" />
-            )}
-            {state === "recording" ? (
-              <button
-                type="button"
-                onClick={stopRecording}
-                aria-label="Arrêter"
-                className="relative grid h-32 w-32 place-items-center rounded-full bg-danger text-white shadow-lg transition active:scale-95"
-              >
-                <span className="h-9 w-9 rounded-lg bg-white" aria-hidden="true" />
+    <div className="flex flex-1 flex-col items-center justify-center gap-8 text-center">
+      <div className="min-h-14">
+        {state === "processing" ? (
+          <>
+            <p className="text-xl font-semibold">Vocalink écrit…</p>
+            <p className="mt-1 text-muted">Transcription et rangement de votre idée</p>
+          </>
+        ) : recording ? (
+          <>
+            <p className="num text-4xl font-semibold tracking-tight">{formatDuration(elapsed)}</p>
+            <p className="mt-1 text-muted">Je vous écoute</p>
+          </>
+        ) : state === "requesting" ? (
+          <p className="text-xl font-semibold">Ouverture du micro…</p>
+        ) : (
+          <>
+            <p className="text-xl font-semibold">Dites votre idée</p>
+            <p className="mt-1 text-muted">Comme elle vient : Vocalink range tout.</p>
+          </>
+        )}
+      </div>
+
+      {/* Onde sonore : barres qui suivent le niveau de la voix. */}
+      <div className="flex h-24 items-center gap-[3px]" aria-hidden="true">
+        {levels.map((level, i) => (
+          <span
+            key={i}
+            className={`w-[5px] rounded-full transition-[height] duration-75 ${
+              recording ? "bg-brand" : state === "processing" ? "animate-pulse bg-brand/40" : "bg-line"
+            }`}
+            style={{ height: `${Math.round((state === "processing" ? 0.25 + ((i * 7) % 5) / 10 : level) * 96)}px` }}
+          />
+        ))}
+      </div>
+
+      {recording ? (
+        <button
+          type="button"
+          onClick={() => recorderRef.current?.stop()}
+          aria-label="Arrêter et transcrire"
+          className="grid h-24 w-24 place-items-center rounded-full bg-danger shadow-xl transition active:scale-95"
+        >
+          <span className="h-8 w-8 rounded-lg bg-white" aria-hidden="true" />
+        </button>
+      ) : state === "processing" ? (
+        <div className="h-24" />
+      ) : (
+        <button
+          type="button"
+          onClick={() => startRecording()}
+          disabled={state === "requesting"}
+          aria-label="Démarrer l'enregistrement"
+          className="grid h-24 w-24 place-items-center rounded-full bg-brand text-white shadow-xl transition hover:bg-brand-hover active:scale-95 disabled:opacity-60"
+        >
+          <Mic size={38} strokeWidth={2.2} aria-hidden="true" />
+        </button>
+      )}
+
+      <div className="min-h-16 max-w-xs">
+        {recording ? <p className="text-sm text-muted">Touchez pour terminer</p> : null}
+        {state === "error" && errorMessage ? (
+          <div className="flex flex-col items-center gap-3">
+            <p className="text-sm text-danger">{errorMessage}</p>
+            {blobRef.current ? (
+              <button type="button" onClick={() => void transcribe()} className="btn btn-secondary">
+                <RotateCcw size={16} aria-hidden="true" />
+                Réessayer la transcription
               </button>
-            ) : (
-              <button
-                type="button"
-                onClick={() => startRecording()}
-                disabled={state === "requesting"}
-                aria-label="Démarrer l'enregistrement"
-                className="relative grid h-32 w-32 place-items-center rounded-full bg-brand text-white shadow-lg transition hover:bg-brand-hover active:scale-95 disabled:opacity-60"
-              >
-                <MicIcon />
-              </button>
-            )}
+            ) : null}
           </div>
-          <p className="text-center text-base font-medium">
-            {state === "recording" ? (
-              <>
-                <span className="tabular-nums">{formatDuration(elapsed)}</span> · Touchez pour arrêter
-              </>
-            ) : state === "requesting" ? (
-              "Autorisation du micro…"
-            ) : (
-              "Touchez et parlez"
-            )}
-          </p>
-          {state === "idle" ? (
-            <p className="max-w-xs text-center text-sm text-muted">
-              Vous pourrez réécouter et tout relire avant d&apos;enregistrer.
-            </p>
-          ) : null}
-        </>
-      ) : null}
-
-      {(state === "recorded" || state === "processing" || state === "done") && audioUrl ? (
-        <div className="card flex w-full flex-col gap-4 p-5">
-          <p className="section-title">Votre enregistrement</p>
-          <audio src={audioUrl} controls className="w-full" />
-          {state === "processing" ? (
-            <p className="flex items-center gap-2 text-sm text-muted">
-              <span className="h-4 w-4 animate-spin rounded-full border-2 border-brand border-t-transparent" aria-hidden="true" />
-              Vocalink écoute et range votre idée…
-            </p>
-          ) : null}
-          {state === "recorded" ? (
-            <div className="flex flex-wrap gap-2">
-              <button type="button" onClick={transcribeAndClassify} disabled={isPending} className="btn btn-primary flex-1">
-                Transcrire et classer
-              </button>
-              <button type="button" onClick={reset} disabled={isPending} className="btn btn-secondary">
-                Recommencer
-              </button>
-            </div>
-          ) : null}
-        </div>
-      ) : null}
-
-      {errorMessage ? (
-        <p className="w-full rounded-xl bg-danger-soft px-4 py-3 text-sm text-danger">{errorMessage}</p>
-      ) : null}
+        ) : null}
+      </div>
     </div>
   );
 }

@@ -205,6 +205,15 @@ export async function snoozeIdea(id: string, option: SnoozeOption): Promise<void
   await syncGoogleTaskIfNeeded(idea);
 }
 
+/** « Annuler » après un report : remet l'échéance précédente telle quelle. */
+export async function restoreDue(id: string, dueAt: string | null, dueEstimated: boolean): Promise<void> {
+  const idea = await prisma.idea.update({
+    where: { id },
+    data: { dueAt: dueAt ? new Date(dueAt) : null, dueEstimated },
+  });
+  await syncGoogleTaskIfNeeded(idea);
+}
+
 export async function deleteIdea(id: string): Promise<void> {
   await prisma.idea.delete({ where: { id } });
 }

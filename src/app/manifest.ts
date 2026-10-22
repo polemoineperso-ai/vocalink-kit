@@ -13,7 +13,7 @@ export default function manifest(): MetadataRoute.Manifest {
     description: "Dites une idée, elle se transforme en action.",
     start_url: "/",
     display: "standalone",
-    background_color: "#fbf7f0",
+    background_color: "#f4f3f0",
     theme_color: "#e4572e",
     icons: [{ src: "/icon", sizes: "512x512", type: "image/png", purpose: "any" }],
     // Appui long sur l'icône (Android) : dicter directement.

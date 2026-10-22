@@ -1,20 +1,17 @@
 "use client";
 
-import { useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { deleteIdea } from "@/lib/actions/idea-actions";
+import { toZonedTime, format } from "date-fns-tz";
 import { IdeaReviewForm } from "@/components/idea-review-form";
+import { useToast } from "@/components/toast";
+import { APP_TIMEZONE } from "@/lib/due-date";
 import type { IdeaExtraction } from "@/lib/classification";
 import type { Idea } from "@prisma/client";
 
-function pad(n: number): string {
-  return String(n).padStart(2, "0");
-}
-
 function toExtraction(idea: Idea): IdeaExtraction {
-  // Décompose en heure LOCALE (pas UTC) — dueAt a été construit depuis les
-  // champs date/heure du sélecteur, en heure locale.
-  const due = idea.dueAt ? new Date(idea.dueAt) : null;
+  // Date et heure en heure de PARIS, pas celle de la machine : la page est
+  // d'abord calculée sur le serveur (UTC), puis affichée sur le téléphone.
+  const due = idea.dueAt ? toZonedTime(new Date(idea.dueAt), APP_TIMEZONE) : null;
   return {
     category: idea.category,
     title: idea.title,
@@ -27,36 +24,27 @@ function toExtraction(idea: Idea): IdeaExtraction {
     contactRole: idea.contactRole,
     emailSubject: idea.emailSubject,
     emailBody: idea.emailBody,
-    dueDate: due ? `${due.getFullYear()}-${pad(due.getMonth() + 1)}-${pad(due.getDate())}` : null,
-    dueTime: due ? `${pad(due.getHours())}:${pad(due.getMinutes())}` : null,
+    dueDate: due ? format(due, "yyyy-MM-dd", { timeZone: APP_TIMEZONE }) : null,
+    dueTime: due ? format(due, "HH:mm", { timeZone: APP_TIMEZONE }) : null,
   };
 }
 
 export function EditIdeaForm({ idea }: { idea: Idea }) {
   const router = useRouter();
-  const [isDeleting, startTransition] = useTransition();
-
-  function handleDelete() {
-    if (!window.confirm(`Supprimer « ${idea.title} » ? Cette action est définitive.`)) return;
-    startTransition(async () => {
-      await deleteIdea(idea.id);
-      router.push("/ideas");
-    });
-  }
+  const toast = useToast();
 
   return (
-    <>
-      <IdeaReviewForm
-        ideaId={idea.id}
-        transcript={idea.transcript}
-        extraction={toExtraction(idea)}
-        initialParentId={idea.parentId}
-        initialPriority={idea.priority}
-        onSaved={() => router.push("/ideas")}
-      />
-      <button type="button" onClick={handleDelete} disabled={isDeleting} className="btn btn-ghost mx-auto mt-2 text-danger">
-        Supprimer cette idée
-      </button>
-    </>
+    <IdeaReviewForm
+      ideaId={idea.id}
+      transcript={idea.transcript}
+      extraction={toExtraction(idea)}
+      initialParentId={idea.parentId}
+      initialPriority={idea.priority}
+      onSaved={() => {
+        toast("Modifications enregistrées");
+        router.push(`/ideas/${idea.id}`);
+      }}
+      onCancel={() => router.push(`/ideas/${idea.id}`)}
+    />
   );
 }

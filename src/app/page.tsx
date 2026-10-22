@@ -1,91 +1,144 @@
 import Link from "next/link";
-import { logout } from "@/lib/actions/auth-actions";
-import { getHomeStats } from "@/lib/actions/idea-actions";
+import { redirect } from "next/navigation";
+import { listIdeas } from "@/lib/actions/idea-actions";
 import { getAppSettings } from "@/lib/actions/settings-actions";
+import { formatToday, greeting, groupBySection } from "@/lib/idea-sections";
 import { AppBadge } from "@/components/app-badge";
-import { AppHeader } from "@/components/app-header";
-import { CaptureFlow } from "@/components/capture-flow";
+import { IdeaRow } from "@/components/idea-row";
 import { NotificationsToggle } from "@/components/notifications-toggle";
 import { Onboarding } from "@/components/onboarding";
+import { TabBar } from "@/components/tab-bar";
 
 export const dynamic = "force-dynamic";
 
-function getNotionUrl(): string | null {
-  const databaseId = process.env.NOTION_DATABASE_ID;
-  if (!databaseId) return null;
-  return `https://www.notion.so/${databaseId.replace(/-/g, "")}`;
-}
+const UPCOMING_LIMIT = 3;
+const RECENT_LIMIT = 3;
 
-function pluralize(n: number, one: string, many: string): string {
-  return `${n} ${n > 1 ? many : one}`;
-}
-
-export default async function Home({ searchParams }: { searchParams: Promise<{ dicter?: string }> }) {
-  const notionUrl = getNotionUrl();
-  const [{ dicter }, stats, settings] = await Promise.all([searchParams, getHomeStats(), getAppSettings()]);
+export default async function TodayPage({ searchParams }: { searchParams: Promise<{ dicter?: string }> }) {
+  const [{ dicter }, ideas, settings] = await Promise.all([searchParams, listIdeas(), getAppSettings()]);
 
   if (!settings.onboarded) {
     return (
-      <main className="mx-auto flex w-full max-w-xl flex-col gap-6 px-4 pb-12 pt-4">
-        <AppHeader showIdeasLink={false} />
+      <main className="safe-top mx-auto flex w-full max-w-xl flex-col gap-6 px-4 pb-12">
         <Onboarding />
       </main>
     );
   }
 
-  return (
-    <main className="mx-auto flex w-full max-w-xl flex-col gap-6 px-4 pb-12 pt-4">
-      <AppHeader />
-      <AppBadge count={stats.dueToday + stats.overdue} />
+  // « Dicter en un geste » (raccourci iPhone, Android) : l'écran de dictée démarre seul.
+  if (dicter === "1") redirect("/capture");
 
-      <section className="pt-4 text-center">
-        {settings.firstName ? <p className="text-muted">Bonjour {settings.firstName} 👋</p> : null}
-        <h1 className="text-3xl font-semibold tracking-tight">Une idée ?</h1>
-        <p className="mt-2 text-muted">
-          {stats.pending === 0
-            ? "Aucune idée en attente. Tout est rangé."
-            : `${pluralize(stats.pending, "idée vous attend", "idées vous attendent")}.`}
-        </p>
+  const now = new Date();
+  const pending = ideas.filter((i) => i.status === "PENDING");
+  const sections = groupBySection(pending, now);
+  const items = (key: string) => sections.find((s) => s.key === key)?.items ?? [];
+  const overdue = items("overdue");
+  const today = items("today");
+  const upcoming = [...items("tomorrow"), ...items("week")].slice(0, UPCOMING_LIMIT);
+  const recent = items("undated").slice(0, RECENT_LIMIT);
+  const initial = settings.firstName?.trim()[0]?.toUpperCase() ?? "•";
+
+  return (
+    <main className="safe-top safe-bottom-space mx-auto w-full max-w-xl px-4">
+      <AppBadge count={today.length + overdue.length} />
+
+      <header className="flex items-start justify-between gap-3 pt-2">
+        <div>
+          <p className="eyebrow">{formatToday(now)}</p>
+          <h1 className="large-title mt-0.5">Aujourd&apos;hui</h1>
+        </div>
+        <Link
+          href="/reglages"
+          aria-label="Réglages"
+          className="mt-1 grid h-10 w-10 shrink-0 place-items-center rounded-full bg-surface text-sm font-semibold text-muted shadow-sm"
+        >
+          {initial}
+        </Link>
+      </header>
+      <p className="mt-1 text-muted">
+        {greeting(now)}
+        {settings.firstName ? ` ${settings.firstName}` : ""}
+        {today.length + overdue.length === 0 ? ", rien d'urgent aujourd'hui." : "."}
+      </p>
+
+      <section className="mt-5 grid grid-cols-3 gap-2.5" aria-label="Résumé">
+        <Link href="/ideas?vue=today" className="rounded-2xl bg-surface p-3.5 transition active:scale-[0.98]">
+          <p className="num text-2xl font-semibold">{today.length}</p>
+          <p className="text-xs text-muted">prévues</p>
+        </Link>
+        <Link
+          href="/ideas?vue=overdue"
+          className={`rounded-2xl p-3.5 transition active:scale-[0.98] ${overdue.length ? "bg-warn-soft" : "bg-surface"}`}
+        >
+          <p className={`num text-2xl font-semibold ${overdue.length ? "text-warn" : ""}`}>{overdue.length}</p>
+          <p className={`text-xs ${overdue.length ? "text-warn" : "text-muted"}`}>en retard</p>
+        </Link>
+        <Link href="/ideas" className="rounded-2xl bg-surface p-3.5 transition active:scale-[0.98]">
+          <p className="num text-2xl font-semibold">{pending.length}</p>
+          <p className="text-xs text-muted">à faire</p>
+        </Link>
       </section>
 
-      <CaptureFlow autoStart={dicter === "1"} />
+      <div className="mt-4">
+        <NotificationsToggle hideWhenOn />
+      </div>
 
-      {stats.pending > 0 ? (
-        <section className="grid grid-cols-3 gap-3">
-          <Link href="/ideas?vue=today" className="card flex flex-col items-center gap-0.5 p-4 text-center transition hover:border-appel">
-            <span className="text-2xl font-semibold text-appel-ink">{stats.dueToday}</span>
-            <span className="text-xs text-muted">aujourd&apos;hui</span>
-          </Link>
-          <Link
-            href="/ideas?vue=overdue"
-            className={`card flex flex-col items-center gap-0.5 p-4 text-center transition ${stats.overdue > 0 ? "bg-warn-soft" : ""}`}
-          >
-            <span className={`text-2xl font-semibold ${stats.overdue > 0 ? "text-warn" : ""}`}>{stats.overdue}</span>
-            <span className="text-xs text-muted">en retard</span>
-          </Link>
-          <Link href="/ideas?vue=attente" className="card flex flex-col items-center gap-0.5 p-4 text-center transition hover:border-brand">
-            <span className="text-2xl font-semibold">{stats.pending}</span>
-            <span className="text-xs text-muted">en attente au total</span>
-          </Link>
-        </section>
+      {overdue.length ? (
+        <>
+          <h2 className="group-label text-warn">En retard</h2>
+          <div className="group">
+            {overdue.map((idea) => (
+              <IdeaRow key={idea.id} idea={idea} />
+            ))}
+          </div>
+        </>
       ) : null}
 
-      <NotificationsToggle hideWhenOn />
+      <h2 className="group-label">Programme</h2>
+      {today.length ? (
+        <div className="group">
+          {today.map((idea) => (
+            <IdeaRow key={idea.id} idea={idea} showTime />
+          ))}
+        </div>
+      ) : (
+        <div className="group">
+          <div className="row">
+            <p className="text-sm text-muted">
+              Rien de prévu pour le reste de la journée. Une idée ? Touchez le micro en bas de l&apos;écran.
+            </p>
+          </div>
+        </div>
+      )}
 
-      <footer className="mt-4 flex flex-wrap items-center justify-center gap-2 text-sm">
-        {notionUrl ? (
-          <a href={notionUrl} target="_blank" rel="noopener noreferrer" className="btn btn-ghost">
-            Ouvrir Notion ↗
-          </a>
-        ) : null}
-        {process.env.APP_PASSWORD ? (
-          <form action={logout}>
-            <button type="submit" className="btn btn-ghost">
-              Se déconnecter
-            </button>
-          </form>
-        ) : null}
-      </footer>
+      {upcoming.length ? (
+        <>
+          <h2 className="group-label">Bientôt</h2>
+          <div className="group">
+            {upcoming.map((idea) => (
+              <IdeaRow key={idea.id} idea={idea} />
+            ))}
+          </div>
+        </>
+      ) : null}
+
+      {recent.length ? (
+        <>
+          <div className="flex items-baseline justify-between">
+            <h2 className="group-label">Idées récentes</h2>
+            <Link href="/ideas" className="text-sm font-medium text-brand">
+              Tout voir
+            </Link>
+          </div>
+          <div className="group">
+            {recent.map((idea) => (
+              <IdeaRow key={idea.id} idea={idea} />
+            ))}
+          </div>
+        </>
+      ) : null}
+
+      <TabBar />
     </main>
   );
 }
