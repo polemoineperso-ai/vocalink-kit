@@ -87,6 +87,10 @@ model Idea {
 
   googleTaskId String?
 
+  // Dernière fois que l'idée a été traitée depuis « À redécouvrir »
+  // (développée, remise à plus tard, archivée) : pas reproposée avant 14 jours.
+  resurfacedAt DateTime?
+
   notes IdeaNote[]
 }
 

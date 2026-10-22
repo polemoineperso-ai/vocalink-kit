@@ -10,6 +10,7 @@ import { APP_TIMEZONE, resolveDueAt, snoozeDueAt, todayInParis, type SnoozeOptio
 import { fillFromKnownContact, normalizeContact, type ContactInput } from "@/lib/contact";
 import { IdeaCategory, IdeaStatus, IdeaPriority, type Idea, type IdeaStage } from "@prisma/client";
 import { ACTION_CATEGORIES, statusForStage } from "@/lib/idea-kind";
+import { pickRediscovery } from "@/lib/rediscover";
 
 /**
  * Server Actions de Vocalink. Doctrine :
@@ -210,6 +211,40 @@ export async function snoozeIdea(id: string, option: SnoozeOption): Promise<void
 export async function setIdeaStage(id: string, stage: IdeaStage): Promise<void> {
   const idea = await prisma.idea.update({ where: { id }, data: { stage, status: statusForStage(stage) } });
   await syncGoogleTaskIfNeeded(idea);
+}
+
+/**
+ * L'idée « À redécouvrir » du jour (écran Mes idées, brief du matin) :
+ * la plus longtemps oubliée parmi les idées encore vivantes.
+ */
+export async function getRediscovery(now: Date = new Date()): Promise<Idea | null> {
+  const [ideas, lastNotes] = await Promise.all([
+    prisma.idea.findMany({
+      where: { category: { notIn: ACTION_CATEGORIES }, stage: { in: ["NEW", "THINKING", "IN_PROGRESS"] } },
+    }),
+    prisma.ideaNote.groupBy({ by: ["ideaId"], _max: { createdAt: true } }),
+  ]);
+  const lastNoteByIdea = new Map(lastNotes.map((n) => [n.ideaId, n._max.createdAt]));
+  return pickRediscovery(
+    ideas.map((idea) => ({ ...idea, lastNoteAt: lastNoteByIdea.get(idea.id) ?? null })),
+    now,
+  );
+}
+
+/**
+ * Réponse à « À redécouvrir » : la développer (on ouvre la fiche), la
+ * remettre à plus tard, ou l'archiver. Dans tous les cas, l'idée n'est
+ * pas reproposée avant 14 jours.
+ */
+export async function answerRediscovery(id: string, choice: "develop" | "later" | "archive"): Promise<void> {
+  const idea = await prisma.idea.update({
+    where: { id },
+    data: {
+      resurfacedAt: new Date(),
+      ...(choice === "archive" ? { stage: "ARCHIVED" as const, status: statusForStage("ARCHIVED") } : {}),
+    },
+  });
+  if (choice === "archive") await syncGoogleTaskIfNeeded(idea);
 }
 
 /** « Annuler » après un report : remet l'échéance précédente telle quelle. */

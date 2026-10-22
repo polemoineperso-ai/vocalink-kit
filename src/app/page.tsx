@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { ChevronRight, ListChecks } from "lucide-react";
-import { getHomeStats, listIdeas } from "@/lib/actions/idea-actions";
+import { getHomeStats, getRediscovery, listIdeas } from "@/lib/actions/idea-actions";
 import { getAppSettings } from "@/lib/actions/settings-actions";
 import { prisma } from "@/lib/prisma";
 import { isAction } from "@/lib/idea-kind";
@@ -9,6 +9,7 @@ import { greeting } from "@/lib/idea-sections";
 import { AppBadge } from "@/components/app-badge";
 import { IdeasBoard } from "@/components/ideas-board";
 import { NotificationsToggle } from "@/components/notifications-toggle";
+import { RediscoverCard } from "@/components/rediscover-card";
 import { Onboarding } from "@/components/onboarding";
 import { TabBar } from "@/components/tab-bar";
 
@@ -16,12 +17,13 @@ export const dynamic = "force-dynamic";
 
 /** Accueil : « Mes idées ». Les actions (appels, emails) vivent dans l'onglet À faire. */
 export default async function IdeasHomePage({ searchParams }: { searchParams: Promise<{ dicter?: string; tag?: string }> }) {
-  const [{ dicter, tag }, ideas, stats, settings, notes] = await Promise.all([
+  const [{ dicter, tag }, ideas, stats, settings, notes, rediscovery] = await Promise.all([
     searchParams,
     listIdeas(),
     getHomeStats(),
     getAppSettings(),
     prisma.ideaNote.findMany({ select: { ideaId: true, text: true } }),
+    getRediscovery(),
   ]);
 
   if (!settings.onboarded) {
@@ -84,6 +86,18 @@ export default async function IdeasHomePage({ searchParams }: { searchParams: Pr
           </span>
           <ChevronRight size={17} aria-hidden="true" />
         </Link>
+      ) : null}
+
+      {rediscovery ? (
+        <RediscoverCard
+          idea={{
+            id: rediscovery.id,
+            title: rediscovery.title,
+            summary: rediscovery.summary,
+            createdAt: rediscovery.createdAt.toISOString(),
+            stage: rediscovery.stage,
+          }}
+        />
       ) : null}
 
       <div className="mt-4">

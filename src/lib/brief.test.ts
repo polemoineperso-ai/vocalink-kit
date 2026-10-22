@@ -45,4 +45,20 @@ describe("buildMorningBrief", () => {
     expect(brief?.body).toBe("Rien de prévu aujourd'hui. 1 action sans date : un petit tri ?");
     expect(brief?.badgeCount).toBe(0);
   });
+
+  it("ajoute l'idée à redécouvrir en dernière ligne", () => {
+    const brief = buildMorningBrief(
+      [{ title: "Rappeler Jean", dueAt: at("2026-10-22T08:00:00Z"), dueEstimated: false }],
+      "Marie",
+      NOW,
+      { id: "idee-1", title: "Atelier poterie pour maman" },
+    );
+    expect(brief?.body).toBe("Aujourd'hui : Rappeler Jean (10:00).\n💡 À redécouvrir : Atelier poterie pour maman");
+    expect(brief?.url).toBe("/a-faire");
+  });
+
+  it("sans action, ne parle que de l'idée et ouvre sa fiche", () => {
+    const brief = buildMorningBrief([], null, NOW, { id: "idee-1", title: "Atelier poterie" });
+    expect(brief).toEqual({ title: "Bonjour ☀️", body: "💡 À redécouvrir : Atelier poterie", url: "/ideas/idee-1", badgeCount: 0 });
+  });
 });

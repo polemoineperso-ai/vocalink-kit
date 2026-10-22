@@ -5,6 +5,7 @@ import { sendPushToAll } from "@/lib/push";
 import { isAuthorizedCronCall } from "@/lib/cron-auth";
 import { todayInParis } from "@/lib/due-date";
 import { ACTION_CATEGORIES } from "@/lib/idea-kind";
+import { getRediscovery } from "@/lib/actions/idea-actions";
 
 /**
  * Brief du matin : une notification avec ce qui est prévu aujourd'hui et
@@ -17,13 +18,14 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Non autorisé." }, { status: 401 });
   }
 
-  const [ideas, settings] = await Promise.all([
+  const [ideas, settings, rediscovery] = await Promise.all([
     // Le brief parle des actions (appels, emails) ; les idées mûrissent sans rappel culpabilisant.
     prisma.idea.findMany({
       where: { status: "PENDING", category: { in: ACTION_CATEGORIES } },
       select: { title: true, dueAt: true, dueEstimated: true },
     }),
     prisma.settings.findUnique({ where: { id: 1 } }),
+    getRediscovery(),
   ]);
 
   // Vercel Cron peut livrer deux fois le même appel : un seul brief par jour.
@@ -31,7 +33,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ sent: 0, reason: "brief déjà envoyé aujourd'hui" });
   }
 
-  const brief = buildMorningBrief(ideas, settings?.firstName ?? null);
+  const brief = buildMorningBrief(ideas, settings?.firstName ?? null, new Date(), rediscovery);
   if (!brief) return NextResponse.json({ sent: 0, reason: "rien à signaler" });
 
   const result = await sendPushToAll(brief);
