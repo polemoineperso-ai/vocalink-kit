@@ -12,8 +12,17 @@ import { prisma } from "@/lib/prisma";
  */
 
 const SETTINGS_ID = 1;
-// Contact exigé par le protocole VAPID ; jamais affiché à l'utilisateur.
-const VAPID_SUBJECT = "mailto:notifications@vocalink.invalid";
+/**
+ * Contact exigé par le protocole VAPID ; jamais affiché à l'utilisateur.
+ * Doit être une adresse réelle : Apple refuse un contact fictif
+ * (403 BadJwtToken constaté avec "mailto:…@vocalink.invalid"). Adresse
+ * publique de l'app fournie par Vercel, sinon APP_URL, sinon le dépôt.
+ */
+export function vapidSubject(env: Record<string, string | undefined> = process.env): string {
+  if (env.VERCEL_PROJECT_PRODUCTION_URL) return `https://${env.VERCEL_PROJECT_PRODUCTION_URL}`;
+  if (env.APP_URL?.startsWith("https://")) return env.APP_URL;
+  return "https://github.com/polemoineperso-ai/vocalink-kit";
+}
 
 export type PushPayload = { title: string; body: string; url?: string };
 
@@ -43,7 +52,7 @@ export async function sendPushToAll(payload: PushPayload): Promise<{ sent: numbe
       await webpush.sendNotification(
         { endpoint: sub.endpoint, keys: { p256dh: sub.p256dh, auth: sub.auth } },
         JSON.stringify(payload),
-        { vapidDetails: { subject: VAPID_SUBJECT, publicKey, privateKey }, TTL: 12 * 60 * 60 },
+        { vapidDetails: { subject: vapidSubject(), publicKey, privateKey }, TTL: 12 * 60 * 60 },
       );
       sent++;
     } catch (e) {
