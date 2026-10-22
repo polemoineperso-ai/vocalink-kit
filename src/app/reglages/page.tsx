@@ -4,6 +4,7 @@ import { logout } from "@/lib/actions/auth-actions";
 import { getAppSettings } from "@/lib/actions/settings-actions";
 import { NotificationsToggle } from "@/components/notifications-toggle";
 import { CopyShortcutUrl, FirstNameField } from "@/components/settings-panels";
+import { AboutPanel } from "@/components/update-check";
 
 export const dynamic = "force-dynamic";
 
@@ -56,6 +57,9 @@ export default async function SettingsPage() {
         </>
       ) : null}
 
+      <h2 className="group-label">À propos</h2>
+      <AboutPanel />
+
       {process.env.APP_PASSWORD ? (
         <div className="group mt-8">
           <form action={logout}>
@@ -67,7 +71,7 @@ export default async function SettingsPage() {
         </div>
       ) : null}
 
-      <p className="mt-6 text-center text-xs text-faint">Vocalink — dites une idée, elle se transforme en action.</p>
+      <p className="mt-6 text-center text-xs text-faint">Vocalink — ne perdez plus jamais une idée.</p>
     </main>
   );
 }

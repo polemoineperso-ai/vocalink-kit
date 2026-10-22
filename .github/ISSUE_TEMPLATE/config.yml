@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Guide d'installation et aide
+    url: https://polemoineperso-ai.github.io/vocalink-kit/
+    about: Les problèmes fréquents et leur solution, en bas du guide.

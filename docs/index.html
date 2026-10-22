@@ -275,6 +275,27 @@
       <summary>Le micro ne marche pas</summary>
       <div>Dans les réglages du téléphone, autorisez le micro pour Safari (ou Chrome). Si ça ne marche pas depuis l'icône, ouvrez votre adresse Vocalink directement dans le navigateur.</div>
     </details>
+    <details id="mise-a-jour">
+      <summary>Mettre à jour mon Vocalink</summary>
+      <div>
+        <p style="margin:0 0 6px">Quand une nouvelle version existe, une pastille apparaît sur votre initiale dans Vocalink, et <span class="btn">Réglages</span> l'annonce. La mise à jour prend 2 minutes et ne touche pas à vos idées.</p>
+        <ol>
+          <li>Sur <a href="https://github.com" target="_blank" rel="noopener">github.com</a>, ouvrez votre dépôt <b>mon-vocalink</b>.</li>
+          <li>Onglet <span class="btn">Actions</span>, puis à gauche <span class="btn">Mettre à jour Vocalink</span>.</li>
+          <li>À droite : <span class="btn">Run workflow</span>, puis le bouton vert <span class="btn">Run workflow</span>.</li>
+          <li>Attendez la coche verte (environ 1 minute), puis 2 à 3 minutes que Vercel remette votre assistant en ligne. Fermez et rouvrez l'app.</li>
+        </ol>
+        <p style="margin:6px 0 0">Une croix rouge ? Votre Vocalink continue de marcher comme avant. Signalez-le (juste en dessous).</p>
+      </div>
+    </details>
+    <details id="signaler">
+      <summary>Signaler un problème ou poser une question</summary>
+      <div>
+        <p style="margin:0 0 6px">Depuis Vocalink : <span class="btn">Réglages</span> → <span class="btn">Signaler un problème</span>. Ou directement ici, avec votre compte GitHub :</p>
+        <a class="go" href="https://github.com/polemoineperso-ai/vocalink-kit/issues/new?template=probleme.yml" target="_blank" rel="noopener">Signaler un problème ↗</a>
+        <p style="margin:10px 0 0"><b>Le message est public :</b> n'y mettez jamais votre mot de passe, votre clé OpenAI, l'adresse de votre Vocalink ni le contenu de vos idées.</p>
+      </div>
+    </details>
     <button class="reset" id="reset">Recommencer le guide depuis le début</button>
   </section>
 
@@ -297,7 +318,7 @@
       </details>
       <details>
         <summary><span class="e"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"></path><path d="m21.854 2.147-10.94 10.939"></path></svg></span><span class="t">Ce qui sort de chez vous</span><svg class="chev" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></summary>
-        <p>Pour vous comprendre, l'enregistrement de votre voix et le texte de vos idées passent par OpenAI. Vocalink ne garde pas l'enregistrement. Selon ses conditions, OpenAI n'entraîne pas ses modèles avec ce qui passe par une clé comme la vôtre. Si vous activez les options avancées (Notion, Google Tasks, email), vos idées y sont aussi copiées.</p>
+        <p>Pour vous comprendre, l'enregistrement de votre voix et le texte de vos idées passent par OpenAI. Vocalink ne garde pas l'enregistrement. Selon ses conditions, OpenAI n'entraîne pas ses modèles avec ce qui passe par une clé comme la vôtre. Si vous activez les options avancées (Notion, Google Tasks, email), vos idées y sont aussi copiées. Enfin, une fois par jour, l'app regarde sur le site du guide s'il existe une nouvelle version, sans rien envoyer de vos données.</p>
       </details>
       <details>
         <summary><span class="e"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49"></path><path d="M14.084 14.158a3 3 0 0 1-4.242-4.242"></path><path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143"></path><path d="m2 2 20 20"></path></svg></span><span class="t">Pas de secrets dans vos idées</span><svg class="chev" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></summary>
@@ -614,6 +635,18 @@ var ICONS = {"idcard": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1em\" 
 
   setupPhone();
   render();
+
+  // Liens depuis l'app (#mise-a-jour, #signaler) : l'aide s'affiche même si
+  // le guide n'a pas été commencé, et la bonne question s'ouvre.
+  function openFromHash() {
+    var target = location.hash ? document.getElementById(location.hash.slice(1)) : null;
+    if (!target || !help.contains(target)) return;
+    help.hidden = false;
+    target.open = true;
+    target.scrollIntoView({ block: "start" });
+  }
+  openFromHash();
+  window.addEventListener("hashchange", openFromHash);
 })();
 </script>
 </body>

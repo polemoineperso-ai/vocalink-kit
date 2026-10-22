@@ -1,0 +1,61 @@
+# Bouton « Mettre à jour Vocalink » : onglet Actions de votre dépôt
+# → Mettre à jour Vocalink → Run workflow.
+#
+# Remplace le code de votre Vocalink par la dernière version du kit
+# (polemoineperso-ai/vocalink-kit), puis Vercel le remet en ligne tout seul.
+# Vos idées ne sont pas concernées : elles sont dans votre base de données,
+# que la mise à jour adapte si besoin, sans rien effacer.
+#
+# Volontairement sans action externe (ni actions/checkout) : uniquement git
+# et bash, pour que ce bouton fonctionne encore dans plusieurs années.
+name: Mettre à jour Vocalink
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency: mise-a-jour
+
+jobs:
+  mettre-a-jour:
+    # Dans le dépôt d'origine du kit, il n'y a rien à mettre à jour.
+    if: github.repository != 'polemoineperso-ai/vocalink-kit'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Récupérer la dernière version et l'installer
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          ACTOR: ${{ github.actor }}
+          ACTOR_ID: ${{ github.actor_id }}
+          KIT_URL: https://github.com/polemoineperso-ai/vocalink-kit.git
+        run: |
+          set -euo pipefail
+          git clone --quiet "https://x-access-token:${GH_TOKEN}@github.com/${REPO}.git" mon-vocalink
+          cd mon-vocalink
+          git fetch --quiet --depth=1 "$KIT_URL" main
+
+          # Tout le code devient celui du kit, sauf le dossier .github :
+          # GitHub interdit à ce bouton de modifier ses propres réglages.
+          git rm -r --quiet --ignore-unmatch -- . ':!.github'
+          git checkout FETCH_HEAD -- . ':!.github'
+
+          VERSION=$(sed -n 's/.*"version": *"\([^"]*\)".*/\1/p' docs/version.json | head -1)
+          if git diff --cached --quiet; then
+            echo "### Votre Vocalink est déjà à jour (version ${VERSION})." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+
+          # Auteur = vous : sur l'offre gratuite de Vercel, un dépôt privé ne
+          # se redéploie que pour les modifications faites par son propriétaire.
+          NAME="$ACTOR"
+          EMAIL="${ACTOR_ID}+${ACTOR}@users.noreply.github.com"
+          git -c user.name="$NAME" -c user.email="$EMAIL" commit --quiet -m "Mise à jour de Vocalink (version ${VERSION})"
+          git push --quiet origin HEAD
+
+          {
+            echo "### Votre Vocalink passe en version ${VERSION}."
+            echo "Vercel le remet en ligne dans 2 à 3 minutes. Ensuite, fermez puis rouvrez l'app."
+          } >> "$GITHUB_STEP_SUMMARY"

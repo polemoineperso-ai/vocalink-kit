@@ -1,0 +1,36 @@
+name: Signaler un problème
+description: Quelque chose ne marche pas dans votre Vocalink.
+title: "Problème : "
+labels: ["problème"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Merci de prendre le temps de le signaler !
+        **Ce message est public.** N'y mettez jamais votre mot de passe, votre clé OpenAI, l'adresse de votre Vocalink, ni le contenu de vos idées.
+  - type: textarea
+    id: probleme
+    attributes:
+      label: Que se passe-t-il ?
+      description: Ce que vous faisiez, ce qui s'est passé, et ce que vous attendiez.
+      placeholder: "Exemple : je touche le micro, je parle, puis « La transcription a échoué » s'affiche."
+    validations:
+      required: true
+  - type: textarea
+    id: message
+    attributes:
+      label: Message affiché (facultatif)
+      description: Recopiez le message d'erreur s'il y en a un. Une capture d'écran peut aussi être glissée ici, si elle ne montre rien de personnel.
+  - type: dropdown
+    id: appareil
+    attributes:
+      label: Sur quel appareil ?
+      options:
+        - iPhone
+        - Android
+        - Ordinateur
+  - type: input
+    id: version
+    attributes:
+      label: Version de Vocalink
+      description: Dans Vocalink, Réglages → À propos. Déjà remplie si vous venez de l'app.

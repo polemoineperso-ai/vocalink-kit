@@ -12,6 +12,7 @@ import { NotificationsToggle } from "@/components/notifications-toggle";
 import { RediscoverCard } from "@/components/rediscover-card";
 import { Onboarding } from "@/components/onboarding";
 import { TabBar } from "@/components/tab-bar";
+import { UpdateDot } from "@/components/update-check";
 
 export const dynamic = "force-dynamic";
 
@@ -64,9 +65,10 @@ export default async function IdeasHomePage({ searchParams }: { searchParams: Pr
         <Link
           href="/reglages"
           aria-label="Réglages"
-          className="mt-1 grid h-10 w-10 shrink-0 place-items-center rounded-full bg-surface text-sm font-semibold text-muted shadow-sm"
+          className="relative mt-1 grid h-10 w-10 shrink-0 place-items-center rounded-full bg-surface text-sm font-semibold text-muted shadow-sm"
         >
           {initial}
+          <UpdateDot />
         </Link>
       </header>
 
