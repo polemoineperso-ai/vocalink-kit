@@ -50,3 +50,29 @@ export function resolveDueAt(
   const dueAt = fromZonedTime(`${tomorrowDateStr}T${String(DEFAULT_DUE_HOUR).padStart(2, "0")}:00:00`, APP_TIMEZONE);
   return { dueAt, dueEstimated: true };
 }
+
+export type SnoozeOption = "tomorrow" | "monday" | "week";
+
+export const SNOOZE_LABELS: Record<SnoozeOption, string> = {
+  tomorrow: "Demain",
+  monday: "Lundi",
+  week: "Dans 1 semaine",
+};
+
+/**
+ * « Reporter » : nouvelle échéance à partir d'aujourd'hui (Paris), en
+ * gardant l'heure prévue (heure de Paris) ou 9 h s'il n'y en avait pas.
+ * « Lundi » = le prochain lundi, jamais aujourd'hui.
+ */
+export function snoozeDueAt(current: Date | null, option: SnoozeOption, now: Date = new Date()): Date {
+  const todayParis = toZonedTime(now, APP_TIMEZONE);
+  const target = new Date(todayParis);
+  if (option === "tomorrow") target.setDate(target.getDate() + 1);
+  if (option === "week") target.setDate(target.getDate() + 7);
+  if (option === "monday") target.setDate(target.getDate() + (((8 - target.getDay()) % 7) || 7));
+  const date = format(target, "yyyy-MM-dd", { timeZone: APP_TIMEZONE });
+  const time = current
+    ? format(toZonedTime(current, APP_TIMEZONE), "HH:mm", { timeZone: APP_TIMEZONE })
+    : `${String(DEFAULT_DUE_HOUR).padStart(2, "0")}:00`;
+  return fromZonedTime(`${date}T${time}:00`, APP_TIMEZONE);
+}

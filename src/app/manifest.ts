@@ -16,5 +16,7 @@ export default function manifest(): MetadataRoute.Manifest {
     background_color: "#fbf7f0",
     theme_color: "#e4572e",
     icons: [{ src: "/icon", sizes: "512x512", type: "image/png", purpose: "any" }],
+    // Appui long sur l'icône (Android) : dicter directement.
+    shortcuts: [{ name: "Dicter une idée", short_name: "Dicter", url: "/?dicter=1", icons: [{ src: "/icon", sizes: "512x512" }] }],
   };
 }

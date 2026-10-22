@@ -6,7 +6,7 @@ import { classifyAndExtractIdea, isClassificationAvailable, type IdeaExtraction 
 import { isNotionAvailable, upsertProjectPage } from "@/lib/notion";
 import { isGoogleTasksAvailable, upsertTask } from "@/lib/google-tasks";
 import { fromZonedTime } from "date-fns-tz";
-import { APP_TIMEZONE, resolveDueAt, todayInParis } from "@/lib/due-date";
+import { APP_TIMEZONE, resolveDueAt, snoozeDueAt, todayInParis, type SnoozeOption } from "@/lib/due-date";
 import { fillFromKnownContact, normalizeContact, type ContactInput } from "@/lib/contact";
 import { IdeaCategory, IdeaStatus, IdeaPriority, type Idea } from "@prisma/client";
 
@@ -191,6 +191,17 @@ export async function saveIdea(input: SaveIdeaInput): Promise<Idea> {
 export async function updateIdeaStatus(id: string, status: IdeaStatus): Promise<void> {
   const idea = await prisma.idea.update({ where: { id }, data: { status } });
   // Reflète "Marquer fait"/"Remettre en attente" dans Google Tasks (coché/décoché).
+  await syncGoogleTaskIfNeeded(idea);
+}
+
+/** « Reporter » : nouvelle échéance (demain, lundi, dans une semaine), plus « estimée ». */
+export async function snoozeIdea(id: string, option: SnoozeOption): Promise<void> {
+  const current = await prisma.idea.findUnique({ where: { id }, select: { dueAt: true } });
+  if (!current) return;
+  const idea = await prisma.idea.update({
+    where: { id },
+    data: { dueAt: snoozeDueAt(current.dueAt, option), dueEstimated: false },
+  });
   await syncGoogleTaskIfNeeded(idea);
 }
 

@@ -150,6 +150,9 @@ L'icône 🎙️ Vocalink apparaît avec vos autres applications. Ouvrez-la : Vo
 - **Dicter** : touchez le micro → parlez → touchez pour arrêter → *Transcrire et classer* → relisez → *Enregistrer*.
 - **Retrouver** : *Mes idées* permet de chercher (y compris par nom de contact ou société) et de filtrer par catégorie, statut ou priorité.
 - **Agir** : sur chaque idée, *Écrire l'email* ou *Agenda* prépare le message ou l'événement ; le numéro de téléphone d'un contact se touche pour appeler.
+- **Contacter** : sur une idée avec un contact, *Appeler*, *SMS*, *WhatsApp* ou *Email* en un toucher.
+- **Reporter** : une idée du jour ou en retard se reporte à *Demain*, *Lundi* ou *Dans 1 semaine*.
+- **Dicter en un geste** : l'adresse `https://votre-adresse.vercel.app/?dicter=1` ouvre Vocalink micro déjà lancé. Sur iPhone, mettez-la dans un raccourci (app *Raccourcis* → *Ouvrir les URL*), à lancer avec Siri ou le bouton Action. Sur Android, appui long sur l'icône → *Dicter*.
 - **Ranger** : *Marquer fait* quand c'est fait (l'idée reste dans l'historique, filtre *Faites*). Pour supprimer une idée : ✎ puis *Supprimer cette idée*.
 
 ---

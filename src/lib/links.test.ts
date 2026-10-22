@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { buildMailtoLink, buildGoogleCalendarLink, buildTelLink } from "@/lib/links";
+import { buildMailtoLink, buildGoogleCalendarLink, buildTelLink, buildSmsLink, buildWhatsAppLink } from "@/lib/links";
 
 describe("buildMailtoLink", () => {
   it("inclut le destinataire quand c'est une adresse email valide", () => {
@@ -47,5 +47,33 @@ describe("buildGoogleCalendarLink", () => {
     expect(link).toContain("action=TEMPLATE");
     expect(link).toContain("text=Rendez-vous");
     expect(link).toContain("dates=20261005T090000Z%2F20261005T093000Z");
+  });
+});
+
+describe("buildSmsLink", () => {
+  it("numéro seul ou avec message pré-rempli", () => {
+    expect(buildSmsLink("06 12 34 56 78")).toBe("sms:0612345678");
+    expect(buildSmsLink("06 12 34 56 78", "Bonjour Jean")).toBe("sms:0612345678?&body=Bonjour%20Jean");
+  });
+  it("null sans numéro exploitable", () => {
+    expect(buildSmsLink(null)).toBeNull();
+    expect(buildSmsLink("demander à Paul")).toBeNull();
+  });
+});
+
+describe("buildWhatsAppLink", () => {
+  it("convertit un numéro français au format international", () => {
+    expect(buildWhatsAppLink("06 12 34 56 78")).toBe("https://wa.me/33612345678");
+  });
+  it("garde un numéro déjà international (+ ou 00)", () => {
+    expect(buildWhatsAppLink("+44 7700 900123")).toBe("https://wa.me/447700900123");
+    expect(buildWhatsAppLink("0032 470 12 34 56")).toBe("https://wa.me/32470123456");
+  });
+  it("ajoute un message pré-rempli", () => {
+    expect(buildWhatsAppLink("0612345678", "Salut")).toBe("https://wa.me/33612345678?text=Salut");
+  });
+  it("null si le numéro est incomplet ou ambigu", () => {
+    expect(buildWhatsAppLink("079812345")).toBeNull();
+    expect(buildWhatsAppLink(null)).toBeNull();
   });
 });

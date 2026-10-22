@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { resolveDueAt, todayInParis } from "@/lib/due-date";
+import { resolveDueAt, snoozeDueAt, todayInParis } from "@/lib/due-date";
 import { IdeaCategory } from "@prisma/client";
 
 describe("resolveDueAt", () => {
@@ -55,5 +55,30 @@ describe("todayInParis", () => {
   it("passe au jour suivant à minuit heure de Paris, pas minuit UTC", () => {
     // 00h05 Paris le 16 juin (CEST, UTC+2) = 15 juin 22h05 UTC — encore le 15 en UTC, déjà le 16 à Paris.
     expect(todayInParis(new Date("2026-06-15T22:05:00.000Z"))).toBe("2026-06-16");
+  });
+});
+
+describe("snoozeDueAt", () => {
+  // Jeudi 22/10/2026, 15 h à Paris (UTC+2).
+  const NOW = new Date("2026-10-22T13:00:00Z");
+  const paris = (d: Date) => d.toLocaleString("fr-FR", { timeZone: "Europe/Paris", weekday: "long", day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
+
+  it("demain, en gardant l'heure prévue (heure de Paris)", () => {
+    const due = new Date("2026-10-21T10:00:00Z"); // mercredi 12:00 à Paris
+    expect(paris(snoozeDueAt(due, "tomorrow", NOW))).toBe("vendredi 23/10 12:00");
+  });
+
+  it("lundi prochain, 9 h sans heure prévue", () => {
+    expect(paris(snoozeDueAt(null, "monday", NOW))).toBe("lundi 26/10 09:00");
+  });
+
+  it("dans une semaine, en passant l'heure d'hiver (25/10) sans décaler l'heure", () => {
+    const due = new Date("2026-10-22T08:00:00Z"); // 10:00 à Paris
+    expect(paris(snoozeDueAt(due, "week", NOW))).toBe("jeudi 29/10 10:00");
+  });
+
+  it("un lundi, « Lundi » veut dire le lundi suivant", () => {
+    const monday = new Date("2026-10-26T08:00:00Z");
+    expect(paris(snoozeDueAt(null, "monday", monday))).toBe("lundi 02/11 09:00");
   });
 });

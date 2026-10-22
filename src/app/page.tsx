@@ -20,9 +20,9 @@ function pluralize(n: number, one: string, many: string): string {
   return `${n} ${n > 1 ? many : one}`;
 }
 
-export default async function Home() {
+export default async function Home({ searchParams }: { searchParams: Promise<{ dicter?: string }> }) {
   const notionUrl = getNotionUrl();
-  const [stats, settings] = await Promise.all([getHomeStats(), getAppSettings()]);
+  const [{ dicter }, stats, settings] = await Promise.all([searchParams, getHomeStats(), getAppSettings()]);
 
   if (!settings.onboarded) {
     return (
@@ -48,7 +48,7 @@ export default async function Home() {
         </p>
       </section>
 
-      <CaptureFlow />
+      <CaptureFlow autoStart={dicter === "1"} />
 
       {stats.pending > 0 ? (
         <section className="grid grid-cols-3 gap-3">

@@ -33,8 +33,11 @@ function formatDuration(seconds: number): string {
 
 export function IdeaRecorder({
   onExtracted,
+  autoStart = false,
 }: {
   onExtracted: (transcript: string, extraction: IdeaExtraction | null) => void;
+  /** « Dicter en un geste » (/?dicter=1) : lance le micro dès l'ouverture. */
+  autoStart?: boolean;
 }) {
   const [state, setState] = useState<RecorderState>("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -53,7 +56,17 @@ export function IdeaRecorder({
     return () => window.clearInterval(timer);
   }, [state]);
 
-  async function startRecording() {
+  // Démarrage automatique : si le navigateur exige un toucher pour ouvrir le
+  // micro, on revient simplement au gros bouton, sans message d'erreur.
+  const autoStarted = useRef(false);
+  useEffect(() => {
+    if (!autoStart || autoStarted.current) return;
+    autoStarted.current = true;
+    window.history.replaceState(null, "", window.location.pathname);
+    void startRecording({ silentFailure: true });
+  }, [autoStart]);
+
+  async function startRecording({ silentFailure = false }: { silentFailure?: boolean } = {}) {
     setErrorMessage(null);
     setElapsed(0);
     setState("requesting");
@@ -80,6 +93,10 @@ export function IdeaRecorder({
       recorder.start();
       setState("recording");
     } catch {
+      if (silentFailure) {
+        setState("idle");
+        return;
+      }
       setErrorMessage("Micro indisponible — vérifiez l'autorisation donnée au navigateur.");
       setState("error");
     }
@@ -138,7 +155,7 @@ export function IdeaRecorder({
             ) : (
               <button
                 type="button"
-                onClick={startRecording}
+                onClick={() => startRecording()}
                 disabled={state === "requesting"}
                 aria-label="Démarrer l'enregistrement"
                 className="relative grid h-32 w-32 place-items-center rounded-full bg-brand text-white shadow-lg transition hover:bg-brand-hover active:scale-95 disabled:opacity-60"

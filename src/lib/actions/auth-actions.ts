@@ -3,12 +3,13 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { computeSessionToken, SESSION_COOKIE_NAME } from "@/lib/session";
+import { safeNextPath } from "@/lib/safe-next";
 
 const SESSION_MAX_AGE_SECONDS = 60 * 60 * 24 * 180; // 180 jours
 
 export async function login(formData: FormData): Promise<void> {
   const password = formData.get("password");
-  const next = (formData.get("next") as string) || "/";
+  const next = safeNextPath(formData.get("next"));
   const expected = process.env.APP_PASSWORD;
 
   if (!expected || password !== expected) {

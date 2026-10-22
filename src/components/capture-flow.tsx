@@ -16,14 +16,22 @@ type Step =
   | { name: "saved"; idea: Idea };
 
 /** Parcours complet d'une idée : micro → relecture → confirmation. Utilisé par l'accueil et /capture. */
-export function CaptureFlow() {
+export function CaptureFlow({ autoStart = false }: { autoStart?: boolean }) {
   const [step, setStep] = useState<Step>({ name: "record" });
+  // Le lancement automatique ne vaut que pour la première dictée.
+  const [autoStartPending, setAutoStartPending] = useState(autoStart);
   const router = useRouter();
 
   return (
     <>
       {step.name === "record" ? (
-        <IdeaRecorder onExtracted={(transcript, extraction) => setStep({ name: "review", transcript, extraction })} />
+        <IdeaRecorder
+          autoStart={autoStartPending}
+          onExtracted={(transcript, extraction) => {
+            setAutoStartPending(false);
+            setStep({ name: "review", transcript, extraction });
+          }}
+        />
       ) : null}
 
       {step.name === "review" ? (

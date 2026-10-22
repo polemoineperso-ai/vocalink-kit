@@ -3,8 +3,9 @@
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { updateIdeaStatus } from "@/lib/actions/idea-actions";
-import { buildMailtoLink, buildGoogleCalendarLink, buildTelLink } from "@/lib/links";
+import { snoozeIdea, updateIdeaStatus } from "@/lib/actions/idea-actions";
+import { buildMailtoLink, buildGoogleCalendarLink, buildTelLink, buildSmsLink, buildWhatsAppLink } from "@/lib/links";
+import { SNOOZE_LABELS, todayInParis, type SnoozeOption } from "@/lib/due-date";
 import { formatContactIdentity, hasContact } from "@/lib/contact";
 import { CATEGORY_STYLE, PRIORITY_STYLE } from "@/lib/category-style";
 import type { Idea } from "@prisma/client";
@@ -23,7 +24,9 @@ export function IdeaCard({
   const router = useRouter();
   const style = CATEGORY_STYLE[idea.category];
   const done = idea.status === "ACTIONED";
-  const overdue = !done && idea.dueAt !== null && new Date(idea.dueAt) < new Date();
+  const now = new Date();
+  const overdue = !done && idea.dueAt !== null && new Date(idea.dueAt) < now;
+  const dueToday = !done && idea.dueAt !== null && todayInParis(new Date(idea.dueAt)) === todayInParis(now);
 
   function toggleStatus() {
     startTransition(async () => {
@@ -32,16 +35,30 @@ export function IdeaCard({
     });
   }
 
-  const actionLink =
+  function snooze(option: SnoozeOption) {
+    startTransition(async () => {
+      await snoozeIdea(idea.id, option);
+      router.refresh();
+    });
+  }
+
+  // Pour un Email, le message préparé part avec le lien email (contact ou non).
+  const emailLink =
     idea.category === "EMAIL"
       ? buildMailtoLink({ recipient: idea.contactEmail, subject: idea.emailSubject, body: idea.emailBody })
-      : idea.category === "APPEL_RAPPEL" && idea.dueAt
-        ? buildGoogleCalendarLink({ title: idea.title, details: idea.summary, start: new Date(idea.dueAt) })
+      : idea.contactEmail
+        ? buildMailtoLink({ recipient: idea.contactEmail, subject: null, body: null })
         : null;
-  const actionLabel = idea.category === "EMAIL" ? "Écrire l'email" : "Agenda";
+  const calendarLink =
+    idea.category === "APPEL_RAPPEL" && idea.dueAt
+      ? buildGoogleCalendarLink({ title: idea.title, details: idea.summary, start: new Date(idea.dueAt) })
+      : null;
 
   const contactIdentity = formatContactIdentity(idea);
   const telLink = buildTelLink(idea.contactPhone);
+  const smsLink = buildSmsLink(idea.contactPhone);
+  const whatsAppLink = buildWhatsAppLink(idea.contactPhone);
+  const contactAction = "inline-flex items-center gap-1 rounded-full bg-surface px-3 py-1.5 text-sm font-semibold shadow-sm transition active:scale-95";
 
   return (
     <article className={`card relative flex overflow-hidden ${isChild ? "ml-6" : ""} ${done ? "opacity-70" : ""}`}>
@@ -64,25 +81,54 @@ export function IdeaCard({
         </div>
 
         {hasContact(idea) ? (
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 rounded-xl bg-subtle px-3 py-2 text-sm">
-            {contactIdentity ? <span className="font-medium">👤 {contactIdentity}</span> : null}
-            {idea.contactPhone ? (
-              telLink ? (
-                <a href={telLink} className="font-medium text-appel-ink underline-offset-2 hover:underline">
-                  📞 {idea.contactPhone}
-                </a>
-              ) : (
-                <span>📞 {idea.contactPhone}</span>
-              )
+          <div className="flex flex-col gap-2 rounded-xl bg-subtle px-3 py-2.5 text-sm">
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5">
+              {contactIdentity ? <span className="font-medium">👤 {contactIdentity}</span> : null}
+              {idea.contactPhone ? <span className="text-muted">{idea.contactPhone}</span> : null}
+              {idea.contactEmail ? <span className="break-all text-muted">{idea.contactEmail}</span> : null}
+            </div>
+            {/* Contacter en un toucher. */}
+            {telLink || emailLink ? (
+              <div className="flex flex-wrap gap-1.5">
+                {telLink ? (
+                  <a href={telLink} className={`${contactAction} text-appel-ink`}>
+                    📞 Appeler
+                  </a>
+                ) : null}
+                {smsLink ? (
+                  <a href={smsLink} className={`${contactAction} text-ink`}>
+                    💬 SMS
+                  </a>
+                ) : null}
+                {whatsAppLink ? (
+                  <a href={whatsAppLink} target="_blank" rel="noopener noreferrer" className={`${contactAction} text-email-ink`}>
+                    WhatsApp
+                  </a>
+                ) : null}
+                {emailLink ? (
+                  <a href={emailLink} className={`${contactAction} text-projet-ink`}>
+                    ✉ {idea.category === "EMAIL" ? "Écrire l'email" : "Email"}
+                  </a>
+                ) : null}
+              </div>
             ) : null}
-            {idea.contactEmail ? (
-              <a
-                href={buildMailtoLink({ recipient: idea.contactEmail, subject: null, body: null })}
-                className="font-medium text-email-ink underline-offset-2 hover:underline"
+          </div>
+        ) : null}
+
+        {!done && idea.dueAt && (overdue || dueToday) ? (
+          <div className="flex flex-wrap items-center gap-1.5 text-sm">
+            <span className="font-medium text-muted">⏰ Reporter :</span>
+            {(Object.keys(SNOOZE_LABELS) as SnoozeOption[]).map((option) => (
+              <button
+                key={option}
+                type="button"
+                onClick={() => snooze(option)}
+                disabled={isPending}
+                className="rounded-full border border-line bg-surface px-3 py-1 font-medium transition hover:bg-subtle active:scale-95 disabled:opacity-50"
               >
-                ✉ {idea.contactEmail}
-              </a>
-            ) : null}
+                {SNOOZE_LABELS[option]}
+              </button>
+            ))}
           </div>
         ) : null}
 
@@ -115,14 +161,14 @@ export function IdeaCard({
               Marquer fait
             </button>
           )}
-          {actionLink ? (
-            <a
-              href={actionLink}
-              target={idea.category === "APPEL_RAPPEL" ? "_blank" : undefined}
-              rel="noopener noreferrer"
-              className="btn btn-ghost"
-            >
-              {actionLabel}
+          {calendarLink ? (
+            <a href={calendarLink} target="_blank" rel="noopener noreferrer" className="btn btn-ghost">
+              Agenda
+            </a>
+          ) : null}
+          {emailLink && !hasContact(idea) ? (
+            <a href={emailLink} className="btn btn-ghost">
+              Écrire l&apos;email
             </a>
           ) : null}
           {idea.category === "PROJET" && idea.notionPageUrl ? (
