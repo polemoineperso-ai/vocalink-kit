@@ -184,10 +184,20 @@ La clé OpenAI a expiré (colonne « Expire » sur la page des clés OpenAI), es
 
 ---
 
+## Précautions d'usage
+
+Votre Vocalink n'est pas l'appli d'une entreprise : c'est **le vôtre**, installé sur vos propres comptes. C'est ce qui le rend privé, et c'est pour ça que ces quelques réflexes comptent.
+
+- **Vous êtes la seule personne à y avoir accès.** Vos idées sont rangées dans **votre** base de données (Neon), sur **vos** comptes. Personne d'autre ne peut les lire, pas même la personne qui vous a envoyé ce kit. Le revers : personne ne pourra non plus les récupérer à votre place. Gardez précieusement votre note (clé et mot de passe) et vos accès GitHub, Vercel et OpenAI.
+- **Votre mot de passe ouvre tout.** Quiconque le connaît voit toutes vos idées : ne le donnez à personne et ne le réutilisez pas ailleurs. Téléphone perdu, ou mot de passe qui a circulé ? Changez-le (voir « Changer la clé OpenAI ou le mot de passe ») : tous les appareils connectés sont aussitôt déconnectés. Sur un appareil partagé, déconnectez-vous depuis **Réglages**.
+- **Votre clé OpenAI, c'est comme une carte bancaire.** Elle permet de dépenser votre crédit. Ne l'envoyez jamais par email, message ou capture d'écran, à personne, même pour vous faire aider. Si elle a pu fuiter : supprimez-la sur la page des clés OpenAI et créez-en une nouvelle. Laissez la recharge automatique désactivée : au pire, vous perdez le crédit restant, jamais plus.
+- **Ce qui sort de chez vous.** Pour vous comprendre, l'enregistrement de votre voix et le texte de vos idées passent par OpenAI. Vocalink ne garde pas l'enregistrement. Selon ses conditions, OpenAI n'entraîne pas ses modèles avec ce qui passe par une clé comme la vôtre. Si vous activez les options avancées (Notion, Google Tasks, email), vos idées y sont aussi copiées.
+- **Pas de secrets dans vos idées.** Vocalink est fait pour des idées, pas pour servir de coffre-fort : ne dictez ni codes, ni mots de passe, ni numéros de carte, ni informations de santé très personnelles. Les coordonnées de vos contacts sont pour votre usage personnel : ne les diffusez pas, par respect pour eux.
+- **Les notifications se lisent sur l'écran verrouillé.** Le brief du matin affiche le titre de vos idées. Si d'autres voient votre téléphone, masquez les aperçus : sur iPhone, Réglages → Notifications → Afficher les aperçus → *Si déverrouillé* ; sur Android, masquez le contenu sensible sur l'écran de verrouillage.
+- **Supprimer, c'est définitif.** Une idée supprimée ne revient pas : en cas de doute, préférez *Archiver*. Et ne supprimez jamais le projet **mon-vocalink** sur Vercel ni sa base de données : toutes vos idées partiraient avec.
+
 ## Bon à savoir
 
-- **Vos données** : vos idées sont stockées dans **votre** base de données (Neon), accessible uniquement avec **votre** mot de passe. L'audio est envoyé à OpenAI pour être transcrit, puis **n'est conservé nulle part** par Vocalink.
-- **Contacts** : si vous notez des coordonnées de tiers, gardez-les pour votre usage personnel.
 - **Usage** : l'offre gratuite de Vercel (Hobby) est prévue pour un usage **personnel, non commercial**.
 - **Mises à jour** : votre Vocalink est une copie indépendante. Il ne change pas tout seul et continue de fonctionner tel quel.
 - **Options avancées** (facultatives, plus techniques) : synchronisation Notion, Google Tasks, email récapitulatif quotidien — voir [docs/OPTIONS-AVANCEES.md](docs/OPTIONS-AVANCEES.md).
