@@ -67,7 +67,7 @@ La « clé » est un code secret qui autorise votre Vocalink à utiliser OpenAI 
 
 1. Allez sur **[platform.openai.com/api-keys](https://platform.openai.com/api-keys)**.
 2. Cliquez sur **Create new secret key**.
-3. Nom : `Vocalink`. Laissez les autres options par défaut. Cliquez sur **Create secret key**.
+3. Nom : `Vocalink`. Si un champ d'**expiration** apparaît, choisissez **Jamais** (*Never*) : une clé qui expire coupe Vocalink le jour dit, sans prévenir. Cliquez sur **Create secret key**.
 4. Une longue suite de caractères commençant par **`sk-`** s'affiche. Cliquez sur **Copy** et **collez-la tout de suite dans votre note**.
 
 > ⚠️ **OpenAI n'affichera plus jamais cette clé.** Si vous la perdez, ce n'est pas grave : supprimez-la et recréez-en une (même procédure).
@@ -157,7 +157,7 @@ L'icône 🎙️ Vocalink apparaît avec vos autres applications. Ouvrez-la : Vo
 ## Problèmes fréquents
 
 **« Transcription indisponible » ou « La transcription a échoué »**
-La clé OpenAI est absente, mal copiée, ou votre crédit OpenAI est épuisé.
+La clé OpenAI a expiré (colonne « Expire » sur la page des clés OpenAI), est mal copiée, ou votre crédit OpenAI est épuisé.
 → Vérifiez votre crédit sur [platform.openai.com/settings/organization/billing](https://platform.openai.com/settings/organization/billing). Si besoin, créez une nouvelle clé et remplacez-la (voir ci-dessous).
 
 **Changer la clé OpenAI ou le mot de passe**

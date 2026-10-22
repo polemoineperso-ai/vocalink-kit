@@ -236,7 +236,7 @@
     <h2>🛟 Un souci après l'installation ?</h2>
     <details>
       <summary>Vocalink dit « Transcription indisponible » ou « a échoué »</summary>
-      <div>Votre crédit OpenAI est probablement épuisé, ou la clé a été mal collée. Vérifiez votre crédit sur <a href="https://platform.openai.com/settings/organization/billing" target="_blank" rel="noopener">votre compte OpenAI</a>, puis si besoin changez la clé (voir juste en dessous).</div>
+      <div>Votre clé OpenAI a peut-être <b>expiré</b> (regardez la colonne « Expire » sur la page des clés OpenAI), votre crédit est épuisé, ou la clé a été mal collée. Vérifiez votre crédit sur <a href="https://platform.openai.com/settings/organization/billing" target="_blank" rel="noopener">votre compte OpenAI</a>, puis si besoin changez la clé (voir juste en dessous).</div>
     </details>
     <details>
       <summary>Changer la clé ou le mot de passe (ou mot de passe oublié)</summary>
@@ -295,13 +295,14 @@
       <li><label class="task"><input type="checkbox"><span class="tick">✓</span><span class="what">Mettre 5 $ de crédit
         <small><span class="btn">Add payment details</span> → <span class="btn">Individual</span> → votre carte → 5 $. Laissez la recharge automatique <b>désactivée</b> : impossible de dépenser plus.<br><a class="go" href="https://platform.openai.com/settings/organization/billing" target="_blank" rel="noopener">Ouvrir la page crédit ↗</a></small></span></label></li>
       <li><label class="task"><input type="checkbox"><span class="tick">✓</span><span class="what">Fabriquer ma clé et la coller dans ma note
-        <small><span class="btn">Create new secret key</span> → nom : <i>Vocalink</i> → <span class="btn">Create secret key</span> → <span class="btn">Copy</span>. Elle commence par <span class="secret">sk-</span>. ⚠️ Elle ne s'affiche <b>qu'une fois</b> : collez-la tout de suite.<br><a class="go" href="https://platform.openai.com/api-keys" target="_blank" rel="noopener">Ouvrir la page des clés ↗</a></small></span></label></li>
+        <small><span class="btn">Create new secret key</span> → nom : <i>Vocalink</i> → si un champ d'<b>expiration</b> apparaît, choisissez <b>Jamais</b> (<i>Never</i>) → <span class="btn">Create secret key</span> → <span class="btn">Copy</span>. Elle commence par <span class="secret">sk-</span>. ⚠️ Elle ne s'affiche <b>qu'une fois</b> : collez-la tout de suite.<br><a class="go" href="https://platform.openai.com/api-keys" target="_blank" rel="noopener">Ouvrir la page des clés ↗</a></small></span></label></li>
       <li><label class="task"><input type="checkbox"><span class="tick">✓</span><span class="what">Inventer mon mot de passe secret et le noter
         <small>Il protégera votre assistant. Astuce : trois mots au hasard, facile à retenir, impossible à deviner, par exemple <i>girafe-orage-violon42</i>.</small></span></label></li>
     </ul>
     <details class="stuck"><summary>😕 Je bloque</summary><div>
       <p><b>J'ai perdu ma clé</b> : pas grave ! Sur la page des clés, supprimez-la et fabriquez-en une nouvelle.</p>
       <p><b>OpenAI demande mon téléphone</b> : c'est normal, c'est une vérification anti-robot.</p>
+      <p><b>Pourquoi « Jamais » pour l'expiration ?</b> Une clé qui expire coupe votre assistant le jour dit, sans prévenir. Avec « Jamais », il fonctionne tant que vous ne supprimez pas la clé.</p>
     </div></details>
   </article>
 
