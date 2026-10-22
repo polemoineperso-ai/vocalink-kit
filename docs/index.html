@@ -74,7 +74,7 @@
     padding: 24px; margin-bottom: 16px;
   }
   .intro h2 { font-size: 20px; margin-bottom: 16px; }
-  .facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(135px, 1fr)); gap: 12px; }
+  .facts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
   .fact { background: var(--bg); border-radius: 12px; padding: 14px; }
   .fact b { display: block; font-size: 15px; }
   .fact span { color: var(--muted); font-size: 15px; }
@@ -170,6 +170,9 @@
 
   footer { margin-top: 48px; text-align: center; color: var(--muted); font-size: 14px; }
 
+  @media (max-width: 720px) {
+    .facts { grid-template-columns: 1fr 1fr; }
+  }
   @media (max-width: 560px) {
     body { font-size: 16px; }
     header { padding: 32px 0 24px; }
