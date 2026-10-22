@@ -25,6 +25,7 @@ describe("buildMorningBrief", () => {
       title: "Bonjour Marie ☀️",
       body: "Aujourd'hui : Rappeler Jean (10:00), Écrire à Sophie (14:00). 1 en retard.",
       url: "/ideas",
+      badgeCount: 3,
     });
   });
 
@@ -42,5 +43,6 @@ describe("buildMorningBrief", () => {
   it("rien de daté : propose un tri des idées en attente", () => {
     const brief = buildMorningBrief([{ title: "Idée", dueAt: null, dueEstimated: false }], "Marie", NOW);
     expect(brief?.body).toBe("Rien de prévu aujourd'hui. 1 idée en attente : un petit tri ?");
+    expect(brief?.badgeCount).toBe(0);
   });
 });

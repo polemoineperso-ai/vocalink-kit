@@ -2,6 +2,7 @@ import Link from "next/link";
 import { logout } from "@/lib/actions/auth-actions";
 import { getHomeStats } from "@/lib/actions/idea-actions";
 import { getAppSettings } from "@/lib/actions/settings-actions";
+import { AppBadge } from "@/components/app-badge";
 import { AppHeader } from "@/components/app-header";
 import { CaptureFlow } from "@/components/capture-flow";
 import { NotificationsToggle } from "@/components/notifications-toggle";
@@ -35,6 +36,7 @@ export default async function Home() {
   return (
     <main className="mx-auto flex w-full max-w-xl flex-col gap-6 px-4 pb-12 pt-4">
       <AppHeader />
+      <AppBadge count={stats.dueToday + stats.overdue} />
 
       <section className="pt-4 text-center">
         {settings.firstName ? <p className="text-muted">Bonjour {settings.firstName} 👋</p> : null}

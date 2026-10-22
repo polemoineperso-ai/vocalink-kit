@@ -24,7 +24,8 @@ export function vapidSubject(env: Record<string, string | undefined> = process.e
   return "https://github.com/polemoineperso-ai/vocalink-kit";
 }
 
-export type PushPayload = { title: string; body: string; url?: string };
+/** badgeCount : chiffre de la pastille rouge sur l'icône (0 = l'effacer). */
+export type PushPayload = { title: string; body: string; url?: string; badgeCount?: number };
 
 export async function getVapidKeys(): Promise<{ publicKey: string; privateKey: string }> {
   const settings = await prisma.settings.findUnique({ where: { id: SETTINGS_ID } });

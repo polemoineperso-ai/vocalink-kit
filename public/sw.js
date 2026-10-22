@@ -9,13 +9,21 @@ self.addEventListener("push", (event) => {
   } catch {
     data = { title: "Vocalink", body: event.data.text() };
   }
+  // Pastille rouge sur l'icône (iPhone : app ajoutée à l'écran d'accueil).
+  let badge = Promise.resolve();
+  if (typeof data.badgeCount === "number" && "setAppBadge" in self.navigator) {
+    badge = (data.badgeCount > 0 ? self.navigator.setAppBadge(data.badgeCount) : self.navigator.clearAppBadge()).catch(() => {});
+  }
   event.waitUntil(
-    self.registration.showNotification(data.title || "Vocalink", {
-      body: data.body || "",
-      icon: "/icon",
-      badge: "/icon",
-      data: { url: data.url || "/" },
-    }),
+    Promise.all([
+      badge,
+      self.registration.showNotification(data.title || "Vocalink", {
+        body: data.body || "",
+        icon: "/icon",
+        badge: "/icon",
+        data: { url: data.url || "/" },
+      }),
+    ]),
   );
 });
 

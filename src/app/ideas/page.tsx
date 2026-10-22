@@ -1,16 +1,18 @@
 import Link from "next/link";
-import { listIdeas } from "@/lib/actions/idea-actions";
+import { getHomeStats, listIdeas } from "@/lib/actions/idea-actions";
+import { AppBadge } from "@/components/app-badge";
 import { AppHeader } from "@/components/app-header";
 import { IdeasFilterList } from "@/components/ideas-filter-list";
 
 export const dynamic = "force-dynamic";
 
 export default async function IdeasPage() {
-  const ideas = await listIdeas();
+  const [ideas, stats] = await Promise.all([listIdeas(), getHomeStats()]);
 
   return (
     <main className="mx-auto flex w-full max-w-xl flex-col gap-5 px-4 pb-28 pt-4">
       <AppHeader showIdeasLink={false} />
+      <AppBadge count={stats.dueToday + stats.overdue} />
       <h1 className="text-2xl font-semibold">Mes idées</h1>
 
       <IdeasFilterList ideas={ideas} />

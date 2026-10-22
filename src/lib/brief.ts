@@ -23,6 +23,8 @@ export function buildMorningBrief(pendingIdeas: BriefIdea[], firstName: string |
     .sort((a, b) => a.dueAt!.getTime() - b.dueAt!.getTime());
   const overdue = pendingIdeas.filter((i) => i.dueAt && i.dueAt < now);
   const hello = firstName ? `Bonjour ${firstName} ☀️` : "Bonjour ☀️";
+  // Pastille de l'icône : ce qui demande de l'attention aujourd'hui.
+  const badgeCount = dueToday.length + overdue.length;
 
   if (dueToday.length === 0 && overdue.length === 0) {
     if (pendingIdeas.length === 0) return null;
@@ -30,6 +32,7 @@ export function buildMorningBrief(pendingIdeas: BriefIdea[], firstName: string |
       title: hello,
       body: `Rien de prévu aujourd'hui. ${pendingIdeas.length} idée${pendingIdeas.length > 1 ? "s" : ""} en attente : un petit tri ?`,
       url: "/ideas",
+      badgeCount,
     };
   }
 
@@ -43,5 +46,5 @@ export function buildMorningBrief(pendingIdeas: BriefIdea[], firstName: string |
   }
   if (overdue.length > 0) parts.push(`${overdue.length} en retard.`);
 
-  return { title: hello, body: parts.join(" "), url: "/ideas" };
+  return { title: hello, body: parts.join(" "), url: "/ideas", badgeCount };
 }
