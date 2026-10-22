@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { CircleArrowUp, CircleCheck, ExternalLink, LifeBuoy } from "lucide-react";
+import { CircleArrowUp, CircleCheck, CircleUserRound, ExternalLink, LifeBuoy } from "lucide-react";
 import {
   APP_VERSION,
+  AUTHOR_CARD_URL,
+  AUTHOR_NAME,
   isNewerVersion,
   parseUpdateFeed,
   REPORT_ISSUE_URL,
@@ -68,7 +70,7 @@ export function UpdateDot() {
   );
 }
 
-/** Groupe « À propos » des Réglages : version, mise à jour, signaler un problème. */
+/** Groupe « À propos » des Réglages : version, mise à jour, signaler un problème, auteur. */
 export function AboutPanel() {
   const update = useAvailableUpdate();
 
@@ -96,6 +98,14 @@ export function AboutPanel() {
         <span className="flex-1">
           <span className="row-title block">Signaler un problème</span>
           <span className="row-sub block">Sur GitHub. Le message est public : n&apos;y mettez ni mot de passe, ni clé, ni idée.</span>
+        </span>
+        <ExternalLink size={17} className="shrink-0 text-faint" aria-hidden="true" />
+      </a>
+      <a href={AUTHOR_CARD_URL} target="_blank" rel="noopener noreferrer" className="row">
+        <CircleUserRound size={20} className="shrink-0 text-muted" aria-hidden="true" />
+        <span className="flex-1">
+          <span className="row-title block">Créé par {AUTHOR_NAME}</span>
+          <span className="row-sub block">Sa carte de visite</span>
         </span>
         <ExternalLink size={17} className="shrink-0 text-faint" aria-hidden="true" />
       </a>

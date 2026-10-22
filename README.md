@@ -69,6 +69,6 @@ Votre Vocalink n'est pas l'appli d'une entreprise : c'est **le vôtre**, install
 ## Bon à savoir
 
 - **Usage** : l'offre gratuite de Vercel (Hobby) est prévue pour un usage **personnel, non commercial**.
-- **Licence** : Vocalink est un logiciel libre ([licence MIT](LICENSE)) de Pierre-Olivier Lemoine, fourni tel quel, **sans garantie** : vous l'installez et l'utilisez sous votre responsabilité.
+- **Licence** : Vocalink est un logiciel libre ([licence MIT](LICENSE)) créé par [Pierre-Olivier Lemoine](https://polemoineperso-ai.github.io/portfolio/carte-visite.html), fourni tel quel, **sans garantie** : vous l'installez et l'utilisez sous votre responsabilité.
 - **Mises à jour** : votre Vocalink est une copie indépendante. Il ne change jamais tout seul : c'est vous qui décidez de le mettre à jour (voir plus haut). Pour vérifier s'il existe une nouvelle version, l'app consulte une fois par jour le site du guide, sans rien envoyer de vos données.
 - **Options avancées** (facultatives, plus techniques) : synchronisation Notion, Google Tasks, email récapitulatif quotidien — voir [docs/OPTIONS-AVANCEES.md](docs/OPTIONS-AVANCEES.md).

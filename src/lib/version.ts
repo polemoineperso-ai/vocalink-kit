@@ -7,13 +7,16 @@
  * ici ET dans docs/version.json du kit, dans le même commit.
  */
 
-export const APP_VERSION = "1.0.2";
+export const APP_VERSION = "1.0.3";
 
 const KIT_SITE = "https://polemoineperso-ai.github.io/vocalink-kit";
 const KIT_REPO = "https://github.com/polemoineperso-ai/vocalink-kit";
 
 export const UPDATE_FEED_URL = `${KIT_SITE}/version.json`;
 export const UPDATE_GUIDE_URL = `${KIT_SITE}/#mise-a-jour`;
+// Qui a créé Vocalink (présentation, pas le canal d'aide : « Signaler un problème »).
+export const AUTHOR_NAME = "Pierre-Olivier Lemoine";
+export const AUTHOR_CARD_URL = "https://polemoineperso-ai.github.io/portfolio/carte-visite.html";
 export const REPORT_ISSUE_URL = `${KIT_REPO}/issues/new?template=probleme.yml&version=${APP_VERSION}`;
 
 export type UpdateFeed = { version: string; notes: string };
