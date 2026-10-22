@@ -29,7 +29,7 @@ Chaque idée de catégorie **Projet** crée ou met à jour une page dans une bas
 
 ## Synchronisation Google Tasks (toutes les idées)
 
-Chaque idée crée ou met à jour une tâche Google Tasks ; « ✓ Traité » coche la tâche. **C'est l'option la plus technique** : elle demande d'installer [Node.js](https://nodejs.org) sur votre ordinateur et de lancer une commande une fois.
+Chaque idée crée ou met à jour une tâche Google Tasks ; « Marquer fait » coche la tâche. **C'est l'option la plus technique** : elle demande d'installer [Node.js](https://nodejs.org) sur votre ordinateur et de lancer une commande une fois.
 
 1. [console.cloud.google.com](https://console.cloud.google.com) → créez un projet → activez l'**API Google Tasks**.
 2. **Écran de consentement OAuth** → type **Externe**, statut **Test** → ajoutez votre propre adresse Google comme **utilisateur de test** → scope `https://www.googleapis.com/auth/tasks`.

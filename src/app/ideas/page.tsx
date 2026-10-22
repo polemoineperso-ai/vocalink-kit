@@ -27,7 +27,7 @@ export default async function IdeasPage({ searchParams }: { searchParams: Promis
       <Link
         href="/"
         aria-label="Enregistrer une idée"
-        className="fixed bottom-6 left-1/2 flex -translate-x-1/2 items-center gap-2 rounded-full bg-brand px-6 py-4 font-semibold text-white shadow-xl transition hover:bg-brand-hover active:scale-95"
+        className="fixed bottom-6 left-1/2 flex -translate-x-1/2 items-center gap-2 whitespace-nowrap rounded-full bg-brand px-6 py-4 font-semibold text-white shadow-xl transition hover:bg-brand-hover active:scale-95"
       >
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
           <rect x="9" y="2" width="6" height="12" rx="3" />

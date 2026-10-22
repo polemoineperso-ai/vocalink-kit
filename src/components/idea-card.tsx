@@ -3,7 +3,7 @@
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { updateIdeaStatus, deleteIdea } from "@/lib/actions/idea-actions";
+import { updateIdeaStatus } from "@/lib/actions/idea-actions";
 import { buildMailtoLink, buildGoogleCalendarLink, buildTelLink } from "@/lib/links";
 import { formatContactIdentity, hasContact } from "@/lib/contact";
 import { CATEGORY_STYLE, PRIORITY_STYLE } from "@/lib/category-style";
@@ -32,14 +32,6 @@ export function IdeaCard({
     });
   }
 
-  function handleDelete() {
-    if (!window.confirm(`Supprimer « ${idea.title} » ? Cette action est définitive.`)) return;
-    startTransition(async () => {
-      await deleteIdea(idea.id);
-      router.refresh();
-    });
-  }
-
   const actionLink =
     idea.category === "EMAIL"
       ? buildMailtoLink({ recipient: idea.contactEmail, subject: idea.emailSubject, body: idea.emailBody })
@@ -55,20 +47,20 @@ export function IdeaCard({
     <article className={`card relative flex overflow-hidden ${isChild ? "ml-6" : ""} ${done ? "opacity-70" : ""}`}>
       <div className={`w-1.5 shrink-0 ${done ? "bg-line" : style.stripe}`} aria-hidden="true" />
       <div className="flex min-w-0 flex-1 flex-col gap-3 p-4">
-        <div className="flex items-start justify-between gap-3">
-          <div className="min-w-0">
-            {isChild && parentTitle ? <p className="mb-1 text-xs text-muted">↳ {parentTitle}</p> : null}
-            <h2 className={`font-semibold leading-snug ${done ? "text-muted line-through" : ""}`}>{idea.title}</h2>
-            {idea.summary ? <p className="mt-1 text-sm leading-relaxed text-muted">{idea.summary}</p> : null}
-          </div>
-          <div className="flex shrink-0 flex-col items-end gap-1.5">
-            <span className={`chip ${style.chip}`}>
-              <span aria-hidden="true">{style.icon}</span>
-              {style.label}
-            </span>
-            {idea.priority === "HIGH" ? <span className={`chip ${PRIORITY_STYLE.HIGH.chip}`}>Haute</span> : null}
-            {idea.priority === "LOW" ? <span className={`chip ${PRIORITY_STYLE.LOW.chip}`}>Basse</span> : null}
-          </div>
+        {/* Pastilles au-dessus du titre : le titre garde toute la largeur sur téléphone. */}
+        <div className="flex flex-wrap items-center gap-1.5">
+          <span className={`chip ${style.chip}`}>
+            <span aria-hidden="true">{style.icon}</span>
+            {style.label}
+          </span>
+          {idea.priority === "HIGH" ? <span className={`chip ${PRIORITY_STYLE.HIGH.chip}`}>Haute</span> : null}
+          {idea.priority === "LOW" ? <span className={`chip ${PRIORITY_STYLE.LOW.chip}`}>Basse</span> : null}
+          {done ? <span className="chip bg-ok-soft text-ok">✓ Fait</span> : null}
+        </div>
+        <div className="min-w-0">
+          {isChild && parentTitle ? <p className="mb-1 text-xs text-muted">↳ {parentTitle}</p> : null}
+          <h2 className={`font-semibold leading-snug ${done ? "text-muted line-through" : ""}`}>{idea.title}</h2>
+          {idea.summary ? <p className="mt-1 text-sm leading-relaxed text-muted">{idea.summary}</p> : null}
         </div>
 
         {hasContact(idea) ? (
@@ -112,10 +104,17 @@ export function IdeaCard({
           {idea.googleTaskId ? <span title="Synchronisé avec Google Tasks">✓ Google Tasks</span> : null}
         </div>
 
-        <div className="-mx-2 flex flex-wrap items-center gap-1 border-t border-line pt-2">
-          <button type="button" onClick={toggleStatus} disabled={isPending} className="btn btn-ghost font-semibold text-ok">
-            {done ? "↺ Remettre en attente" : "✓ Traité"}
-          </button>
+        <div className="flex flex-wrap items-center gap-1 border-t border-line pt-3">
+          {done ? (
+            <button type="button" onClick={toggleStatus} disabled={isPending} className="btn btn-ghost -ml-2">
+              ↺ Remettre en attente
+            </button>
+          ) : (
+            <button type="button" onClick={toggleStatus} disabled={isPending} className="btn btn-secondary px-3 py-1.5 text-sm">
+              <span className="h-3.5 w-3.5 rounded-full border-2 border-current" aria-hidden="true" />
+              Marquer fait
+            </button>
+          )}
           {actionLink ? (
             <a
               href={actionLink}
@@ -131,12 +130,9 @@ export function IdeaCard({
               Notion ↗
             </a>
           ) : null}
-          <Link href={`/ideas/${idea.id}/edit`} className="btn btn-ghost">
-            Modifier
+          <Link href={`/ideas/${idea.id}/edit`} aria-label="Modifier ou supprimer" title="Modifier" className="btn btn-ghost ml-auto text-base">
+            ✎
           </Link>
-          <button type="button" onClick={handleDelete} disabled={isPending} className="btn btn-ghost ml-auto text-danger">
-            Supprimer
-          </button>
         </div>
       </div>
     </article>

@@ -1,6 +1,8 @@
 "use client";
 
+import { useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { deleteIdea } from "@/lib/actions/idea-actions";
 import { IdeaReviewForm } from "@/components/idea-review-form";
 import type { IdeaExtraction } from "@/lib/classification";
 import type { Idea } from "@prisma/client";
@@ -32,15 +34,29 @@ function toExtraction(idea: Idea): IdeaExtraction {
 
 export function EditIdeaForm({ idea }: { idea: Idea }) {
   const router = useRouter();
+  const [isDeleting, startTransition] = useTransition();
+
+  function handleDelete() {
+    if (!window.confirm(`Supprimer « ${idea.title} » ? Cette action est définitive.`)) return;
+    startTransition(async () => {
+      await deleteIdea(idea.id);
+      router.push("/ideas");
+    });
+  }
 
   return (
-    <IdeaReviewForm
-      ideaId={idea.id}
-      transcript={idea.transcript}
-      extraction={toExtraction(idea)}
-      initialParentId={idea.parentId}
-      initialPriority={idea.priority}
-      onSaved={() => router.push("/ideas")}
-    />
+    <>
+      <IdeaReviewForm
+        ideaId={idea.id}
+        transcript={idea.transcript}
+        extraction={toExtraction(idea)}
+        initialParentId={idea.parentId}
+        initialPriority={idea.priority}
+        onSaved={() => router.push("/ideas")}
+      />
+      <button type="button" onClick={handleDelete} disabled={isDeleting} className="btn btn-ghost mx-auto mt-2 text-danger">
+        Supprimer cette idée
+      </button>
+    </>
   );
 }

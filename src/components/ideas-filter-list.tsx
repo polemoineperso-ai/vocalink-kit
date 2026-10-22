@@ -10,7 +10,7 @@ import type { Idea, IdeaCategory, IdeaStatus, IdeaPriority } from "@prisma/clien
 const STATUS_OPTIONS: { value: IdeaStatus | ""; label: string }[] = [
   { value: "", label: "Toutes" },
   { value: "PENDING", label: "En attente" },
-  { value: "ACTIONED", label: "Traitées" },
+  { value: "ACTIONED", label: "Faites" },
 ];
 
 /** Recherche/filtres côté client — usage personnel, quelques dizaines/centaines d'idées, pas besoin d'aller-retour serveur. */

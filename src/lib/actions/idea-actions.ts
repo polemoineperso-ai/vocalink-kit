@@ -190,7 +190,7 @@ export async function saveIdea(input: SaveIdeaInput): Promise<Idea> {
 
 export async function updateIdeaStatus(id: string, status: IdeaStatus): Promise<void> {
   const idea = await prisma.idea.update({ where: { id }, data: { status } });
-  // Reflète "Marquer traité"/"Marquer en attente" dans Google Tasks (coché/décoché).
+  // Reflète "Marquer fait"/"Remettre en attente" dans Google Tasks (coché/décoché).
   await syncGoogleTaskIfNeeded(idea);
 }
 

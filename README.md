@@ -150,7 +150,7 @@ L'icône 🎙️ Vocalink apparaît avec vos autres applications. Ouvrez-la : Vo
 - **Dicter** : touchez le micro → parlez → touchez pour arrêter → *Transcrire et classer* → relisez → *Enregistrer*.
 - **Retrouver** : *Mes idées* permet de chercher (y compris par nom de contact ou société) et de filtrer par catégorie, statut ou priorité.
 - **Agir** : sur chaque idée, *Écrire l'email* ou *Agenda* prépare le message ou l'événement ; le numéro de téléphone d'un contact se touche pour appeler.
-- **Ranger** : *✓ Traité* quand c'est fait.
+- **Ranger** : *Marquer fait* quand c'est fait (l'idée reste dans l'historique, filtre *Faites*). Pour supprimer une idée : ✎ puis *Supprimer cette idée*.
 
 ---
 
