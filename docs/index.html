@@ -163,6 +163,14 @@
   .qr img, .qr canvas { display: block; }
   .qr-err { color: var(--brand); font-size: 15px; margin-top: 6px; }
 
+  .ic { display: inline-flex; vertical-align: -0.15em; color: var(--brand); }
+  .ic svg, .e svg, .badge svg { display: block; }
+  .item .e, .phone-banner .e { color: var(--brand); display: flex; justify-content: center; }
+  .reward .e { color: var(--brand); display: flex; justify-content: center; }
+  .badge { color: var(--muted); }
+  .node.current .badge, .node.done .badge { color: var(--brand); }
+  .node.done .badge { color: var(--ok); }
+
   canvas#confetti { position: fixed; inset: 0; pointer-events: none; z-index: 50; }
 
   @media (max-width: 560px) {
@@ -196,22 +204,22 @@
       <p class="hook">Une idée en voiture, sous la douche, en réunion… et <b>pfff, envolée</b>.<br>Dans <b>30 minutes</b>, vous aurez votre propre assistant : vous parlez, il <b>garde vos idées, les fait mûrir et vous les rappelle au bon moment</b>.</p>
       <p class="hook" style="font-size:17px">Pas besoin de s'y connaître : <b>4 missions</b>, on vous guide clic par clic.</p>
       <div class="phone-banner" data-phone-banner hidden>
-        <span class="e">💻</span>
+        <span class="e"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 5a2 2 0 0 1 2 2v8.526a2 2 0 0 0 .212.897l1.068 2.127a1 1 0 0 1-.9 1.45H3.62a1 1 0 0 1-.9-1.45l1.068-2.127A2 2 0 0 0 4 15.526V7a2 2 0 0 1 2-2z"></path><path d="M20.054 15.987H3.946"></path></svg></span>
         <div>
           <p><b>Vous êtes sur un téléphone.</b> L'installation se fait bien plus facilement sur un ordinateur. Envoyez-vous ce lien par email, puis ouvrez-le sur votre ordinateur.</p>
-          <a class="go" data-mail-self href="#">✉️ M'envoyer le lien par email</a>
+          <a class="go" data-mail-self href="#"><span class="ic"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"></path><rect x="2" y="4" width="20" height="16" rx="2"></rect></svg></span> M'envoyer le lien par email</a>
         </div>
       </div>
 
       <div class="bag">
-        <h2>🎒 Votre sac pour l'aventure</h2>
+        <h2><span class="ic"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"></path><path d="M8 10h8"></path><path d="M8 18h8"></path><path d="M8 22v-6a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v6"></path><path d="M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"></path></svg></span> Votre sac pour l'aventure</h2>
         <div class="items">
-          <div class="item"><span class="e">💻</span>Un ordinateur</div>
-          <div class="item"><span class="e">📱</span>Votre téléphone</div>
-          <div class="item"><span class="e">💳</span>Une carte bancaire<br><small style="color:var(--muted)">pour 5 $ de crédit</small></div>
-          <div class="item"><span class="e">☕</span>30 minutes</div>
+          <div class="item"><span class="e"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 5a2 2 0 0 1 2 2v8.526a2 2 0 0 0 .212.897l1.068 2.127a1 1 0 0 1-.9 1.45H3.62a1 1 0 0 1-.9-1.45l1.068-2.127A2 2 0 0 0 4 15.526V7a2 2 0 0 1 2-2z"></path><path d="M20.054 15.987H3.946"></path></svg></span>Un ordinateur</div>
+          <div class="item"><span class="e"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"></rect><path d="M12 18h.01"></path></svg></span>Votre téléphone</div>
+          <div class="item"><span class="e"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="14" x="2" y="5" rx="2"></rect><line x1="2" x2="22" y1="10" y2="10"></line><path d="M6 14h2"></path></svg></span>Une carte bancaire<br><small style="color:var(--muted)">pour 5 $ de crédit</small></div>
+          <div class="item"><span class="e"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 2v2"></path><path d="M14 2v2"></path><path d="M16 8a1 1 0 0 1 1 1v8a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V9a1 1 0 0 1 1-1h14a4 4 0 1 1 0 8h-1"></path><path d="M6 2v2"></path></svg></span>30 minutes</div>
         </div>
-        <p class="price">💶 <b>Combien ça coûte ?</b> Presque rien : vous commencez avec <b>5 $ de crédit</b> (environ 5 €), qui durent en général plusieurs semaines. Ensuite, <b>quelques euros par mois</b>, uniquement si vous rechargez. Pas d'abonnement, pas de surprise.</p>
+        <p class="price"><span class="ic"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.744 17.736a6 6 0 1 1-7.48-7.48"></path><path d="M15 6h1v4"></path><path d="m6.134 14.768.866-.5 2 3.464"></path><circle cx="16" cy="8" r="6"></circle></svg></span> <b>Combien ça coûte ?</b> Presque rien : vous commencez avec <b>5 $ de crédit</b> (environ 5 €), qui durent en général plusieurs semaines. Ensuite, <b>quelques euros par mois</b>, uniquement si vous rechargez. Pas d'abonnement, pas de surprise.</p>
       </div>
 
       <button class="big" id="start">Commencer l'aventure →</button>
@@ -221,10 +229,10 @@
   <!-- ===================== PARCOURS ===================== -->
   <section id="journey" hidden>
     <div class="phone-banner" data-phone-banner hidden>
-      <span class="e">💻</span>
+      <span class="e"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 5a2 2 0 0 1 2 2v8.526a2 2 0 0 0 .212.897l1.068 2.127a1 1 0 0 1-.9 1.45H3.62a1 1 0 0 1-.9-1.45l1.068-2.127A2 2 0 0 0 4 15.526V7a2 2 0 0 1 2-2z"></path><path d="M20.054 15.987H3.946"></path></svg></span>
       <div>
         <p><b>Astuce :</b> les missions 1 à 3 se font plus facilement sur un ordinateur.</p>
-        <a class="go" data-mail-self href="#">✉️ M'envoyer le lien par email</a>
+        <a class="go" data-mail-self href="#"><span class="ic"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"></path><rect x="2" y="4" width="20" height="16" rx="2"></rect></svg></span> M'envoyer le lien par email</a>
       </div>
     </div>
     <nav class="map" id="map" aria-label="Progression"></nav>
@@ -233,7 +241,7 @@
 
   <!-- ===================== AIDE ===================== -->
   <section class="help" id="help" hidden>
-    <h2>🛟 Un souci après l'installation ?</h2>
+    <h2><span class="ic"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="m4.93 4.93 4.24 4.24"></path><path d="m14.83 9.17 4.24-4.24"></path><path d="m14.83 14.83 4.24 4.24"></path><path d="m9.17 14.83-4.24 4.24"></path><circle cx="12" cy="12" r="4"></circle></svg></span> Un souci après l'installation ?</h2>
     <details>
       <summary>Vocalink dit « Transcription indisponible » ou « a échoué »</summary>
       <div>Votre clé OpenAI a peut-être <b>expiré</b> (regardez la colonne « Expire » sur la page des clés OpenAI), votre crédit est épuisé, ou la clé a été mal collée. Vérifiez votre crédit sur <a href="https://platform.openai.com/settings/organization/billing" target="_blank" rel="noopener">votre compte OpenAI</a>, puis si besoin changez la clé (voir juste en dessous).</div>
@@ -261,11 +269,11 @@
 
 <template id="missions">
   <!-- MISSION 1 -->
-  <article data-badge="🪪" data-label="Passeport" data-reward="Passeport obtenu !" data-reward-text="Vous avez votre passeport pour Internet. Plus que 3 missions.">
+  <article data-badge="idcard" data-label="Passeport" data-reward="Passeport obtenu !" data-reward-text="Vous avez votre passeport pour Internet. Plus que 3 missions.">
     <div class="kicker">Mission 1 sur 4</div>
-    <h2>🪪 Votre passeport</h2>
+    <h2><span class="ic"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 19a4 4 0 00-8 0"></path><path d="M16 10h2"></path><path d="M16 14h2"></path><circle cx="9" cy="12" r="3"></circle><rect x="2" y="5" width="20" height="14" rx="2"></rect></svg></span> Votre passeport</h2>
     <p class="story">Votre assistant aura besoin d'un endroit où ranger son « cerveau ». Cet endroit s'appelle <b>GitHub</b>. On commence par y créer votre passeport : un simple compte gratuit.</p>
-    <div class="meta"><span class="pill">⏱️ 5 min</span><span class="pill">🆓 Gratuit</span></div>
+    <div class="meta"><span class="pill"><span class="ic"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg></span> 5 min</span><span class="pill"><span class="ic"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 7v14"></path><path d="M20 11v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8"></path><path d="M7.5 7a1 1 0 0 1 0-5A4.8 8 0 0 1 12 7a4.8 8 0 0 1 4.5-5 1 1 0 0 1 0 5"></path><rect x="3" y="7" width="18" height="4" rx="1"></rect></svg></span> Gratuit</span></div>
     <ul class="tasks">
       <li><label class="task"><input type="checkbox"><span class="tick">✓</span><span class="what">Ouvrir la page d'inscription
         <small><a class="go" href="https://github.com/signup" target="_blank" rel="noopener">Ouvrir GitHub ↗</a></small></span></label></li>
@@ -276,30 +284,30 @@
       <li><label class="task"><input type="checkbox"><span class="tick">✓</span><span class="what">J'arrive sur la page d'accueil de GitHub
         <small>Si GitHub pose des questions, cliquez sur <span class="btn">Skip</span>. Si on propose une offre, prenez <span class="btn">Free</span>.</small></span></label></li>
     </ul>
-    <details class="stuck"><summary>😕 Je bloque</summary><div>
+    <details class="stuck"><summary><span class="ic"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><path d="M12 17h.01"></path></svg></span> Je bloque</summary><div>
       <p><b>« Username is not available »</b> : ce pseudo est déjà pris. Ajoutez un chiffre (<i>marie-dupont-75</i>).</p>
       <p><b>Pas de code reçu</b> : regardez dans les spams, ou attendez une minute.</p>
     </div></details>
   </article>
 
   <!-- MISSION 2 -->
-  <article data-badge="🔑" data-label="Clé" data-reward="Clé magique trouvée !" data-reward-text="Votre assistant pourra comprendre votre voix. On passe au grand moment.">
+  <article data-badge="key" data-label="Clé" data-reward="Clé magique trouvée !" data-reward-text="Votre assistant pourra comprendre votre voix. On passe au grand moment.">
     <div class="kicker">Mission 2 sur 4</div>
-    <h2>🔑 La clé magique</h2>
+    <h2><span class="ic"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"></path><circle cx="16.5" cy="7.5" r=".5" fill="currentColor"></circle></svg></span> La clé magique</h2>
     <p class="story">Pour comprendre votre voix, votre assistant fait appel à une intelligence artificielle : <b>OpenAI</b>. Il lui faut une <b>clé</b>, comme celle d'une voiture. Et vous allez choisir votre <b>mot de passe secret</b>.</p>
-    <div class="meta"><span class="pill">⏱️ 10 min</span><span class="pill">💳 5 $ de crédit</span></div>
-    <div class="tip">📝 <b>Avant tout :</b> ouvrez une note sur votre ordinateur (Bloc-notes, Notes…). Vous allez y garder deux trésors.</div>
+    <div class="meta"><span class="pill"><span class="ic"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg></span> 10 min</span><span class="pill"><span class="ic"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="14" x="2" y="5" rx="2"></rect><line x1="2" x2="22" y1="10" y2="10"></line><path d="M6 14h2"></path></svg></span> 5 $ de crédit</span></div>
+    <div class="tip"><span class="ic"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.4 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7.4"></path><path d="M2 6h4"></path><path d="M2 10h4"></path><path d="M2 14h4"></path><path d="M2 18h4"></path><path d="M21.378 5.626a1 1 0 1 0-3.004-3.004l-5.01 5.012a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506z"></path></svg></span> <b>Avant tout :</b> ouvrez une note sur votre ordinateur (Bloc-notes, Notes…). Vous allez y garder deux trésors.</div>
     <ul class="tasks">
       <li><label class="task"><input type="checkbox"><span class="tick">✓</span><span class="what">Créer mon compte OpenAI
         <small>Avec votre email ou <span class="btn">Continue with Google</span>. Un abonnement ChatGPT n'est <b>pas</b> nécessaire, c'est un autre service.<br><a class="go" href="https://platform.openai.com/signup" target="_blank" rel="noopener">Ouvrir OpenAI ↗</a></small></span></label></li>
       <li><label class="task"><input type="checkbox"><span class="tick">✓</span><span class="what">Mettre 5 $ de crédit
         <small><span class="btn">Add payment details</span> → <span class="btn">Individual</span> → votre carte → 5 $. Laissez la recharge automatique <b>désactivée</b> : impossible de dépenser plus.<br><a class="go" href="https://platform.openai.com/settings/organization/billing" target="_blank" rel="noopener">Ouvrir la page crédit ↗</a></small></span></label></li>
       <li><label class="task"><input type="checkbox"><span class="tick">✓</span><span class="what">Fabriquer ma clé et la coller dans ma note
-        <small><span class="btn">Create new secret key</span> → nom : <i>Vocalink</i> → si un champ d'<b>expiration</b> apparaît, choisissez <b>Jamais</b> (<i>Never</i>) → <span class="btn">Create secret key</span> → <span class="btn">Copy</span>. Elle commence par <span class="secret">sk-</span>. ⚠️ Elle ne s'affiche <b>qu'une fois</b> : collez-la tout de suite.<br><a class="go" href="https://platform.openai.com/api-keys" target="_blank" rel="noopener">Ouvrir la page des clés ↗</a></small></span></label></li>
+        <small><span class="btn">Create new secret key</span> → nom : <i>Vocalink</i> → si un champ d'<b>expiration</b> apparaît, choisissez <b>Jamais</b> (<i>Never</i>) → <span class="btn">Create secret key</span> → <span class="btn">Copy</span>. Elle commence par <span class="secret">sk-</span>. <span class="ic"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></svg></span> Elle ne s'affiche <b>qu'une fois</b> : collez-la tout de suite.<br><a class="go" href="https://platform.openai.com/api-keys" target="_blank" rel="noopener">Ouvrir la page des clés ↗</a></small></span></label></li>
       <li><label class="task"><input type="checkbox"><span class="tick">✓</span><span class="what">Inventer mon mot de passe secret et le noter
         <small>Il protégera votre assistant. Astuce : trois mots au hasard, facile à retenir, impossible à deviner, par exemple <i>girafe-orage-violon42</i>.</small></span></label></li>
     </ul>
-    <details class="stuck"><summary>😕 Je bloque</summary><div>
+    <details class="stuck"><summary><span class="ic"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><path d="M12 17h.01"></path></svg></span> Je bloque</summary><div>
       <p><b>J'ai perdu ma clé</b> : pas grave ! Sur la page des clés, supprimez-la et fabriquez-en une nouvelle.</p>
       <p><b>OpenAI demande mon téléphone</b> : c'est normal, c'est une vérification anti-robot.</p>
       <p><b>Pourquoi « Jamais » pour l'expiration ?</b> Une clé qui expire coupe votre assistant le jour dit, sans prévenir. Avec « Jamais », il fonctionne tant que vous ne supprimez pas la clé.</p>
@@ -307,17 +315,17 @@
   </article>
 
   <!-- MISSION 3 -->
-  <article data-badge="🚀" data-label="Lancement" data-reward="Décollage réussi !" data-reward-text="Votre assistant existe ! Il vit sur Internet, à votre adresse. Dernière mission : le mettre dans votre poche.">
+  <article data-badge="rocket" data-label="Lancement" data-reward="Décollage réussi !" data-reward-text="Votre assistant existe ! Il vit sur Internet, à votre adresse. Dernière mission : le mettre dans votre poche.">
     <div class="kicker">Mission 3 sur 4</div>
-    <h2>🚀 Le grand lancement</h2>
+    <h2><span class="ic"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"></path><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09"></path><path d="M9 12a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.4 22.4 0 0 1-4 2z"></path><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 .05 5 .05"></path></svg></span> Le grand lancement</h2>
     <p class="story">C'est le moment magique : un seul bouton, et votre assistant prend vie sur Internet, chez <b>Vercel</b> (gratuit). Gardez votre note à côté : on va avoir besoin de vos deux trésors.</p>
-    <div class="meta"><span class="pill">⏱️ 10 min</span><span class="pill">🆓 Gratuit</span></div>
+    <div class="meta"><span class="pill"><span class="ic"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg></span> 10 min</span><span class="pill"><span class="ic"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 7v14"></path><path d="M20 11v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8"></path><path d="M7.5 7a1 1 0 0 1 0-5A4.8 8 0 0 1 12 7a4.8 8 0 0 1 4.5-5 1 1 0 0 1 0 5"></path><rect x="3" y="7" width="18" height="4" rx="1"></rect></svg></span> Gratuit</span></div>
     <ul class="tasks">
       <li><label class="task"><input type="checkbox" data-autotick><span class="tick">✓</span><span class="what">Appuyer sur le bouton de lancement
-        <small><a class="go launch" target="_blank" rel="noopener" href="https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fpolemoineperso-ai%2Fvocalink-kit&project-name=mon-vocalink&repository-name=mon-vocalink&env=OPENAI_API_KEY,APP_PASSWORD&envDescription=OPENAI_API_KEY%20%3A%20la%20cl%C3%A9%20OpenAI%20cr%C3%A9%C3%A9e%20%C3%A0%20l%27%C3%A9tape%202.%20APP_PASSWORD%20%3A%20le%20mot%20de%20passe%20choisi%20%C3%A0%20l%27%C3%A9tape%203.&envLink=https%3A%2F%2Fgithub.com%2Fpolemoineperso-ai%2Fvocalink-kit%23readme&stores=%5B%7B%22type%22%3A%22integration%22%2C%22integrationSlug%22%3A%22neon%22%2C%22productSlug%22%3A%22neon%22%2C%22protocol%22%3A%22storage%22%7D%5D">🚀 Lancer mon assistant</a>
+        <small><a class="go launch" target="_blank" rel="noopener" href="https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fpolemoineperso-ai%2Fvocalink-kit&project-name=mon-vocalink&repository-name=mon-vocalink&env=OPENAI_API_KEY,APP_PASSWORD&envDescription=OPENAI_API_KEY%20%3A%20la%20cl%C3%A9%20OpenAI%20cr%C3%A9%C3%A9e%20%C3%A0%20l%27%C3%A9tape%202.%20APP_PASSWORD%20%3A%20le%20mot%20de%20passe%20choisi%20%C3%A0%20l%27%C3%A9tape%203.&envLink=https%3A%2F%2Fgithub.com%2Fpolemoineperso-ai%2Fvocalink-kit%23readme&stores=%5B%7B%22type%22%3A%22integration%22%2C%22integrationSlug%22%3A%22neon%22%2C%22productSlug%22%3A%22neon%22%2C%22protocol%22%3A%22storage%22%7D%5D"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"></path><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09"></path><path d="M9 12a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.4 22.4 0 0 1-4 2z"></path><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 .05 5 .05"></path></svg> Lancer mon assistant</a>
         Il s'ouvre dans un nouvel onglet : revenez ici après chaque étape. Cette étape se coche toute seule.</small></span></label></li>
       <li><label class="task"><input type="checkbox"><span class="tick">✓</span><span class="what">Entrer avec mon passeport
-        <small><span class="btn">Continue with GitHub</span> → <span class="btn">Authorize Vercel</span>. Si on vous demande votre usage, choisissez <span class="btn">Hobby</span> (personnel).<br>😌 Un grand écran en anglais vous demande des autorisations ? <b>C'est normal</b> : Vercel a besoin de déposer la copie de votre assistant dans votre compte GitHub. Acceptez.</small></span></label></li>
+        <small><span class="btn">Continue with GitHub</span> → <span class="btn">Authorize Vercel</span>. Si on vous demande votre usage, choisissez <span class="btn">Hobby</span> (personnel).<br><span class="ic"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg></span> Un grand écran en anglais vous demande des autorisations ? <b>C'est normal</b> : Vercel a besoin de déposer la copie de votre assistant dans votre compte GitHub. Acceptez.</small></span></label></li>
       <li><label class="task"><input type="checkbox"><span class="tick">✓</span><span class="what">Créer la copie de mon assistant
         <small>Laissez le nom proposé et cliquez sur <span class="btn">Create</span>. Si GitHub redemande une permission (<span class="btn">Install</span>), acceptez : c'est le même accord.</small></span></label></li>
       <li><label class="task"><input type="checkbox"><span class="tick">✓</span><span class="what">Lui donner une mémoire
@@ -326,23 +334,23 @@
         <small>Deux cases aux noms un peu bizarres apparaissent, c'est normal :<br>
           • dans <span class="secret">OPENAI_API_KEY</span> → collez votre <b>clé</b> (<span class="secret">sk-…</span>)<br>
           • dans <span class="secret">APP_PASSWORD</span> → votre <b>mot de passe secret</b></small></span></label></li>
-      <li><label class="task"><input type="checkbox"><span class="tick">✓</span><span class="what">Cliquer sur Deploy et attendre les confettis 🎉
+      <li><label class="task"><input type="checkbox"><span class="tick">✓</span><span class="what">Cliquer sur Deploy et attendre les confettis
         <small>2 à 4 minutes. Ensuite <span class="btn">Continue to Dashboard</span> : votre adresse s'affiche, du type <i>mon-vocalink-xxxx.vercel.app</i>. <b>Notez-la</b> : c'est la maison de votre assistant.</small></span></label></li>
     </ul>
-    <details class="stuck"><summary>😕 Je bloque</summary><div>
+    <details class="stuck"><summary><span class="ic"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><path d="M12 17h.01"></path></svg></span> Je bloque</summary><div>
       <p><b>Un message d'erreur rouge</b> : dans Vercel, onglet <span class="btn">Deployments</span> → <span class="btn">⋯</span> → <span class="btn">Redeploy</span>. Un deuxième essai suffit souvent.</p>
       <p><b>Je n'ai pas vu Neon</b> : dans votre projet, onglet <span class="btn">Storage</span> → <span class="btn">Create Database</span> → <b>Neon</b> → <span class="btn">Free</span> → <span class="btn">Connect</span>, puis <span class="btn">Redeploy</span>.</p>
     </div></details>
   </article>
 
   <!-- MISSION 4 -->
-  <article data-badge="📱" data-label="Poche" data-reward="Mission accomplie !" data-reward-text="Votre assistant est dans votre poche. Plus aucune idée ne vous échappera.">
+  <article data-badge="phone" data-label="Poche" data-reward="Mission accomplie !" data-reward-text="Votre assistant est dans votre poche. Plus aucune idée ne vous échappera.">
     <div class="kicker">Mission 4 sur 4</div>
-    <h2>📱 Dans votre poche</h2>
+    <h2><span class="ic"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"></rect><path d="M12 18h.01"></path></svg></span> Dans votre poche</h2>
     <p class="story">Dernière mission : installer votre assistant sur votre téléphone, comme une vraie application, lui dire votre prénom, puis lui confier <b>votre toute première idée</b>.</p>
-    <div class="meta"><span class="pill">⏱️ 5 min</span><span class="pill">🏁 Dernière ligne droite</span></div>
+    <div class="meta"><span class="pill"><span class="ic"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg></span> 5 min</span><span class="pill"><span class="ic"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 22V4a1 1 0 0 1 .4-.8A6 6 0 0 1 8 2c3 0 5 2 7.333 2q2 0 3.067-.8A1 1 0 0 1 20 4v10a1 1 0 0 1-.4.8A6 6 0 0 1 16 16c-3 0-5-2-8-2a6 6 0 0 0-4 1.528"></path></svg></span> Dernière ligne droite</span></div>
     <ul class="tasks">
-      <li><div class="task" style="cursor:default"><span class="tick" style="border-style:dashed;color:inherit;font-size:15px">📷</span><span class="what">Pas envie de taper votre adresse sur le téléphone ?
+      <li><div class="task" style="cursor:default"><span class="tick" style="border-style:dashed;color:inherit;font-size:15px"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.997 4a2 2 0 0 1 1.76 1.05l.486.9A2 2 0 0 0 18.003 7H20a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h1.997a2 2 0 0 0 1.759-1.048l.489-.904A2 2 0 0 1 10.004 4z"></path><circle cx="12" cy="13" r="3"></circle></svg></span><span class="what">Pas envie de taper votre adresse sur le téléphone ?
         <small>Collez-la ici : un QR code apparaît. Visez-le avec l'appareil photo du téléphone et touchez le lien qui s'affiche.</small>
         <div class="qr-box"><input type="url" inputmode="url" placeholder="mon-vocalink-xxxx.vercel.app" data-qr-input aria-label="Votre adresse Vocalink"><div class="qr-err" data-qr-err hidden></div><div class="qr" data-qr hidden></div></div></span></div></li>
       <li><label class="task"><input type="checkbox"><span class="tick">✓</span><span class="what">Ouvrir mon adresse sur le téléphone
@@ -354,7 +362,7 @@
       <li><label class="task"><input type="checkbox"><span class="tick">✓</span><span class="what">Confier ma première idée
         <small>Touchez le <b>gros bouton micro orange</b> en bas de l'écran (autorisez le micro) et dites par exemple : <i>« Rappeler Jean Dupont, directeur chez ACME, au 06 12 34 56 78, jeudi à 10 heures »</i>. Touchez le bouton rouge pour arrêter : Vocalink écrit et range l'idée tout seul. Vérifiez, puis <span class="btn">Enregistrer</span>.</small></span></label></li>
     </ul>
-    <details class="stuck"><summary>😕 Je bloque</summary><div>
+    <details class="stuck"><summary><span class="ic"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><path d="M12 17h.01"></path></svg></span> Je bloque</summary><div>
       <p><b>Le micro ne réagit pas</b> : autorisez le micro dans les réglages du téléphone (Safari ou Chrome), ou ouvrez votre adresse directement dans le navigateur.</p>
       <p><b>« Transcription indisponible »</b> : la clé a peut-être été mal collée à la mission 3. Voir « Changer la clé » en bas de cette page.</p>
       <p><b>Pas de bouton pour les notifications sur iPhone</b> : elles ne marchent qu'en ouvrant Vocalink <b>depuis l'icône</b>, pas depuis Safari. Touchez « Plus tard », ouvrez l'icône, et activez-les depuis la carte « Brief du matin » de l'accueil.</p>
@@ -364,6 +372,7 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
+var ICONS = {"idcard": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1em\" height=\"1em\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M13 19a4 4 0 00-8 0\"></path><path d=\"M16 10h2\"></path><path d=\"M16 14h2\"></path><circle cx=\"9\" cy=\"12\" r=\"3\"></circle><rect x=\"2\" y=\"5\" width=\"20\" height=\"14\" rx=\"2\"></rect></svg>", "key": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1em\" height=\"1em\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z\"></path><circle cx=\"16.5\" cy=\"7.5\" r=\".5\" fill=\"currentColor\"></circle></svg>", "rocket": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1em\" height=\"1em\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5\"></path><path d=\"M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09\"></path><path d=\"M9 12a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.4 22.4 0 0 1-4 2z\"></path><path d=\"M9 12H4s.55-3.03 2-4c1.62-1.08 5 .05 5 .05\"></path></svg>", "phone": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1em\" height=\"1em\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><rect width=\"14\" height=\"20\" x=\"5\" y=\"2\" rx=\"2\" ry=\"2\"></rect><path d=\"M12 18h.01\"></path></svg>", "trophy": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1em\" height=\"1em\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M10 14.66V17a1 1 0 0 1-1 1 2 2 0 0 0-2 2v2\"></path><path d=\"M14 14.66V17a1 1 0 0 0 1 1 2 2 0 0 1 2 2v2\"></path><path d=\"M17.916 10H19.5A2.5 2.5 0 0 0 22 7.5V5a1 1 0 0 0-1-1h-3\"></path><path d=\"M4 22h16\"></path><path d=\"M6 9a6 6 0 0 0 12 0V3a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1z\"></path><path d=\"M6.084 10H4.5A2.5 2.5 0 0 1 2 7.5V5a1 1 0 0 1 1-1h3\"></path></svg>", "check": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1em\" height=\"1em\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M20 6 9 17l-5-5\"></path></svg>", "target": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1em\" height=\"1em\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"10\"></circle><circle cx=\"12\" cy=\"12\" r=\"6\"></circle><circle cx=\"12\" cy=\"12\" r=\"2\"></circle></svg>"};
 (function () {
   var KEY = "vocalink-quest";
   var missions = Array.prototype.slice.call(document.getElementById("missions").content.querySelectorAll("article"));
@@ -379,7 +388,7 @@
 
   function isDone(i) {
     var t = state.ticks[i] || [];
-    var total = missions[i].querySelectorAll(".task").length;
+    var total = missions[i].querySelectorAll("label.task").length;
     return t.filter(Boolean).length === total;
   }
   function doneCount() { var n = 0; for (var i = 0; i < missions.length; i++) if (isDone(i)) n++; return n; }
@@ -396,7 +405,7 @@
       var b = document.createElement("button");
       b.className = "node " + (state.current === i ? "current" : isDone(i) ? "done" : reachable ? "" : "locked");
       b.disabled = !reachable;
-      b.innerHTML = '<span class="badge">' + (isDone(i) ? "✅" : m.dataset.badge) + "</span>" + m.dataset.label;
+      b.innerHTML = '<span class="badge">' + (isDone(i) ? ICONS.check : ICONS[m.dataset.badge]) + "</span>" + m.dataset.label;
       b.onclick = function () { state.current = i; save(); render(); };
       map.appendChild(b);
     });
@@ -407,7 +416,7 @@
     var all = doneCount() === missions.length;
     trophy.className = "node " + (state.current === missions.length ? "current" : all ? "done" : "locked");
     trophy.disabled = !all;
-    trophy.innerHTML = '<span class="badge">🏆</span>Bravo';
+    trophy.innerHTML = '<span class="badge">' + ICONS.trophy + '</span>Bravo';
     trophy.onclick = function () { state.current = missions.length; save(); render(); };
     map.appendChild(trophy);
   }
@@ -425,7 +434,7 @@
       var n = 0;
       tasks.forEach(function (t, k) { t.classList.toggle("on", Boolean(ticks[k])); t.querySelector("input").checked = Boolean(ticks[k]); if (ticks[k]) n++; });
       btn.disabled = n < tasks.length;
-      btn.textContent = n < tasks.length ? "Encore " + (tasks.length - n) + " étape" + (tasks.length - n > 1 ? "s" : "") + " à cocher" : (i === missions.length - 1 ? "🏆 Terminer l'aventure" : "Mission accomplie ! →");
+      btn.textContent = n < tasks.length ? "Encore " + (tasks.length - n) + " étape" + (tasks.length - n > 1 ? "s" : "") + " à cocher" : (i === missions.length - 1 ? "Terminer l'aventure" : "Mission accomplie ! →");
       hint.textContent = n < tasks.length ? "Cochez chaque étape une fois faite." : "";
     }
     tasks.forEach(function (t, k) {
@@ -495,7 +504,7 @@
     var last = i === missions.length - 1;
     stage.innerHTML = "";
     var box = document.createElement("div"); box.className = "mission reward";
-    box.innerHTML = '<span class="e">' + (last ? "🏆" : m.dataset.badge) + "</span><h2>" + m.dataset.reward + "</h2><p>" + m.dataset.rewardText + "</p>";
+    box.innerHTML = '<span class="e">' + (last ? ICONS.trophy : ICONS[m.dataset.badge]) + "</span><h2>" + m.dataset.reward + "</h2><p>" + m.dataset.rewardText + "</p>";
     var btn = document.createElement("button"); btn.className = "big";
     btn.textContent = last ? "Voir mon trophée →" : "Mission suivante →";
     btn.onclick = function () { state.current = i + 1; save(); render(); };
@@ -508,9 +517,9 @@
 
   function renderFinal() {
     var box = document.createElement("div"); box.className = "mission reward";
-    box.innerHTML = '<span class="e">🏆</span><h2>Votre assistant est prêt !</h2>' +
+    box.innerHTML = '<span class="e">' + ICONS.trophy + '</span><h2>Votre assistant est prêt !</h2>' +
       "<p>Vous avez réussi les 4 missions. À partir de maintenant, chaque idée a sa place.</p>" +
-      '<div class="challenge"><b>🎯 Le défi de la semaine</b><p style="margin:6px 0 0;color:var(--muted);font-size:17px">Dès qu\'une idée vous traverse l\'esprit, touchez l\'icône et dites-la. Par exemple :</p>' +
+      '<div class="challenge"><b><span class="ic">' + ICONS.target + '</span> Le défi de la semaine</b><p style="margin:6px 0 0;color:var(--muted);font-size:17px">Dès qu\'une idée vous traverse l\'esprit, touchez l\'icône et dites-la. Par exemple :</p>' +
       "<q>Écrire à Sophie pour le dîner de samedi</q><q>Idée de cadeau pour maman : un atelier poterie</q></div>";
     return box;
   }
