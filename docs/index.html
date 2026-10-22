@@ -187,6 +187,7 @@
   .safety details[open] .chev { transform: rotate(180deg); }
   .safety details p { margin: 0; padding: 0 16px 16px 60px; font-size: 15px; color: var(--muted); line-height: 1.55; }
   .safety details p b { color: var(--text); }
+  .safety details p + p { margin-top: -6px; }
   @media (max-width: 560px) { .safety details p { padding-left: 16px; } }
   @media (max-width: 560px) {
     body { font-size: 17px; }
@@ -309,6 +310,12 @@
       <details>
         <summary><span class="e"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg></span><span class="t">Supprimer, c'est définitif</span><svg class="chev" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></summary>
         <p>Une idée supprimée ne revient pas : en cas de doute, préférez <i>Archiver</i>. Et ne supprimez jamais le projet <b>mon-vocalink</b> sur Vercel ni sa base de données : toutes vos idées partiraient avec.</p>
+      </details>
+      <details>
+        <summary><span class="e"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"></path><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"></path><path d="M7 21h10"></path><path d="M12 3v18"></path><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"></path></svg></span><span class="t">Et le RGPD ?</span><svg class="chev" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></summary>
+        <p><b>Usage personnel</b> (vos idées, vos proches) : le RGPD ne s'applique pas, c'est l'exception de l'usage « personnel ou domestique ».</p>
+        <p><b>Usage professionnel</b> (clients, prospects, collègues) : il s'applique, et c'est vous qui êtes responsable des données. Notez seulement le nécessaire, supprimez ce qui ne sert plus, effacez un contact s'il vous le demande, évitez les données sensibles (santé, opinions…) et vérifiez que votre employeur autorise ce type d'outil.</p>
+        <p><b>Où sont vos données</b> : la base et les serveurs de votre Vocalink sont en Europe (Francfort) ; seule la compréhension de la voix et du texte passe par OpenAI, aux États-Unis (ainsi que Notion, Google ou l'email si vous activez les options avancées). La personne qui vous a envoyé ce guide n'a accès à rien. Ces repères ne remplacent pas un avis juridique.</p>
       </details>
     </div>
   </section>
