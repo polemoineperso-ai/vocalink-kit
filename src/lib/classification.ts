@@ -1,4 +1,5 @@
 import Anthropic from "@anthropic-ai/sdk";
+import { normalizeNextStep, type NextStep } from "@/lib/next-step";
 
 /**
  * Classification + extraction d'une idée dictée, en un seul appel LLM
@@ -240,4 +241,53 @@ ${trimmed.slice(0, MAX_TEXT_LENGTH)}
     dueDate,
     dueTime,
   };
+}
+
+/**
+ * Prochaine étape pour une idée : UNE action concrète et petite, faisable
+ * cette semaine. N'invente aucun contact ni coordonnée : la suggestion
+ * s'appuie seulement sur le titre, le résumé et les notes. Renvoie null en
+ * cas d'échec (l'écran propose alors de réessayer).
+ */
+export async function suggestNextStep(idea: {
+  title: string;
+  summary: string;
+  notes: string[];
+  contactName: string | null;
+}): Promise<NextStep | null> {
+  const notes = idea.notes.length ? idea.notes.map((n) => `- ${n}`).join("\n") : "(aucune)";
+  const input = await callTool({
+    toolName: "suggest_next_step",
+    toolDescription: "Propose la prochaine étape concrète pour faire avancer l'idée.",
+    maxTokens: 300,
+    schema: {
+      type: "object",
+      properties: {
+        title: {
+          type: "string",
+          description:
+            "La prochaine étape, formulée comme une action courte qui commence par un verbe (ex. « Écrire à la mairie pour demander un rendez-vous »). Moins de 90 caractères.",
+        },
+        kind: {
+          type: "string",
+          enum: ["email", "call", "think"],
+          description: "email : écrire à quelqu'un. call : appeler quelqu'un. think : piste de réflexion ou recherche à faire seul.",
+        },
+        why: { type: "string", description: "Une phrase courte : pourquoi cette étape maintenant." },
+      },
+      required: ["title", "kind"],
+    },
+    prompt: `Tu aides l'auteur d'une idée à la faire avancer d'un petit pas concret, faisable cette semaine.
+
+Règles :
+- Propose UNE seule étape, simple et réaliste, pas un plan.
+- N'invente jamais de nom, d'adresse, de numéro ou de fait absent du texte.
+${idea.contactName ? `- Contact connu : ${idea.contactName}.` : "- Aucun contact connu : si l'étape consiste à contacter quelqu'un, décris-le sans le nommer (« un artisan », « la mairie »)."}
+
+Idée : ${idea.title}
+Résumé : ${idea.summary || "(aucun)"}
+Notes ajoutées :
+${notes}`,
+  });
+  return normalizeNextStep(input);
 }

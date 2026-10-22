@@ -12,6 +12,11 @@ export const dynamic = "force-dynamic";
 export default async function TodoPage({ searchParams }: { searchParams: Promise<{ vue?: string }> }) {
   const [{ vue }, ideas, stats] = await Promise.all([searchParams, listIdeas(), getHomeStats()]);
   const actions = ideas.filter((i) => isAction(i.category));
+  // Idée d'origine de chaque action (affichée sous son titre).
+  const titles = new Map(ideas.map((i) => [i.id, i.title]));
+  const origins = Object.fromEntries(
+    actions.filter((a) => a.parentId && titles.has(a.parentId)).map((a) => [a.id, titles.get(a.parentId!)!]),
+  );
 
   return (
     <main className="safe-top safe-bottom-space mx-auto w-full max-w-xl px-4">
@@ -25,6 +30,7 @@ export default async function TodoPage({ searchParams }: { searchParams: Promise
         ideas={actions}
         initialDue={isDueView(vue) ? vue : ""}
         categories={ACTION_CATEGORIES}
+        origins={origins}
       />
 
       <TabBar />

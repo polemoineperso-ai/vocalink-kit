@@ -24,10 +24,13 @@ export function IdeasFilterList({
   initialDue = "",
   initialTag = "",
   categories = CATEGORY_ORDER,
+  origins = {},
 }: {
   ideas: Idea[];
   /** Catégories proposées en filtre (onglet À faire : Email, Appel / Rappel). */
   categories?: IdeaCategory[];
+  /** Titre de l'idée d'origine, par identifiant d'action. */
+  origins?: Record<string, string>;
   /** Vue ouverte depuis un compteur de l'écran Aujourd'hui. */
   initialDue?: DueView | "";
   /** Tag ouvert depuis une fiche. */
@@ -136,7 +139,7 @@ export function IdeasFilterList({
             </h2>
             <div className="group">
               {section.items.map((idea) => (
-                <IdeaRow key={idea.id} idea={idea} />
+                <IdeaRow key={idea.id} idea={idea} origin={origins[idea.id]} />
               ))}
             </div>
           </section>

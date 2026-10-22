@@ -91,6 +91,12 @@ model Idea {
   // (développée, remise à plus tard, archivée) : pas reproposée avant 14 jours.
   resurfacedAt DateTime?
 
+  // Prochaine étape suggérée par l'IA (gardée pour ne pas la relancer à
+  // chaque ouverture de la fiche) : texte, nature (email / call / think), date.
+  nextStepTitle String?
+  nextStepKind  String?
+  nextStepWhy   String?
+
   notes IdeaNote[]
 }
 

@@ -24,7 +24,17 @@ import type { Idea } from "@prisma/client";
 const SWIPE_OPEN = -148;
 const SWIPE_ACTIONS: SnoozeOption[] = ["tomorrow", "monday"];
 
-export function IdeaRow({ idea, showTime = false }: { idea: Idea; /** Colonne d'heure (écran Aujourd'hui). */ showTime?: boolean }) {
+export function IdeaRow({
+  idea,
+  showTime = false,
+  origin,
+}: {
+  idea: Idea;
+  /** Colonne d'heure (liste du jour). */
+  showTime?: boolean;
+  /** Titre de l'idée dont l'action est née (onglet À faire). */
+  origin?: string;
+}) {
   const router = useRouter();
   const toast = useToast();
   const [isPending, startTransition] = useTransition();
@@ -55,8 +65,8 @@ export function IdeaRow({ idea, showTime = false }: { idea: Idea; /** Colonne d'
   const subtitle = [
     !showTime && idea.dueAt ? formatDue(idea.dueAt, now, idea.dueEstimated) : null,
     style.label,
-    idea.contactName ?? idea.contactCompany,
-    splitTags(idea.tags)[0] ? `#${splitTags(idea.tags)[0]}` : null,
+    origin ? `↳ ${origin}` : (idea.contactName ?? idea.contactCompany),
+    !origin && splitTags(idea.tags)[0] ? `#${splitTags(idea.tags)[0]}` : null,
   ]
     .filter(Boolean)
     .join(" · ");

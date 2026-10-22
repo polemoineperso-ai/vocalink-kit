@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { filterIdeas, splitTags } from "@/lib/idea-filter";
+import { filterIdeas, splitTags, topThemes } from "@/lib/idea-filter";
 import type { Idea } from "@prisma/client";
 
 function makeIdea(overrides: Partial<Idea> & { id: string }): Idea {
@@ -107,5 +107,22 @@ describe("filterIdeas — par tag", () => {
 
   it("splitTags nettoie la liste", () => {
     expect(splitTags(" appel ,, Acme ,")).toEqual(["appel", "Acme"]);
+  });
+});
+
+describe("topThemes", () => {
+  it("tags les plus fréquents, sans doublon de majuscules, au moins 2 idées", () => {
+    const themes = topThemes([
+      { tags: "Pro, NorthIA" },
+      { tags: "pro, famille" },
+      { tags: "PRO, northia" },
+      { tags: "famille" },
+      { tags: "isolé" },
+    ]);
+    expect(themes).toEqual([
+      { tag: "Pro", count: 3 },
+      { tag: "famille", count: 2 },
+      { tag: "NorthIA", count: 2 },
+    ]);
   });
 });

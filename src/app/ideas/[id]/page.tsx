@@ -9,8 +9,11 @@ import { CATEGORY_STYLE, PRIORITY_STYLE } from "@/lib/category-style";
 import { formatDue, sectionOf } from "@/lib/idea-sections";
 import { splitTags } from "@/lib/idea-filter";
 import { DeleteIdeaButton, DoneToggle, SnoozeButtons, StageStepper } from "@/components/idea-detail-actions";
-import { isAction } from "@/lib/idea-kind";
 import { IdeaNotes } from "@/components/idea-notes";
+import { IdeaRow } from "@/components/idea-row";
+import { NextStepCard } from "@/components/next-step-card";
+import { ACTION_CATEGORIES, isAction, isActiveStage } from "@/lib/idea-kind";
+import type { NextStepKind } from "@/lib/next-step";
 
 export const dynamic = "force-dynamic";
 
@@ -19,9 +22,11 @@ export default async function IdeaPage({ params }: { params: Promise<{ id: strin
   const { id } = await params;
   const idea = await getIdea(id);
   if (!idea) notFound();
-  const [parent, notes] = await Promise.all([
+  const [parent, notes, linkedActions] = await Promise.all([
     idea.parentId ? prisma.idea.findUnique({ where: { id: idea.parentId }, select: { id: true, title: true } }) : null,
     prisma.ideaNote.findMany({ where: { ideaId: idea.id }, orderBy: { createdAt: "desc" } }),
+    // Actions nées de cette idée (suggestion acceptée ou rattachement manuel).
+    prisma.idea.findMany({ where: { parentId: idea.id, category: { in: ACTION_CATEGORIES } }, orderBy: { createdAt: "desc" } }),
   ]);
 
   const now = new Date();
@@ -102,6 +107,30 @@ export default async function IdeaPage({ params }: { params: Promise<{ id: strin
             notes={notes.map((n) => ({ id: n.id, text: n.text, source: n.source, createdAt: n.createdAt.toISOString() }))}
           />
         </div>
+      ) : null}
+
+      {!action && isActiveStage(idea.stage) ? (
+        <NextStepCard
+          ideaId={idea.id}
+          initial={
+            idea.nextStepTitle
+              ? { title: idea.nextStepTitle, kind: (idea.nextStepKind ?? "think") as NextStepKind, why: idea.nextStepWhy ?? "" }
+              : null
+          }
+        />
+      ) : null}
+
+      {!action && linkedActions.length ? (
+        <>
+          <h2 className="group-label">
+            Actions liées <span className="font-normal text-faint">{linkedActions.length}</span>
+          </h2>
+          <div className="group">
+            {linkedActions.map((a) => (
+              <IdeaRow key={a.id} idea={a} />
+            ))}
+          </div>
+        </>
       ) : null}
 
       {primary ? (

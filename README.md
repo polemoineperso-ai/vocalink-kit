@@ -149,6 +149,8 @@ L'icône 🎙️ Vocalink apparaît avec vos autres applications. Ouvrez-la : Vo
 
 - **Dicter** : touchez le micro (en bas, au centre) → parlez → touchez pour arrêter → relisez → *Enregistrer*.
 - **Mes idées** (l'accueil) : vos idées en cartes, rangées par étape : *Nouvelle*, *En réflexion*, *En cours*, puis *Réalisée*. Touchez une idée pour la faire avancer d'une étape, lui **ajouter une note à la voix** (une précision, une piste qui vous vient plus tard), ou l'*archiver* : elle est mise de côté, pas perdue.
+- **Prochaine étape** : sur une idée, *Suggérer une prochaine étape* propose un petit pas concret. *Créer l'action* l'ajoute à *À faire* (avec le contact connu) ; une piste de réflexion s'ajoute en note.
+- **Thèmes** : sous la recherche de *Mes idées*, vos sujets les plus fréquents en un toucher.
 - **À redécouvrir** : une idée oubliée depuis plus d'une semaine remonte en haut de *Mes idées* (et dans le brief du matin). *La développer*, *Plus tard* ou *Archiver* : elle ne revient pas avant deux semaines.
 - **À faire** (onglet) : uniquement les appels et emails, rangés par moment (en retard, aujourd'hui, demain…).
 - **Retrouver** : la recherche de *Mes idées* (et de *À faire*) permet de chercher (y compris par nom de contact ou société) et de filtrer par catégorie, statut ou priorité.

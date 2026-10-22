@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Search, X } from "lucide-react";
 import { IdeaTile } from "@/components/idea-tile";
-import { filterIdeas } from "@/lib/idea-filter";
+import { filterIdeas, topThemes } from "@/lib/idea-filter";
 import { STAGE_STYLE, isActiveStage } from "@/lib/idea-kind";
 import type { Idea, IdeaStage } from "@prisma/client";
 
@@ -38,6 +38,7 @@ export function IdeasBoard({
   const matching = filterIdeas(ideas, { tag })
     .filter((i) => !needle || byFields.has(i.id) || notesByIdea[i.id]?.text.toLowerCase().includes(needle))
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  const themes = topThemes(ideas.filter((i) => isActiveStage(i.stage)));
   const inScope = matching.filter((i) => (scope === "active" ? isActiveStage(i.stage) : i.stage === scope));
   const groups =
     scope === "active"
@@ -57,6 +58,25 @@ export function IdeasBoard({
           aria-label="Rechercher une idée"
         />
       </div>
+
+      {themes.length ? (
+        <div className="scroll-row -mx-4 mt-3 flex gap-2 overflow-x-auto px-4" role="group" aria-label="Thèmes">
+          {themes.map((theme) => {
+            const selected = tag.toLowerCase() === theme.tag.toLowerCase();
+            return (
+              <button
+                key={theme.tag}
+                type="button"
+                aria-pressed={selected}
+                onClick={() => setTag(selected ? "" : theme.tag)}
+                className={`pill shrink-0 !py-1.5 ${selected ? "bg-projet-soft text-projet-ink" : ""}`}
+              >
+                #{theme.tag} <span className="text-faint">{theme.count}</span>
+              </button>
+            );
+          })}
+        </div>
+      ) : null}
 
       <div className="segmented mt-3" role="group" aria-label="Étape">
         {SCOPES.map((s) => (

@@ -54,3 +54,24 @@ export function filterIdeas(ideas: Idea[], filters: IdeaFilters, now: Date = new
     return true;
   });
 }
+
+/**
+ * Thèmes : les tags les plus fréquents (sans tenir compte des majuscules),
+ * pour regrouper ses idées par sujet. Au moins 2 idées par thème : un tag
+ * isolé n'est pas un thème.
+ */
+export function topThemes(ideas: Pick<Idea, "tags">[], limit = 8): { tag: string; count: number }[] {
+  const counts = new Map<string, { tag: string; count: number }>();
+  for (const idea of ideas) {
+    for (const tag of new Set(splitTags(idea.tags).map((t) => t.toLowerCase()))) {
+      const original = splitTags(idea.tags).find((t) => t.toLowerCase() === tag)!;
+      const entry = counts.get(tag) ?? { tag: original, count: 0 };
+      entry.count += 1;
+      counts.set(tag, entry);
+    }
+  }
+  return [...counts.values()]
+    .filter((t) => t.count >= 2)
+    .sort((a, b) => b.count - a.count || a.tag.localeCompare(b.tag, "fr"))
+    .slice(0, limit);
+}
