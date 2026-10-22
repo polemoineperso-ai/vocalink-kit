@@ -4,6 +4,7 @@ import { buildMorningBrief } from "@/lib/brief";
 import { sendPushToAll } from "@/lib/push";
 import { isAuthorizedCronCall } from "@/lib/cron-auth";
 import { todayInParis } from "@/lib/due-date";
+import { ACTION_CATEGORIES } from "@/lib/idea-kind";
 
 /**
  * Brief du matin : une notification avec ce qui est prévu aujourd'hui et
@@ -17,7 +18,11 @@ export async function GET(request: NextRequest) {
   }
 
   const [ideas, settings] = await Promise.all([
-    prisma.idea.findMany({ where: { status: "PENDING" }, select: { title: true, dueAt: true, dueEstimated: true } }),
+    // Le brief parle des actions (appels, emails) ; les idées mûrissent sans rappel culpabilisant.
+    prisma.idea.findMany({
+      where: { status: "PENDING", category: { in: ACTION_CATEGORIES } },
+      select: { title: true, dueAt: true, dueEstimated: true },
+    }),
     prisma.settings.findUnique({ where: { id: 1 } }),
   ]);
 

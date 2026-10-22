@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { formatDue, formatToday, greeting, groupBySection, sectionOf } from "@/lib/idea-sections";
+import { formatAge, formatDue, formatToday, greeting, groupBySection, sectionOf } from "@/lib/idea-sections";
 
 // Jeudi 22/10/2026, 15 h à Paris (UTC+2).
 const NOW = new Date("2026-10-22T13:00:00Z");
@@ -53,5 +53,15 @@ describe("en-tête", () => {
     expect(formatToday(NOW)).toBe("Jeudi 22 octobre");
     expect(greeting(NOW)).toBe("Bonjour");
     expect(greeting(new Date("2026-10-22T19:00:00Z"))).toBe("Bonsoir");
+  });
+});
+
+describe("formatAge", () => {
+  it("âge lisible d'une idée (jours de Paris)", () => {
+    expect(formatAge("2026-10-22T06:00:00Z", NOW)).toBe("Aujourd'hui");
+    expect(formatAge("2026-10-21T21:30:00Z", NOW)).toBe("Hier"); // 23 h 30 à Paris
+    expect(formatAge("2026-10-19T10:00:00Z", NOW)).toBe("Il y a 3 jours");
+    expect(formatAge("2026-10-01T10:00:00Z", NOW)).toBe("Il y a 3 semaines");
+    expect(formatAge("2026-09-12T10:00:00Z", NOW)).toBe("12 sept.");
   });
 });

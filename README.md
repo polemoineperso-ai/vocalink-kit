@@ -148,13 +148,14 @@ L'icône 🎙️ Vocalink apparaît avec vos autres applications. Ouvrez-la : Vo
 ## Au quotidien
 
 - **Dicter** : touchez le micro (en bas, au centre) → parlez → touchez pour arrêter → relisez → *Enregistrer*.
-- **Aujourd'hui** : l'écran d'accueil montre le programme du jour, les retards et ce qui arrive bientôt.
-- **Retrouver** : l'onglet *Idées* permet de chercher (y compris par nom de contact ou société) et de filtrer par catégorie, statut ou priorité.
+- **Mes idées** (l'accueil) : vos idées en cartes, rangées par étape : *Nouvelle*, *En réflexion*, *En cours*, puis *Réalisée*. Touchez une idée et faites-la avancer d'une étape, ou *archivez-la* : elle est mise de côté, pas perdue.
+- **À faire** (onglet) : uniquement les appels et emails, rangés par moment (en retard, aujourd'hui, demain…).
+- **Retrouver** : la recherche de *Mes idées* (et de *À faire*) permet de chercher (y compris par nom de contact ou société) et de filtrer par catégorie, statut ou priorité.
 - **Agir** : sur chaque idée, *Écrire l'email* ou *Agenda* prépare le message ou l'événement ; le numéro de téléphone d'un contact se touche pour appeler.
 - **Contacter** : sur une idée avec un contact, *Appeler*, *SMS*, *WhatsApp* ou *Email* en un toucher.
 - **Reporter** : une idée du jour ou en retard se reporte à *Demain*, *Lundi* ou *Dans 1 semaine*.
 - **Dicter en un geste** : l'adresse `https://votre-adresse.vercel.app/?dicter=1` ouvre Vocalink micro déjà lancé. Sur iPhone, mettez-la dans un raccourci (app *Raccourcis* → *Ouvrir les URL*), à lancer avec Siri ou le bouton Action. Sur Android, appui long sur l'icône → *Dicter*.
-- **Ranger** : touchez le rond à gauche d'une idée quand c'est fait (*Annuler* apparaît quelques secondes). Glissez une idée vers la gauche pour la reporter. Pour supprimer : ouvrez l'idée, puis *Supprimer l'idée* tout en bas.
+- **Ranger une action** : touchez le rond à gauche quand c'est fait (*Annuler* apparaît quelques secondes). Glissez une action vers la gauche pour la reporter. Pour supprimer : ouvrez l'idée, puis *Supprimer l'idée* tout en bas.
 
 ---
 

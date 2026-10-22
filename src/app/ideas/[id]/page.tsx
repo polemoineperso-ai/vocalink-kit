@@ -8,7 +8,8 @@ import { formatContactIdentity } from "@/lib/contact";
 import { CATEGORY_STYLE, PRIORITY_STYLE } from "@/lib/category-style";
 import { formatDue, sectionOf } from "@/lib/idea-sections";
 import { splitTags } from "@/lib/idea-filter";
-import { DeleteIdeaButton, DoneToggle, SnoozeButtons } from "@/components/idea-detail-actions";
+import { DeleteIdeaButton, DoneToggle, SnoozeButtons, StageStepper } from "@/components/idea-detail-actions";
+import { isAction } from "@/lib/idea-kind";
 
 export const dynamic = "force-dynamic";
 
@@ -23,8 +24,10 @@ export default async function IdeaPage({ params }: { params: Promise<{ id: strin
 
   const now = new Date();
   const style = CATEGORY_STYLE[idea.category];
-  const done = idea.status === "ACTIONED";
-  const overdue = !done && sectionOf(idea, now) === "overdue";
+  // Une ACTION se coche et peut être en retard ; une IDÉE mûrit par étapes.
+  const action = isAction(idea.category);
+  const done = action && idea.status === "ACTIONED";
+  const overdue = action && !done && sectionOf(idea, now) === "overdue";
   const tags = splitTags(idea.tags);
 
   const tel = buildTelLink(idea.contactPhone);
@@ -65,9 +68,9 @@ export default async function IdeaPage({ params }: { params: Promise<{ id: strin
   return (
     <main className="safe-top mx-auto w-full max-w-xl px-4 pb-16">
       <nav className="flex items-center justify-between py-2">
-        <Link href="/ideas" className="-ml-1.5 flex items-center font-medium text-brand">
+        <Link href={action ? "/a-faire" : "/"} className="-ml-1.5 flex items-center font-medium text-brand">
           <ChevronLeft size={22} aria-hidden="true" />
-          Idées
+          {action ? "À faire" : "Mes idées"}
         </Link>
         <Link href={`/ideas/${idea.id}/edit`} className="font-medium text-brand">
           Modifier
@@ -82,6 +85,12 @@ export default async function IdeaPage({ params }: { params: Promise<{ id: strin
       </div>
       <h1 className={`mt-2 text-2xl font-bold leading-tight tracking-tight ${done ? "text-muted line-through" : ""}`}>{idea.title}</h1>
       {idea.summary ? <p className="mt-2 leading-relaxed text-muted">{idea.summary}</p> : null}
+
+      {!action ? (
+        <div className="mt-5">
+          <StageStepper id={idea.id} stage={idea.stage} />
+        </div>
+      ) : null}
 
       {primary ? (
         <a
@@ -131,10 +140,10 @@ export default async function IdeaPage({ params }: { params: Promise<{ id: strin
           <Clock size={18} className="mt-0.5 shrink-0 text-muted" aria-hidden="true" />
           <div className="min-w-0 flex-1">
             <p className={`row-title ${overdue ? "text-warn" : ""}`}>
-              {idea.dueAt ? formatDue(idea.dueAt, now, idea.dueEstimated) : "Pas d'échéance"}
+              {idea.dueAt ? `${action ? "" : "Rappel : "}${formatDue(idea.dueAt, now, idea.dueEstimated)}` : action ? "Pas d'échéance" : "Pas de rappel"}
               {idea.dueEstimated ? <span className="font-normal text-muted"> · créneau estimé</span> : null}
             </p>
-            {!done && idea.dueAt ? (
+            {action && !done && idea.dueAt ? (
               <div className="mt-2">
                 <SnoozeButtons id={idea.id} dueAt={new Date(idea.dueAt).toISOString()} dueEstimated={idea.dueEstimated} />
               </div>
@@ -163,9 +172,11 @@ export default async function IdeaPage({ params }: { params: Promise<{ id: strin
         ) : null}
       </div>
 
-      <div className="group mt-4">
-        <DoneToggle id={idea.id} title={idea.title} done={done} />
-      </div>
+      {action ? (
+        <div className="group mt-4">
+          <DoneToggle id={idea.id} title={idea.title} done={done} />
+        </div>
+      ) : null}
 
       {idea.transcript ? (
         <details className="group mt-4">

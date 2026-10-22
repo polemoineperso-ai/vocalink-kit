@@ -23,8 +23,11 @@ export function IdeasFilterList({
   ideas,
   initialDue = "",
   initialTag = "",
+  categories = CATEGORY_ORDER,
 }: {
   ideas: Idea[];
+  /** Catégories proposées en filtre (onglet À faire : Email, Appel / Rappel). */
+  categories?: IdeaCategory[];
   /** Vue ouverte depuis un compteur de l'écran Aujourd'hui. */
   initialDue?: DueView | "";
   /** Tag ouvert depuis une fiche. */
@@ -59,7 +62,7 @@ export function IdeasFilterList({
           type="search"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Rechercher une idée, un contact…"
+          placeholder="Rechercher une action, un contact…"
           className="!rounded-xl !border-transparent !bg-surface pl-10"
           aria-label="Rechercher"
         />
@@ -74,7 +77,7 @@ export function IdeasFilterList({
       </div>
 
       <div className="scroll-row -mx-4 mt-3 flex gap-2 overflow-x-auto px-4" role="group" aria-label="Filtres">
-        {CATEGORY_ORDER.map((value) => {
+        {categories.map((value) => {
           const style = CATEGORY_STYLE[value];
           const selected = category === value;
           return (
@@ -119,10 +122,10 @@ export function IdeasFilterList({
       {filtered.length === 0 ? (
         <div className="mt-10 flex flex-col items-center gap-1 px-6 text-center">
           <p className="font-semibold">
-            {hasFilters ? "Aucune idée ne correspond" : scope === "done" ? "Rien de fait pour l'instant" : "Tout est fait"}
+            {hasFilters ? "Aucune action ne correspond" : scope === "done" ? "Rien de fait pour l'instant" : "Tout est fait 🎉"}
           </p>
           <p className="text-sm text-muted">
-            {hasFilters ? "Essayez d'autres filtres." : "Une nouvelle idée ? Touchez le micro en bas de l'écran."}
+            {hasFilters ? "Essayez d'autres filtres." : "Les appels et emails que vous dictez apparaîtront ici."}
           </p>
         </div>
       ) : (

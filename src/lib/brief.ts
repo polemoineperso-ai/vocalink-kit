@@ -3,7 +3,7 @@ import { APP_TIMEZONE, todayInParis } from "@/lib/due-date";
 import type { PushPayload } from "@/lib/push";
 
 /**
- * Brief du matin (fonction pure, testable) : ce qui est prévu aujourd'hui
+ * Brief du matin (fonction pure, testable), à partir des ACTIONS en attente : ce qui est prévu aujourd'hui
  * et ce qui est en retard, en une notification courte. Renvoie `null` s'il
  * n'y a rien à dire — pas de notification vide qui habitue à ignorer.
  */
@@ -30,8 +30,8 @@ export function buildMorningBrief(pendingIdeas: BriefIdea[], firstName: string |
     if (pendingIdeas.length === 0) return null;
     return {
       title: hello,
-      body: `Rien de prévu aujourd'hui. ${pendingIdeas.length} idée${pendingIdeas.length > 1 ? "s" : ""} en attente : un petit tri ?`,
-      url: "/ideas",
+      body: `Rien de prévu aujourd'hui. ${pendingIdeas.length} action${pendingIdeas.length > 1 ? "s" : ""} sans date : un petit tri ?`,
+      url: "/a-faire",
       badgeCount,
     };
   }
@@ -46,5 +46,5 @@ export function buildMorningBrief(pendingIdeas: BriefIdea[], firstName: string |
   }
   if (overdue.length > 0) parts.push(`${overdue.length} en retard.`);
 
-  return { title: hello, body: parts.join(" "), url: "/ideas", badgeCount };
+  return { title: hello, body: parts.join(" "), url: "/a-faire", badgeCount };
 }

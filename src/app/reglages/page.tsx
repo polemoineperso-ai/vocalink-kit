@@ -17,7 +17,7 @@ export default async function SettingsPage() {
       <nav className="flex items-center py-2">
         <Link href="/" className="-ml-1.5 flex items-center font-medium text-brand">
           <ChevronLeft size={22} aria-hidden="true" />
-          Aujourd&apos;hui
+          Mes idées
         </Link>
       </nav>
       <h1 className="large-title mt-1">Réglages</h1>

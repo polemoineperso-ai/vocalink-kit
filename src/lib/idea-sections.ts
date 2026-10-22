@@ -90,3 +90,18 @@ export function greeting(now: Date = new Date()): string {
   return "Bonjour";
 }
 
+
+/** Âge d'une idée : « Aujourd'hui », « Hier », « Il y a 3 jours », « Il y a 2 semaines », puis la date. */
+export function formatAge(createdAt: Date | string, now: Date = new Date()): string {
+  const created = new Date(createdAt);
+  const diff = daysBetween(dayKey(created), dayKey(now));
+  if (diff <= 0) return "Aujourd'hui";
+  if (diff === 1) return "Hier";
+  if (diff < 7) return `Il y a ${diff} jours`;
+  if (diff < 28) {
+    const weeks = Math.floor(diff / 7);
+    return `Il y a ${weeks} semaine${weeks > 1 ? "s" : ""}`;
+  }
+  const zoned = toZonedTime(created, APP_TIMEZONE);
+  return `${zoned.getDate()} ${MONTHS[zoned.getMonth()]}`;
+}

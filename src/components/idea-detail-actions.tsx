@@ -2,8 +2,10 @@
 
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Check, Trash2 } from "lucide-react";
-import { deleteIdea, restoreDue, snoozeIdea, updateIdeaStatus } from "@/lib/actions/idea-actions";
+import { Archive, Check, Trash2 } from "lucide-react";
+import { deleteIdea, restoreDue, setIdeaStage, snoozeIdea, updateIdeaStatus } from "@/lib/actions/idea-actions";
+import { STAGE_ORDER, STAGE_STYLE } from "@/lib/idea-kind";
+import type { IdeaStage } from "@prisma/client";
 import { SNOOZE_LABELS, type SnoozeOption } from "@/lib/due-date";
 import { useToast } from "@/components/toast";
 
@@ -89,7 +91,7 @@ export function DeleteIdeaButton({ id, title }: { id: string; title: string }) {
     if (!window.confirm(`Supprimer « ${title} » ? Cette action est définitive.`)) return;
     startTransition(async () => {
       await deleteIdea(id);
-      router.push("/ideas");
+      router.push("/");
     });
   }
 
@@ -98,5 +100,65 @@ export function DeleteIdeaButton({ id, title }: { id: string; title: string }) {
       <Trash2 size={18} aria-hidden="true" />
       <span className="row-title">Supprimer l&apos;idée</span>
     </button>
+  );
+}
+
+/** Étapes d'une idée : toucher une étape pour y passer ; « Archiver » la met de côté sans culpabilité. */
+export function StageStepper({ id, stage }: { id: string; stage: IdeaStage }) {
+  const router = useRouter();
+  const toast = useToast();
+  const [isPending, startTransition] = useTransition();
+  const current = STAGE_ORDER.indexOf(stage);
+
+  function moveTo(next: IdeaStage, message: string) {
+    const previous = stage;
+    startTransition(async () => {
+      await setIdeaStage(id, next);
+      router.refresh();
+      toast(message, async () => {
+        await setIdeaStage(id, previous);
+        router.refresh();
+      });
+    });
+  }
+
+  if (stage === "ARCHIVED") {
+    return (
+      <div className="flex items-center justify-between gap-3 rounded-2xl bg-surface px-4 py-3">
+        <p className="text-sm text-muted">Idée archivée — mise de côté, pas perdue.</p>
+        <button type="button" disabled={isPending} onClick={() => moveTo("THINKING", "Idée réactivée")} className="shrink-0 text-sm font-semibold text-brand">
+          Réactiver
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <div className="flex gap-1.5" role="group" aria-label="Étape de l'idée">
+        {STAGE_ORDER.map((s, i) => (
+          <button
+            key={s}
+            type="button"
+            disabled={isPending || s === stage}
+            aria-pressed={s === stage}
+            onClick={() => moveTo(s, `Étape : ${STAGE_STYLE[s].label}`)}
+            className="flex-1 text-center"
+          >
+            <span className={`block h-1.5 rounded-full transition ${i <= current ? STAGE_STYLE[stage].bar : "bg-line"}`} />
+            <span className={`mt-1.5 block text-xs ${s === stage ? "font-semibold text-ink" : "text-muted"}`}>{STAGE_STYLE[s].label}</span>
+          </button>
+        ))}
+      </div>
+      <button
+        type="button"
+        disabled={isPending}
+        onClick={() => moveTo("ARCHIVED", "Idée archivée")}
+        className="mt-3 flex items-center gap-1.5 text-sm font-medium text-muted"
+      >
+        <Archive size={15} aria-hidden="true" />
+        Archiver cette idée
+      </button>
+    </div>
   );
 }

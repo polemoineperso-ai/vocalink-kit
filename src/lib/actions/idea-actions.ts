@@ -8,7 +8,8 @@ import { isGoogleTasksAvailable, upsertTask } from "@/lib/google-tasks";
 import { fromZonedTime } from "date-fns-tz";
 import { APP_TIMEZONE, resolveDueAt, snoozeDueAt, todayInParis, type SnoozeOption } from "@/lib/due-date";
 import { fillFromKnownContact, normalizeContact, type ContactInput } from "@/lib/contact";
-import { IdeaCategory, IdeaStatus, IdeaPriority, type Idea } from "@prisma/client";
+import { IdeaCategory, IdeaStatus, IdeaPriority, type Idea, type IdeaStage } from "@prisma/client";
+import { ACTION_CATEGORIES, statusForStage } from "@/lib/idea-kind";
 
 /**
  * Server Actions de Vocalink. Doctrine :
@@ -205,6 +206,12 @@ export async function snoozeIdea(id: string, option: SnoozeOption): Promise<void
   await syncGoogleTaskIfNeeded(idea);
 }
 
+/** Étape d'une idée (Nouvelle → En réflexion → En cours → Réalisée, ou Archivée). */
+export async function setIdeaStage(id: string, stage: IdeaStage): Promise<void> {
+  const idea = await prisma.idea.update({ where: { id }, data: { stage, status: statusForStage(stage) } });
+  await syncGoogleTaskIfNeeded(idea);
+}
+
 /** « Annuler » après un report : remet l'échéance précédente telle quelle. */
 export async function restoreDue(id: string, dueAt: string | null, dueEstimated: boolean): Promise<void> {
   const idea = await prisma.idea.update({
@@ -224,13 +231,18 @@ export async function listIdeas(): Promise<Idea[]> {
 
 export type HomeStats = { pending: number; dueToday: number; overdue: number };
 
-/** Compteurs de l'accueil — idées en attente, à faire aujourd'hui (heure de Paris), en retard. */
+/**
+ * Compteurs des ACTIONS (Email, Appel / Rappel) : à faire, prévues aujourd'hui
+ * (heure de Paris), en retard. Les idées n'y comptent jamais : une idée
+ * mûrit, elle n'est pas « en retard ».
+ */
 export async function getHomeStats(now: Date = new Date()): Promise<HomeStats> {
   const endOfToday = fromZonedTime(`${todayInParis(now)}T23:59:59`, APP_TIMEZONE);
+  const actions = { status: IdeaStatus.PENDING, category: { in: ACTION_CATEGORIES } };
   const [pending, dueToday, overdue] = await Promise.all([
-    prisma.idea.count({ where: { status: IdeaStatus.PENDING } }),
-    prisma.idea.count({ where: { status: IdeaStatus.PENDING, dueAt: { gte: now, lte: endOfToday } } }),
-    prisma.idea.count({ where: { status: IdeaStatus.PENDING, dueAt: { lt: now } } }),
+    prisma.idea.count({ where: actions }),
+    prisma.idea.count({ where: { ...actions, dueAt: { gte: now, lte: endOfToday } } }),
+    prisma.idea.count({ where: { ...actions, dueAt: { lt: now } } }),
   ]);
   return { pending, dueToday, overdue };
 }

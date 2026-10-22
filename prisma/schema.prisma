@@ -38,10 +38,21 @@ enum IdeaPriority {
   HIGH
 }
 
+// Cycle de vie d'une IDÉE (catégories Projet, Idée) : elle mûrit, elle ne
+// se coche pas. Les ACTIONS (Email, Appel/Rappel) gardent `status`.
+enum IdeaStage {
+  NEW
+  THINKING
+  IN_PROGRESS
+  DONE
+  ARCHIVED
+}
+
 model Idea {
   id        String       @id @default(cuid())
   createdAt DateTime     @default(now())
   status    IdeaStatus   @default(PENDING)
+  stage     IdeaStage    @default(NEW)
   category  IdeaCategory
   priority  IdeaPriority @default(MEDIUM)
 

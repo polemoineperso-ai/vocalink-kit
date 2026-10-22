@@ -1,28 +1,13 @@
-import { getHomeStats, listIdeas } from "@/lib/actions/idea-actions";
-import { isDueView } from "@/lib/idea-filter";
-import { AppBadge } from "@/components/app-badge";
-import { IdeasFilterList } from "@/components/ideas-filter-list";
-import { TabBar } from "@/components/tab-bar";
+import { redirect } from "next/navigation";
 
-export const dynamic = "force-dynamic";
-
-export default async function IdeasPage({ searchParams }: { searchParams: Promise<{ vue?: string; tag?: string }> }) {
-  const [{ vue, tag }, ideas, stats] = await Promise.all([searchParams, listIdeas(), getHomeStats()]);
-
-  return (
-    <main className="safe-top safe-bottom-space mx-auto w-full max-w-xl px-4">
-      <AppBadge count={stats.dueToday + stats.overdue} />
-      <h1 className="large-title pt-2">Idées</h1>
-
-      <IdeasFilterList
-        // Une vue différente (compteur, tag) remet les filtres à zéro.
-        key={`${vue ?? ""}|${tag ?? ""}`}
-        ideas={ideas}
-        initialDue={isDueView(vue) ? vue : ""}
-        initialTag={tag ?? ""}
-      />
-
-      <TabBar />
-    </main>
-  );
+/**
+ * Ancienne adresse de la liste, conservée pour les liens existants
+ * (notifications, favoris) : les vues de dates mènent à « À faire », le
+ * reste (tags compris) à « Mes idées ».
+ */
+export default async function LegacyIdeasPage({ searchParams }: { searchParams: Promise<{ vue?: string; tag?: string }> }) {
+  const { vue, tag } = await searchParams;
+  if (vue === "today" || vue === "overdue") redirect(`/a-faire?vue=${vue}`);
+  if (vue === "attente") redirect("/a-faire");
+  redirect(tag ? `/?tag=${encodeURIComponent(tag)}` : "/");
 }
