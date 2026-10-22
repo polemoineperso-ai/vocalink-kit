@@ -10,6 +10,7 @@ import { formatDue, sectionOf } from "@/lib/idea-sections";
 import { splitTags } from "@/lib/idea-filter";
 import { DeleteIdeaButton, DoneToggle, SnoozeButtons, StageStepper } from "@/components/idea-detail-actions";
 import { isAction } from "@/lib/idea-kind";
+import { IdeaNotes } from "@/components/idea-notes";
 
 export const dynamic = "force-dynamic";
 
@@ -18,9 +19,10 @@ export default async function IdeaPage({ params }: { params: Promise<{ id: strin
   const { id } = await params;
   const idea = await getIdea(id);
   if (!idea) notFound();
-  const parent = idea.parentId
-    ? await prisma.idea.findUnique({ where: { id: idea.parentId }, select: { id: true, title: true } })
-    : null;
+  const [parent, notes] = await Promise.all([
+    idea.parentId ? prisma.idea.findUnique({ where: { id: idea.parentId }, select: { id: true, title: true } }) : null,
+    prisma.ideaNote.findMany({ where: { ideaId: idea.id }, orderBy: { createdAt: "desc" } }),
+  ]);
 
   const now = new Date();
   const style = CATEGORY_STYLE[idea.category];
@@ -89,6 +91,16 @@ export default async function IdeaPage({ params }: { params: Promise<{ id: strin
       {!action ? (
         <div className="mt-5">
           <StageStepper id={idea.id} stage={idea.stage} />
+        </div>
+      ) : null}
+
+      {/* Les notes font vivre une idée : en haut de la fiche. Pour une action, après le détail. */}
+      {!action ? (
+        <div className="mt-3">
+          <IdeaNotes
+            ideaId={idea.id}
+            notes={notes.map((n) => ({ id: n.id, text: n.text, source: n.source, createdAt: n.createdAt.toISOString() }))}
+          />
         </div>
       ) : null}
 
@@ -175,6 +187,15 @@ export default async function IdeaPage({ params }: { params: Promise<{ id: strin
       {action ? (
         <div className="group mt-4">
           <DoneToggle id={idea.id} title={idea.title} done={done} />
+        </div>
+      ) : null}
+
+      {action ? (
+        <div className="mt-2">
+          <IdeaNotes
+            ideaId={idea.id}
+            notes={notes.map((n) => ({ id: n.id, text: n.text, source: n.source, createdAt: n.createdAt.toISOString() }))}
+          />
         </div>
       ) : null}
 

@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { ChevronRight, ListChecks } from "lucide-react";
 import { getHomeStats, listIdeas } from "@/lib/actions/idea-actions";
 import { getAppSettings } from "@/lib/actions/settings-actions";
+import { prisma } from "@/lib/prisma";
 import { isAction } from "@/lib/idea-kind";
 import { greeting } from "@/lib/idea-sections";
 import { AppBadge } from "@/components/app-badge";
@@ -15,7 +16,13 @@ export const dynamic = "force-dynamic";
 
 /** Accueil : « Mes idées ». Les actions (appels, emails) vivent dans l'onglet À faire. */
 export default async function IdeasHomePage({ searchParams }: { searchParams: Promise<{ dicter?: string; tag?: string }> }) {
-  const [{ dicter, tag }, ideas, stats, settings] = await Promise.all([searchParams, listIdeas(), getHomeStats(), getAppSettings()]);
+  const [{ dicter, tag }, ideas, stats, settings, notes] = await Promise.all([
+    searchParams,
+    listIdeas(),
+    getHomeStats(),
+    getAppSettings(),
+    prisma.ideaNote.findMany({ select: { ideaId: true, text: true } }),
+  ]);
 
   if (!settings.onboarded) {
     return (
@@ -32,6 +39,13 @@ export default async function IdeasHomePage({ searchParams }: { searchParams: Pr
   const onlyIdeas = ideas.filter((i) => !isAction(i.category));
   const urgent = stats.dueToday + stats.overdue;
   const initial = settings.firstName?.trim()[0]?.toUpperCase() ?? "•";
+  // Notes par idée : nombre (affiché sur la carte) et texte (pris en compte par la recherche).
+  const notesByIdea: Record<string, { count: number; text: string }> = {};
+  for (const note of notes) {
+    const entry = (notesByIdea[note.ideaId] ??= { count: 0, text: "" });
+    entry.count += 1;
+    entry.text += ` ${note.text}`;
+  }
 
   return (
     <main className="safe-top safe-bottom-space mx-auto w-full max-w-xl px-4">
@@ -76,7 +90,7 @@ export default async function IdeasHomePage({ searchParams }: { searchParams: Pr
         <NotificationsToggle hideWhenOn />
       </div>
 
-      <IdeasBoard key={tag ?? ""} ideas={onlyIdeas} initialTag={tag ?? ""} />
+      <IdeasBoard key={tag ?? ""} ideas={onlyIdeas} initialTag={tag ?? ""} notesByIdea={notesByIdea} />
 
       <TabBar />
     </main>

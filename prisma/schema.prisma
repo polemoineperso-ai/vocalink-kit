@@ -86,6 +86,22 @@ model Idea {
   notionPageUrl String?
 
   googleTaskId String?
+
+  notes IdeaNote[]
+}
+
+// Notes ajoutées à une idée au fil du temps (dictées ou écrites) : l'idée
+// mûrit sans réécrire son résumé d'origine.
+model IdeaNote {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  ideaId    String
+  idea      Idea     @relation(fields: [ideaId], references: [id], onDelete: Cascade)
+  text      String
+  // "voice" (dictée) ou "text" (écrite)
+  source    String   @default("voice")
+
+  @@index([ideaId, createdAt])
 }
 
 // Réglages de l'installation (une seule ligne, id = 1) — app mono-utilisateur.

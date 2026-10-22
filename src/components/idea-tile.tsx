@@ -6,7 +6,7 @@ import { splitTags } from "@/lib/idea-filter";
 import type { Idea } from "@prisma/client";
 
 /** Carte d'une IDÉE (pas de case à cocher : une idée mûrit, elle ne se coche pas). */
-export function IdeaTile({ idea, now }: { idea: Idea; now?: Date }) {
+export function IdeaTile({ idea, now, noteCount = 0 }: { idea: Idea; now?: Date; noteCount?: number }) {
   const stage = STAGE_STYLE[idea.stage];
   const category = CATEGORY_STYLE[idea.category];
   const tags = splitTags(idea.tags).slice(0, 2);
@@ -25,6 +25,14 @@ export function IdeaTile({ idea, now }: { idea: Idea; now?: Date }) {
         </span>
         <span aria-hidden="true">·</span>
         <span>{formatAge(idea.createdAt, now)}</span>
+        {noteCount ? (
+          <>
+            <span aria-hidden="true">·</span>
+            <span className="font-medium text-muted">
+              {noteCount} note{noteCount > 1 ? "s" : ""}
+            </span>
+          </>
+        ) : null}
         {tags.map((tag) => (
           <span key={tag}>#{tag}</span>
         ))}
