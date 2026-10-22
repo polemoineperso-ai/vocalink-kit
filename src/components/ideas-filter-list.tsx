@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { IdeaCard } from "@/components/idea-card";
-import { filterIdeas } from "@/lib/idea-filter";
+import { filterIdeas, type DueView } from "@/lib/idea-filter";
 import { groupIdeasByRoot } from "@/lib/idea-tree";
 import { CATEGORY_ORDER, CATEGORY_STYLE, PRIORITY_ORDER, PRIORITY_STYLE } from "@/lib/category-style";
 import type { Idea, IdeaCategory, IdeaStatus, IdeaPriority } from "@prisma/client";
@@ -14,26 +14,47 @@ const STATUS_OPTIONS: { value: IdeaStatus | ""; label: string }[] = [
 ];
 
 /** Recherche/filtres côté client — usage personnel, quelques dizaines/centaines d'idées, pas besoin d'aller-retour serveur. */
-export function IdeasFilterList({ ideas }: { ideas: Idea[] }) {
+const DUE_LABELS: Record<DueView, string> = { today: "📅 Prévues aujourd'hui", overdue: "⏰ En retard" };
+
+export function IdeasFilterList({
+  ideas,
+  initialDue = "",
+  initialStatus = "",
+}: {
+  ideas: Idea[];
+  /** Vue ouverte depuis un compteur de l'accueil. */
+  initialDue?: DueView | "";
+  initialStatus?: IdeaStatus | "";
+}) {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState<IdeaCategory | "">("");
-  const [status, setStatus] = useState<IdeaStatus | "">("");
+  const [status, setStatus] = useState<IdeaStatus | "">(initialStatus);
   const [priority, setPriority] = useState<IdeaPriority | "">("");
+  const [due, setDue] = useState<DueView | "">(initialDue);
 
-  const filtered = filterIdeas(ideas, { search, category, status, priority });
+  const filtered = filterIdeas(ideas, { search, category, status, priority, due });
   const groups = groupIdeasByRoot(filtered);
-  const hasActiveFilters = search.trim() !== "" || category !== "" || status !== "" || priority !== "";
+  const hasActiveFilters = search.trim() !== "" || category !== "" || status !== "" || priority !== "" || due !== "";
 
   function resetFilters() {
     setSearch("");
     setCategory("");
     setStatus("");
     setPriority("");
+    setDue("");
   }
 
   return (
     <div className="flex flex-col gap-5">
       <div className="flex flex-col gap-3">
+        {due ? (
+          <div className="flex items-center justify-between gap-3 rounded-2xl bg-warn-soft px-4 py-3">
+            <p className="font-semibold text-warn">{DUE_LABELS[due]}</p>
+            <button type="button" onClick={() => setDue("")} className="btn btn-ghost">
+              Tout voir ✕
+            </button>
+          </div>
+        ) : null}
         <div className="relative">
           <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-muted" aria-hidden="true">
             🔍

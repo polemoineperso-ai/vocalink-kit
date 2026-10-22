@@ -72,3 +72,23 @@ describe("filterIdeas", () => {
     expect(filterIdeas(ideas, { category: "APPEL_RAPPEL", priority: "LOW" })).toHaveLength(0);
   });
 });
+
+describe("filterIdeas — vues aujourd'hui / en retard", () => {
+  // 22/10/2026 15 h à Paris.
+  const NOW = new Date("2026-10-22T13:00:00Z");
+  const ideas = [
+    makeIdea({ id: "retard", dueAt: new Date("2026-10-21T10:00:00Z") }),
+    makeIdea({ id: "ce-soir", dueAt: new Date("2026-10-22T17:00:00Z") }),
+    makeIdea({ id: "demain", dueAt: new Date("2026-10-23T08:00:00Z") }),
+    makeIdea({ id: "sans-date" }),
+    makeIdea({ id: "retard-traitee", dueAt: new Date("2026-10-20T10:00:00Z"), status: "ACTIONED" }),
+  ];
+
+  it("en retard : en attente avec échéance passée", () => {
+    expect(filterIdeas(ideas, { due: "overdue" }, NOW).map((i) => i.id)).toEqual(["retard"]);
+  });
+
+  it("aujourd'hui : en attente, prévue plus tard dans la journée (Paris)", () => {
+    expect(filterIdeas(ideas, { due: "today" }, NOW).map((i) => i.id)).toEqual(["ce-soir"]);
+  });
+});

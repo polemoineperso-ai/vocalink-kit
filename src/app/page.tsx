@@ -52,20 +52,20 @@ export default async function Home() {
 
       {stats.pending > 0 ? (
         <section className="grid grid-cols-3 gap-3">
-          <Link href="/ideas" className="card flex flex-col items-center gap-0.5 p-4 text-center transition hover:border-appel">
+          <Link href="/ideas?vue=today" className="card flex flex-col items-center gap-0.5 p-4 text-center transition hover:border-appel">
             <span className="text-2xl font-semibold text-appel-ink">{stats.dueToday}</span>
             <span className="text-xs text-muted">aujourd&apos;hui</span>
           </Link>
           <Link
-            href="/ideas"
+            href="/ideas?vue=overdue"
             className={`card flex flex-col items-center gap-0.5 p-4 text-center transition ${stats.overdue > 0 ? "bg-warn-soft" : ""}`}
           >
             <span className={`text-2xl font-semibold ${stats.overdue > 0 ? "text-warn" : ""}`}>{stats.overdue}</span>
             <span className="text-xs text-muted">en retard</span>
           </Link>
-          <Link href="/ideas" className="card flex flex-col items-center gap-0.5 p-4 text-center transition hover:border-brand">
+          <Link href="/ideas?vue=attente" className="card flex flex-col items-center gap-0.5 p-4 text-center transition hover:border-brand">
             <span className="text-2xl font-semibold">{stats.pending}</span>
-            <span className="text-xs text-muted">en attente</span>
+            <span className="text-xs text-muted">en attente au total</span>
           </Link>
         </section>
       ) : null}
