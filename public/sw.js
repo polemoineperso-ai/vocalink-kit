@@ -1,6 +1,12 @@
 // Service worker de Vocalink : affiche les notifications (brief du matin…)
 // et ouvre la bonne page quand on touche la notification.
 
+// Une nouvelle version de ce fichier remplace l'ancienne tout de suite,
+// sans attendre que l'app soit entièrement fermée (sinon l'iPhone garde
+// l'ancienne version, constaté avec l'ajout de la pastille).
+self.addEventListener("install", () => self.skipWaiting());
+self.addEventListener("activate", (event) => event.waitUntil(self.clients.claim()));
+
 self.addEventListener("push", (event) => {
   if (!event.data) return;
   let data;
