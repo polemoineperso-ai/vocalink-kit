@@ -1,0 +1,78 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Générateur classique (pas le nouveau "prisma-client" ESM), éprouvé sur
+// Vercel.
+// Sortie par défaut (node_modules/@prisma/client) : Next.js a un support
+// intégré pour bundler correctement le moteur natif à cet emplacement
+// conventionnel, contrairement à un chemin de sortie personnalisé (source
+// d'un bug de résolution de chemin rencontré avec le nouveau générateur).
+generator client {
+  provider      = "prisma-client-js"
+  // "native" pour le dev local (Windows) — rhel-openssl-3.0.x pour le
+  // runtime des fonctions Vercel (différent de la machine de build).
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DATABASE_URL_UNPOOLED")
+}
+
+enum IdeaCategory {
+  PROJET
+  EMAIL
+  APPEL_RAPPEL
+  IDEE_PURE
+}
+
+enum IdeaStatus {
+  PENDING
+  ACTIONED
+}
+
+enum IdeaPriority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+model Idea {
+  id        String       @id @default(cuid())
+  createdAt DateTime     @default(now())
+  status    IdeaStatus   @default(PENDING)
+  category  IdeaCategory
+  priority  IdeaPriority @default(MEDIUM)
+
+  transcript String
+  title      String
+  summary    String
+  tags       String
+
+  // Ancien champ "Destinataire" (nom ou email mélangés, catégorie Email
+  // uniquement) — remplacé par le bloc contact ci-dessous, repris par la
+  // migration add_contact_fields. Conservé en lecture seule, plus écrit.
+  emailRecipient String?
+  emailSubject   String?
+  emailBody      String?
+
+  // Contact lié à l'idée — toutes catégories, tous champs facultatifs.
+  contactName    String?
+  contactPhone   String?
+  contactEmail   String?
+  contactCompany String?
+  contactRole    String?
+
+  dueAt        DateTime?
+  dueEstimated Boolean @default(false)
+
+  parentId String?
+  parent   Idea?   @relation("IdeaParent", fields: [parentId], references: [id], onDelete: SetNull)
+  children Idea[]  @relation("IdeaParent")
+
+  notionPageId  String?
+  notionPageUrl String?
+
+  googleTaskId String?
+}
