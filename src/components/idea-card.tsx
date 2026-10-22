@@ -74,11 +74,12 @@ export function IdeaCard({
           {idea.priority === "LOW" ? <span className={`chip ${PRIORITY_STYLE.LOW.chip}`}>Basse</span> : null}
           {done ? <span className="chip bg-ok-soft text-ok">✓ Fait</span> : null}
         </div>
-        <div className="min-w-0">
+        {/* Toucher le titre ou le texte ouvre la modification. */}
+        <Link href={`/ideas/${idea.id}/edit`} className="-m-1 min-w-0 rounded-xl p-1 transition hover:bg-subtle active:bg-subtle">
           {isChild && parentTitle ? <p className="mb-1 text-xs text-muted">↳ {parentTitle}</p> : null}
           <h2 className={`font-semibold leading-snug ${done ? "text-muted line-through" : ""}`}>{idea.title}</h2>
           {idea.summary ? <p className="mt-1 text-sm leading-relaxed text-muted">{idea.summary}</p> : null}
-        </div>
+        </Link>
 
         {hasContact(idea) ? (
           <div className="flex flex-col gap-2 rounded-xl bg-subtle px-3 py-2.5 text-sm">
@@ -176,8 +177,8 @@ export function IdeaCard({
               Notion ↗
             </a>
           ) : null}
-          <Link href={`/ideas/${idea.id}/edit`} aria-label="Modifier ou supprimer" title="Modifier" className="btn btn-ghost ml-auto text-base">
-            ✎
+          <Link href={`/ideas/${idea.id}/edit`} aria-label="Modifier ou supprimer" className="btn btn-ghost ml-auto">
+            ✎<span className="hidden min-[360px]:inline"> Modifier</span>
           </Link>
         </div>
       </div>
