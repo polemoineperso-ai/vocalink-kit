@@ -12,7 +12,7 @@ export default async function LoginPage({
     <main className="mx-auto flex min-h-screen w-full max-w-sm flex-col justify-center gap-8 px-4 py-12">
       <div className="flex flex-col items-center gap-4 text-center">
         <div className="grid h-20 w-20 place-items-center rounded-3xl bg-brand text-white shadow-lg" aria-hidden="true">
-          <BrandMark size={44} strokeWidth={1.9} />
+          <BrandMark size={48} strokeWidth={1.5} />
         </div>
         <div>
           <h1 className="text-3xl font-semibold tracking-tight">Vocalink</h1>

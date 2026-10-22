@@ -17,7 +17,7 @@ export function AppIconImage({ size }: { size: number }) {
         background: "#e4572e",
       }}
     >
-      <BrandMark size={size * 0.6} color="#ffffff" strokeWidth={1.8} />
+      <BrandMark size={size * 0.66} color="#ffffff" strokeWidth={1.35} />
     </div>
   );
 }
