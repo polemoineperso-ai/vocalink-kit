@@ -31,7 +31,7 @@ export async function middleware(request: NextRequest) {
 export const config = {
   // /api/cron exclu : protégé par son propre secret (CRON_SECRET), appelé
   // par Vercel Cron avec un header Authorization: Bearer. /login exclu pour
-  // éviter une boucle de redirection. Manifest et icônes exclus : le
-  // téléphone les récupère pour l'écran d'accueil, parfois sans cookie.
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|api/cron|login|manifest.webmanifest|icon|apple-icon).*)"],
+  // éviter une boucle de redirection. Manifest, icônes et service worker
+  // (sw.js) exclus : le téléphone les récupère parfois sans cookie.
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|api/cron|login|manifest.webmanifest|icon|apple-icon|sw.js).*)"],
 };

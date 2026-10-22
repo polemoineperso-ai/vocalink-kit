@@ -76,3 +76,27 @@ model Idea {
 
   googleTaskId String?
 }
+
+// Réglages de l'installation (une seule ligne, id = 1) — app mono-utilisateur.
+model Settings {
+  id          Int       @id @default(1)
+  firstName   String?
+  // Premier lancement terminé (écran d'accueil passé).
+  onboardedAt DateTime?
+  // Clés VAPID des notifications, générées automatiquement au premier
+  // besoin : aucune variable d'environnement à configurer.
+  vapidPublicKey  String?
+  vapidPrivateKey String?
+  // Dernier brief envoyé : Vercel Cron peut appeler deux fois le même jour.
+  lastBriefAt DateTime?
+  updatedAt   DateTime  @updatedAt
+}
+
+// Appareils abonnés aux notifications (téléphone, ordinateur…).
+model PushSubscription {
+  id        String   @id @default(cuid())
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  createdAt DateTime @default(now())
+}

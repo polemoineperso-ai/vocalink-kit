@@ -7,7 +7,7 @@ import { isNotionAvailable, upsertProjectPage } from "@/lib/notion";
 import { isGoogleTasksAvailable, upsertTask } from "@/lib/google-tasks";
 import { fromZonedTime } from "date-fns-tz";
 import { APP_TIMEZONE, resolveDueAt, todayInParis } from "@/lib/due-date";
-import { normalizeContact, type ContactInput } from "@/lib/contact";
+import { fillFromKnownContact, normalizeContact, type ContactInput } from "@/lib/contact";
 import { IdeaCategory, IdeaStatus, IdeaPriority, type Idea } from "@prisma/client";
 
 /**
@@ -38,7 +38,31 @@ export async function processIdea(audio: Blob): Promise<ProcessIdeaResult> {
   }
 
   const extraction = await classifyAndExtractIdea(transcript, todayInParis());
-  return { ok: true, transcript, extraction };
+  return { ok: true, transcript, extraction: extraction ? await recallKnownContact(extraction) : null };
+}
+
+/**
+ * Mémoire des contacts : si le contact dicté a déjà été enregistré dans une
+ * idée précédente (même nom, sans tenir compte des majuscules), complète
+ * ses coordonnées manquantes. Signalé à la relecture via contactRecalled.
+ */
+async function recallKnownContact(extraction: IdeaExtraction): Promise<IdeaExtraction> {
+  const name = extraction.contactName?.trim();
+  if (!name) return extraction;
+  const previous = await prisma.idea.findFirst({
+    where: {
+      contactName: { equals: name, mode: "insensitive" },
+      OR: [
+        { contactPhone: { not: null } },
+        { contactEmail: { not: null } },
+        { contactCompany: { not: null } },
+        { contactRole: { not: null } },
+      ],
+    },
+    orderBy: { createdAt: "desc" },
+  });
+  const { contact, recalled } = fillFromKnownContact(normalizeContact(extraction), previous);
+  return recalled.length > 0 ? { ...extraction, ...contact, contactRecalled: recalled } : extraction;
 }
 
 export type SaveIdeaInput = ContactInput & {

@@ -1,8 +1,11 @@
 import Link from "next/link";
 import { logout } from "@/lib/actions/auth-actions";
 import { getHomeStats } from "@/lib/actions/idea-actions";
+import { getAppSettings } from "@/lib/actions/settings-actions";
 import { AppHeader } from "@/components/app-header";
 import { CaptureFlow } from "@/components/capture-flow";
+import { NotificationsToggle } from "@/components/notifications-toggle";
+import { Onboarding } from "@/components/onboarding";
 
 export const dynamic = "force-dynamic";
 
@@ -18,13 +21,23 @@ function pluralize(n: number, one: string, many: string): string {
 
 export default async function Home() {
   const notionUrl = getNotionUrl();
-  const stats = await getHomeStats();
+  const [stats, settings] = await Promise.all([getHomeStats(), getAppSettings()]);
+
+  if (!settings.onboarded) {
+    return (
+      <main className="mx-auto flex w-full max-w-xl flex-col gap-6 px-4 pb-12 pt-4">
+        <AppHeader showIdeasLink={false} />
+        <Onboarding />
+      </main>
+    );
+  }
 
   return (
     <main className="mx-auto flex w-full max-w-xl flex-col gap-6 px-4 pb-12 pt-4">
       <AppHeader />
 
       <section className="pt-4 text-center">
+        {settings.firstName ? <p className="text-muted">Bonjour {settings.firstName} 👋</p> : null}
         <h1 className="text-3xl font-semibold tracking-tight">Une idée ?</h1>
         <p className="mt-2 text-muted">
           {stats.pending === 0
@@ -54,6 +67,8 @@ export default async function Home() {
           </Link>
         </section>
       ) : null}
+
+      <NotificationsToggle hideWhenOn />
 
       <footer className="mt-4 flex flex-wrap items-center justify-center gap-2 text-sm">
         {notionUrl ? (

@@ -44,6 +44,35 @@ export function formatContactIdentity(contact: ContactFields): string | null {
   return parts.length ? parts.join(" — ") : null;
 }
 
+const CONTACT_DETAIL_LABELS = {
+  contactPhone: "téléphone",
+  contactEmail: "email",
+  contactCompany: "société",
+  contactRole: "fonction",
+} as const;
+
+/**
+ * Mémoire des contacts : complète les champs manquants d'un contact dicté
+ * avec ceux d'une idée précédente au même nom. Ne remplace jamais ce qui a
+ * été dicté. Renvoie aussi la liste des champs retrouvés, pour l'afficher
+ * à la relecture (l'utilisateur vérifie toujours).
+ */
+export function fillFromKnownContact(
+  dictated: ContactFields,
+  known: ContactFields | null,
+): { contact: ContactFields; recalled: string[] } {
+  if (!known || !dictated.contactName) return { contact: dictated, recalled: [] };
+  const contact = { ...dictated };
+  const recalled: string[] = [];
+  for (const key of Object.keys(CONTACT_DETAIL_LABELS) as (keyof typeof CONTACT_DETAIL_LABELS)[]) {
+    if (!contact[key] && known[key]) {
+      contact[key] = known[key];
+      recalled.push(CONTACT_DETAIL_LABELS[key]);
+    }
+  }
+  return { contact, recalled };
+}
+
 /** Lignes texte du contact (notes Google Tasks) — tableau vide si aucun champ. */
 export function formatContactLines(contact: ContactFields): string[] {
   const lines: string[] = [];

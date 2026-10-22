@@ -123,7 +123,7 @@ Votre Vocalink sera accessible sur Internet : ce mot de passe empêche quiconque
 
 ---
 
-## Étape 6 — Mettre Vocalink sur l'écran d'accueil du téléphone (1 min)
+## Étape 6 — Mettre Vocalink sur l'écran d'accueil du téléphone (3 min)
 
 Vocalink s'utilise comme une application, sans passer par un store.
 
@@ -137,7 +137,9 @@ Vocalink s'utilise comme une application, sans passer par un store.
 2. Touchez le menu **⋮** en haut à droite.
 3. Choisissez **Installer l'application** (ou **Ajouter à l'écran d'accueil**).
 
-L'icône 🎙️ Vocalink apparaît avec vos autres applications. À la première dictée, **autorisez l'accès au micro**.
+L'icône 🎙️ Vocalink apparaît avec vos autres applications. Ouvrez-la : Vocalink vous demande votre **prénom**, puis propose le **brief du matin** (une notification chaque matin avec ce qui vous attend) : touchez **Activer les notifications** puis **Autoriser**. À la première dictée, **autorisez l'accès au micro**.
+
+> Sur iPhone, les notifications ne fonctionnent qu'en ouvrant Vocalink **depuis l'icône** de l'écran d'accueil (iOS 16.4 ou plus récent).
 
 > Si le micro ne réagit pas depuis l'icône, ouvrez simplement votre adresse Vocalink dans le navigateur : tout fonctionne de la même façon.
 

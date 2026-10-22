@@ -202,6 +202,12 @@ export function IdeaReviewForm({
             <p className="truncate text-sm text-muted">{contactIdentity ?? "Optionnel — personne à contacter"}</p>
           </div>
         </div>
+        {extraction?.contactRecalled?.length && !ideaId ? (
+          <p className="rounded-xl bg-appel-soft px-3 py-2 text-sm text-appel-ink">
+            📇 Déjà connu : {extraction.contactRecalled.join(", ")} retrouvé{extraction.contactRecalled.length > 1 ? "s" : ""} depuis
+            une idée précédente. Vérifiez.
+          </p>
+        ) : null}
         <label className="field-label">
           Nom et prénom
           <input value={contactName} onChange={(e) => setContactName(e.target.value)} autoComplete="off" />

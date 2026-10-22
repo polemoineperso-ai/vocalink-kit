@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { normalizeContact, hasContact, formatContactIdentity, formatContactLines } from "@/lib/contact";
+import { normalizeContact, hasContact, formatContactIdentity, formatContactLines, fillFromKnownContact } from "@/lib/contact";
 
 const EMPTY = normalizeContact({});
 
@@ -53,5 +53,22 @@ describe("formatContactLines", () => {
 
   it("tableau vide sans contact", () => {
     expect(formatContactLines(EMPTY)).toEqual([]);
+  });
+});
+
+describe("fillFromKnownContact", () => {
+  const known = { ...EMPTY, contactName: "Jean Dupont", contactPhone: "06 12 34 56 78", contactEmail: "jean@acme.fr", contactCompany: "ACME" };
+
+  it("complète les champs manquants sans toucher à ce qui a été dicté", () => {
+    const dictated = { ...EMPTY, contactName: "Jean Dupont", contactCompany: "Nouvelle société" };
+    const { contact, recalled } = fillFromKnownContact(dictated, known);
+    expect(contact).toEqual({ ...dictated, contactPhone: "06 12 34 56 78", contactEmail: "jean@acme.fr" });
+    expect(recalled).toEqual(["téléphone", "email"]);
+  });
+
+  it("ne fait rien sans contact connu ou sans nom dicté", () => {
+    const dictated = { ...EMPTY, contactName: "Jean Dupont" };
+    expect(fillFromKnownContact(dictated, null)).toEqual({ contact: dictated, recalled: [] });
+    expect(fillFromKnownContact(EMPTY, known)).toEqual({ contact: EMPTY, recalled: [] });
   });
 });

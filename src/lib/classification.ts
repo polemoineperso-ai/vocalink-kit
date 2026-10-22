@@ -40,6 +40,8 @@ export type IdeaExtraction = {
   emailBody: string | null;
   dueDate: string | null; // YYYY-MM-DD, uniquement si explicite dans le texte
   dueTime: string | null; // HH:MM, uniquement si explicite dans le texte
+  /** Champs du contact complétés depuis une idée précédente (mémoire des contacts), pour la relecture. */
+  contactRecalled?: string[];
 };
 
 let client: Anthropic | null = null;
