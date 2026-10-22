@@ -1,0 +1,454 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Installer Vocalink</title>
+<meta name="description" content="Installez votre propre Vocalink en 30 minutes, sans connaissances techniques.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%23111'/%3E%3Cg fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round'%3E%3Crect x='9.5' y='4' width='5' height='10' rx='2.5'/%3E%3Cpath d='M7 11a5 5 0 0 0 10 0M12 16v4'/%3E%3C/g%3E%3C/svg%3E">
+<style>
+  :root {
+    --bg: #f6f5f2;
+    --surface: #ffffff;
+    --text: #1c1b19;
+    --muted: #64615b;
+    --line: #e4e1da;
+    --accent: #111111;
+    --accent-text: #ffffff;
+    --ok: #1f7a4d;
+    --ok-soft: #e6f4ec;
+    --warn: #8a5a00;
+    --warn-soft: #fdf3dc;
+    --tip-soft: #eef2fb;
+    --tip: #2f4f9e;
+    --kbd: #f0eee9;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #141413;
+      --surface: #1e1d1b;
+      --text: #f1efe9;
+      --muted: #a8a49b;
+      --line: #34322e;
+      --accent: #f1efe9;
+      --accent-text: #141413;
+      --ok: #6fcf9c;
+      --ok-soft: #1c2e24;
+      --warn: #f0c060;
+      --warn-soft: #2f2716;
+      --tip-soft: #1d2333;
+      --tip: #9db4f0;
+      --kbd: #2a2926;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #141413; --surface: #1e1d1b; --text: #f1efe9; --muted: #a8a49b; --line: #34322e;
+    --accent: #f1efe9; --accent-text: #141413; --ok: #6fcf9c; --ok-soft: #1c2e24;
+    --warn: #f0c060; --warn-soft: #2f2716; --tip-soft: #1d2333; --tip: #9db4f0; --kbd: #2a2926;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 17px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 0 16px 64px; }
+  a { color: inherit; }
+  h1, h2, h3 { line-height: 1.25; margin: 0; }
+
+  /* En-tête */
+  header { padding: 48px 0 32px; text-align: center; }
+  .logo {
+    width: 72px; height: 72px; margin: 0 auto 20px; border-radius: 18px;
+    background: #111; display: grid; place-items: center;
+    border: 1px solid var(--line);
+  }
+  header h1 { font-size: 34px; letter-spacing: -0.02em; }
+  header p { color: var(--muted); font-size: 19px; margin: 12px auto 0; max-width: 560px; }
+
+  /* Encadré avant de commencer */
+  .intro {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 16px;
+    padding: 24px; margin-bottom: 16px;
+  }
+  .intro h2 { font-size: 20px; margin-bottom: 16px; }
+  .facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(135px, 1fr)); gap: 12px; }
+  .fact { background: var(--bg); border-radius: 12px; padding: 14px; }
+  .fact b { display: block; font-size: 15px; }
+  .fact span { color: var(--muted); font-size: 15px; }
+  .accounts { margin: 20px 0 0; padding: 0; list-style: none; display: grid; gap: 10px; }
+  .accounts li { display: flex; gap: 12px; align-items: baseline; }
+  .accounts .n {
+    flex: none; width: 26px; height: 26px; border-radius: 50%; background: var(--accent); color: var(--accent-text);
+    display: grid; place-items: center; font-size: 14px; font-weight: 600; transform: translateY(3px);
+  }
+
+  /* Progression */
+  .progress {
+    position: sticky; top: 0; z-index: 5; background: var(--bg); padding: 12px 0;
+    display: flex; align-items: center; gap: 12px; font-size: 15px; color: var(--muted);
+  }
+  .bar { flex: 1; height: 8px; border-radius: 99px; background: var(--line); overflow: hidden; }
+  .bar i { display: block; height: 100%; width: 0; background: var(--ok); transition: width .3s; }
+
+  /* Étapes */
+  .step {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 16px;
+    padding: 24px; margin-top: 16px; scroll-margin-top: 56px;
+  }
+  .step.done { border-color: var(--ok); }
+  .step-head { display: flex; gap: 14px; align-items: flex-start; }
+  .num {
+    flex: none; width: 40px; height: 40px; border-radius: 50%; background: var(--accent); color: var(--accent-text);
+    display: grid; place-items: center; font-weight: 700; font-size: 18px;
+  }
+  .step.done .num { background: var(--ok); color: #fff; }
+  .step h2 { font-size: 22px; }
+  .time { color: var(--muted); font-size: 15px; margin-top: 2px; }
+  .why { color: var(--muted); margin: 16px 0 0; }
+  .step h3 { font-size: 17px; margin: 22px 0 4px; }
+  ol.do { margin: 12px 0 0; padding-left: 22px; }
+  ol.do > li { margin: 8px 0; padding-left: 4px; }
+  ol.do ul { margin: 6px 0; padding-left: 20px; }
+  .btn-name {
+    display: inline-block; background: var(--kbd); border: 1px solid var(--line); border-radius: 6px;
+    padding: 0 7px; font-weight: 600; font-size: 0.92em; white-space: nowrap;
+  }
+  code { background: var(--kbd); border-radius: 5px; padding: 1px 6px; font-size: 0.9em; overflow-wrap: anywhere; white-space: nowrap; }
+  li code, p code, .note code, label code { white-space: normal; overflow-wrap: break-word; }
+
+  .note { border-radius: 12px; padding: 14px 16px; margin-top: 16px; font-size: 16px; }
+  .note.warn { background: var(--warn-soft); }
+  .note.warn b:first-child { color: var(--warn); }
+  .note.tip { background: var(--tip-soft); }
+  .note.tip b:first-child { color: var(--tip); }
+
+  .check {
+    margin-top: 20px; display: flex; gap: 12px; align-items: center; cursor: pointer;
+    background: var(--ok-soft); border-radius: 12px; padding: 14px 16px; font-size: 16px;
+  }
+  .check input { width: 22px; height: 22px; accent-color: var(--ok); flex: none; margin: 0; cursor: pointer; }
+
+  .cta {
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    margin: 20px 0 8px; padding: 18px 20px; border-radius: 14px;
+    background: var(--accent); color: var(--accent-text); text-decoration: none;
+    font-size: 19px; font-weight: 700;
+  }
+  .cta:hover { opacity: .9; }
+  .cta-sub { text-align: center; color: var(--muted); font-size: 15px; margin: 0; }
+
+  .say {
+    border-left: 3px solid var(--line); margin: 10px 0; padding: 4px 0 4px 14px; font-style: italic;
+  }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .two > div { background: var(--bg); border-radius: 12px; padding: 16px; }
+  .two h3 { margin-top: 0; }
+  .two ol { margin: 8px 0 0; padding-left: 20px; }
+
+  .finish {
+    text-align: center; margin-top: 16px; padding: 28px 24px; border-radius: 16px;
+    background: var(--ok-soft); display: none;
+  }
+  .finish.show { display: block; }
+  .finish h2 { font-size: 24px; }
+
+  /* Aide */
+  section.help { margin-top: 40px; }
+  section.help > h2 { font-size: 22px; margin-bottom: 12px; }
+  details {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
+    margin-top: 10px; padding: 0 18px;
+  }
+  summary { cursor: pointer; padding: 16px 0; font-weight: 600; list-style-position: outside; }
+  details[open] summary { border-bottom: 1px solid var(--line); margin-bottom: 4px; }
+  details > :last-child { margin-bottom: 16px; }
+  .good ul { padding-left: 20px; }
+  .good li { margin: 8px 0; }
+
+  footer { margin-top: 48px; text-align: center; color: var(--muted); font-size: 14px; }
+
+  @media (max-width: 560px) {
+    body { font-size: 16px; }
+    header { padding: 32px 0 24px; }
+    header h1 { font-size: 28px; }
+    header p { font-size: 17px; }
+    .intro, .step { padding: 18px; }
+    .step h2 { font-size: 19px; }
+    .two { grid-template-columns: 1fr; }
+    .cta { font-size: 17px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="logo" aria-hidden="true">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10v1a7 7 0 0 0 14 0v-1"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="8" y1="22" x2="16" y2="22"/>
+      </svg>
+    </div>
+    <h1>Installez votre Vocalink</h1>
+    <p>Dites une idée à voix haute : elle devient un projet, un email à écrire, un appel à passer ou une simple note. Ce guide vous accompagne pas à pas, sans connaissances techniques.</p>
+  </header>
+
+  <section class="intro" aria-labelledby="avant">
+    <h2 id="avant">Avant de commencer</h2>
+    <div class="facts">
+      <div class="fact"><b>⏱️ 30 à 45 min</b><span>une seule fois</span></div>
+      <div class="fact"><b>💻 Un ordinateur</b><span>plus confortable qu'un téléphone pour installer</span></div>
+      <div class="fact"><b>📱 Votre téléphone</b><span>pour les codes de vérification</span></div>
+      <div class="fact"><b>💳 Une carte bancaire</b><span>pour le crédit OpenAI</span></div>
+    </div>
+    <p style="margin:18px 0 0"><b>Combien ça coûte ?</b> L'hébergement est <b>gratuit</b>. Seule l'intelligence artificielle (OpenAI) est payante, à l'usage : quelques centimes par idée, soit <b>quelques euros par mois</b>. Vous achetez un crédit à l'avance : <b>pas d'abonnement, pas de mauvaise surprise</b>.</p>
+    <p style="margin:14px 0 0"><b>Vous allez créer 3 comptes</b>, tous à votre nom :</p>
+    <ul class="accounts">
+      <li><span class="n">1</span><span><b>GitHub</b> — garde une copie du programme. Gratuit. Vous n'aurez plus à y retourner ensuite.</span></li>
+      <li><span class="n">2</span><span><b>OpenAI</b> — l'intelligence artificielle qui comprend votre voix. Payant à l'usage.</span></li>
+      <li><span class="n">3</span><span><b>Vercel</b> — fait tourner l'application sur Internet. Gratuit. Se crée en un clic grâce à GitHub.</span></li>
+    </ul>
+    <div class="note tip"><b>Astuce :</b> ouvrez une note (Bloc-notes, Notes…) pour y coller votre <b>clé OpenAI</b> (étape 2) et votre <b>mot de passe</b> (étape 3). Vous en aurez besoin à l'étape 4.</div>
+  </section>
+
+  <div class="progress" aria-live="polite">
+    <div class="bar"><i id="bar"></i></div>
+    <span id="count">0 / 6 étapes</span>
+  </div>
+
+  <!-- ÉTAPE 1 -->
+  <section class="step" id="etape-1">
+    <div class="step-head">
+      <div class="num">1</div>
+      <div><h2>Créer votre compte GitHub</h2><div class="time">environ 5 minutes</div></div>
+    </div>
+    <ol class="do">
+      <li>Ouvrez <a href="https://github.com/signup" target="_blank" rel="noopener">github.com/signup</a>.</li>
+      <li>Saisissez votre <b>adresse email</b>, puis cliquez sur <span class="btn-name">Continue</span>.</li>
+      <li>Choisissez un <b>mot de passe</b>, puis un <b>nom d'utilisateur</b> (par exemple <code>marie-dupont</code>), puis <span class="btn-name">Continue</span>.</li>
+      <li>Faites la petite vérification « je ne suis pas un robot ».</li>
+      <li>Ouvrez votre boîte mail : GitHub vous envoie un <b>code</b>. Recopiez-le.</li>
+      <li>Si GitHub vous pose des questions, choisissez les réponses les plus simples ou cliquez sur <span class="btn-name">Skip</span>. Si on vous propose une offre, choisissez <span class="btn-name">Free</span> (gratuit).</li>
+    </ol>
+    <!-- Emplacement capture : page d'inscription GitHub -->
+    <label class="check"><input type="checkbox" data-step="1"> C'est fait : je vois la page d'accueil de GitHub.</label>
+  </section>
+
+  <!-- ÉTAPE 2 -->
+  <section class="step" id="etape-2">
+    <div class="step-head">
+      <div class="num">2</div>
+      <div><h2>Obtenir votre clé OpenAI</h2><div class="time">environ 10 minutes</div></div>
+    </div>
+    <p class="why">La « clé » est un code secret qui autorise votre Vocalink à utiliser OpenAI, <b>à vos frais</b>. Ne la partagez avec personne.</p>
+
+    <h3>a. Créer le compte</h3>
+    <ol class="do">
+      <li>Ouvrez <a href="https://platform.openai.com/signup" target="_blank" rel="noopener">platform.openai.com/signup</a>.</li>
+      <li>Créez un compte (email et mot de passe, ou <span class="btn-name">Continue with Google</span>).</li>
+      <li>Confirmez votre email et, si on vous le demande, votre numéro de téléphone.</li>
+    </ol>
+    <div class="note warn"><b>Attention :</b> un abonnement ChatGPT <b>ne suffit pas</b> et <b>n'est pas nécessaire</b>. Il s'agit ici de la « plateforme » d'OpenAI, qui est un service séparé.</div>
+
+    <h3>b. Ajouter du crédit</h3>
+    <ol class="do">
+      <li>Ouvrez <a href="https://platform.openai.com/settings/organization/billing" target="_blank" rel="noopener">la page de facturation</a>.</li>
+      <li>Cliquez sur <span class="btn-name">Add payment details</span>, choisissez <span class="btn-name">Individual</span> (particulier) et saisissez votre carte.</li>
+      <li>Achetez <b>5 $</b> de crédit : c'est le minimum, et largement suffisant pour commencer.</li>
+      <li>Laissez la recharge automatique (<i>auto recharge</i>) <b>désactivée</b> : vous ne dépenserez jamais plus que ce crédit.</li>
+    </ol>
+
+    <h3>c. Créer la clé</h3>
+    <ol class="do">
+      <li>Ouvrez <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener">la page des clés</a>.</li>
+      <li>Cliquez sur <span class="btn-name">Create new secret key</span>.</li>
+      <li>Nom : <code>Vocalink</code>. Ne changez rien d'autre. Cliquez sur <span class="btn-name">Create secret key</span>.</li>
+      <li>Une longue suite de caractères commençant par <code>sk-</code> apparaît. Cliquez sur <span class="btn-name">Copy</span> et <b>collez-la tout de suite dans votre note</b>.</li>
+    </ol>
+    <div class="note warn"><b>OpenAI n'affichera plus jamais cette clé.</b> Si vous la perdez, pas de panique : supprimez-la et créez-en une nouvelle de la même façon.</div>
+    <!-- Emplacement capture : fenêtre de la clé créée (clé masquée) -->
+    <label class="check"><input type="checkbox" data-step="2"> C'est fait : ma note contient une clé qui commence par <code>sk-</code>.</label>
+  </section>
+
+  <!-- ÉTAPE 3 -->
+  <section class="step" id="etape-3">
+    <div class="step-head">
+      <div class="num">3</div>
+      <div><h2>Choisir le mot de passe de votre Vocalink</h2><div class="time">1 minute</div></div>
+    </div>
+    <p class="why">Votre Vocalink sera sur Internet : ce mot de passe empêche toute autre personne d'y entrer.</p>
+    <ol class="do">
+      <li>Choisissez un mot de passe <b>nouveau</b>, d'au moins <b>12 caractères</b>. Trois mots au hasard, c'est facile à retenir : <code>girafe-orage-violon42</code>.</li>
+      <li>Notez-le dans votre note.</li>
+    </ol>
+    <label class="check"><input type="checkbox" data-step="3"> C'est fait : mon mot de passe est noté.</label>
+  </section>
+
+  <!-- ÉTAPE 4 -->
+  <section class="step" id="etape-4">
+    <div class="step-head">
+      <div class="num">4</div>
+      <div><h2>Installer Vocalink</h2><div class="time">environ 10 minutes, dont 3 d'attente</div></div>
+    </div>
+    <p class="why">Ce bouton ouvre Vercel, qui va installer votre Vocalink. Gardez votre note à portée de main.</p>
+    <a class="cta" target="_blank" rel="noopener" href="https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fpolemoineperso-ai%2Fvocalink-kit&project-name=mon-vocalink&repository-name=mon-vocalink&env=OPENAI_API_KEY,APP_PASSWORD&envDescription=OPENAI_API_KEY%20%3A%20la%20cl%C3%A9%20OpenAI%20cr%C3%A9%C3%A9e%20%C3%A0%20l%27%C3%A9tape%202.%20APP_PASSWORD%20%3A%20le%20mot%20de%20passe%20choisi%20%C3%A0%20l%27%C3%A9tape%203.&envLink=https%3A%2F%2Fgithub.com%2Fpolemoineperso-ai%2Fvocalink-kit%23readme&stores=%5B%7B%22type%22%3A%22integration%22%2C%22integrationSlug%22%3A%22neon%22%2C%22productSlug%22%3A%22neon%22%2C%22protocol%22%3A%22storage%22%7D%5D">
+      ▲ Installer Vocalink
+    </a>
+    <p class="cta-sub">S'ouvre dans un nouvel onglet — revenez ici pour suivre les étapes.</p>
+    <ol class="do">
+      <li><b>Compte Vercel</b> : cliquez sur <span class="btn-name">Continue with GitHub</span>, puis <span class="btn-name">Authorize Vercel</span>. Si on vous demande votre type d'usage, choisissez <span class="btn-name">Hobby</span> (personnel, gratuit) et indiquez votre nom.</li>
+      <li><b>Copie du programme</b> : Vercel propose de créer une copie nommée <code>mon-vocalink</code>. Laissez <span class="btn-name">Private repository</span> coché et cliquez sur <span class="btn-name">Create</span>. Si GitHub vous demande une autorisation, acceptez (<span class="btn-name">Install</span> ou <span class="btn-name">Authorize</span>).</li>
+      <li><b>Base de données</b> : Vercel propose <b>Neon</b>, l'endroit où vos idées seront rangées. Cliquez sur <span class="btn-name">Add</span> ou <span class="btn-name">Create</span>, puis :
+        <ul>
+          <li>choisissez l'offre <span class="btn-name">Free</span> (gratuite) ;</li>
+          <li>si on vous demande une région, choisissez l'Europe, par exemple <b>Frankfurt</b> ;</li>
+          <li>acceptez et validez.</li>
+        </ul>
+      </li>
+      <li><b>Vos deux secrets</b> : remplissez les deux cases, sans espace avant ni après.
+        <ul>
+          <li><code>OPENAI_API_KEY</code> → votre <b>clé OpenAI</b> (elle commence par <code>sk-</code>) ;</li>
+          <li><code>APP_PASSWORD</code> → votre <b>mot de passe</b> de l'étape 3.</li>
+        </ul>
+      </li>
+      <li>Cliquez sur <span class="btn-name">Deploy</span>. Patientez <b>2 à 4 minutes</b> sans fermer la page.</li>
+      <li>Des confettis 🎉 : c'est installé ! Cliquez sur <span class="btn-name">Continue to Dashboard</span>.</li>
+    </ol>
+    <div class="note tip"><b>Votre adresse Vocalink</b> s'affiche sous la miniature de l'application, sous la forme <code>mon-vocalink-xxxx.vercel.app</code>. <b>Notez-la</b> : c'est votre Vocalink.</div>
+    <!-- Emplacements captures : Continue with GitHub, écran Neon, écran des deux secrets, confettis -->
+    <label class="check"><input type="checkbox" data-step="4"> C'est fait : j'ai noté mon adresse <code>….vercel.app</code>.</label>
+  </section>
+
+  <!-- ÉTAPE 5 -->
+  <section class="step" id="etape-5">
+    <div class="step-head">
+      <div class="num">5</div>
+      <div><h2>Premier essai</h2><div class="time">2 minutes</div></div>
+    </div>
+    <ol class="do">
+      <li>Ouvrez votre adresse Vocalink et saisissez votre <b>mot de passe</b>.</li>
+      <li>Cliquez sur <span class="btn-name">Enregistrer une idée</span>, puis <span class="btn-name">Démarrer l'enregistrement</span>, et <b>autorisez le micro</b>.</li>
+      <li>Dites par exemple :
+        <div class="say">« Rappeler Jean Dupont, directeur chez ACME, au 06 12 34 56 78, jeudi à 10 heures. »</div>
+      </li>
+      <li>Cliquez sur <span class="btn-name">Arrêter</span>. Quelques secondes plus tard, Vocalink affiche le texte, la catégorie <b>Appel / Rappel</b>, le contact et la date.</li>
+      <li>Corrigez si besoin, puis cliquez sur <span class="btn-name">Enregistrer</span>.</li>
+    </ol>
+    <label class="check"><input type="checkbox" data-step="5"> C'est fait : ma première idée est enregistrée.</label>
+  </section>
+
+  <!-- ÉTAPE 6 -->
+  <section class="step" id="etape-6">
+    <div class="step-head">
+      <div class="num">6</div>
+      <div><h2>Mettre Vocalink sur votre téléphone</h2><div class="time">1 minute</div></div>
+    </div>
+    <p class="why">Vocalink s'utilise comme une application, sans passer par un store.</p>
+    <div class="two" style="margin-top:16px">
+      <div>
+        <h3>iPhone</h3>
+        <ol>
+          <li>Ouvrez votre adresse dans <b>Safari</b> et connectez-vous.</li>
+          <li>Touchez <b>Partager</b> (le carré avec une flèche).</li>
+          <li>Choisissez <b>Sur l'écran d'accueil</b>, puis <b>Ajouter</b>.</li>
+        </ol>
+      </div>
+      <div>
+        <h3>Android</h3>
+        <ol>
+          <li>Ouvrez votre adresse dans <b>Chrome</b> et connectez-vous.</li>
+          <li>Touchez le menu <b>⋮</b> en haut à droite.</li>
+          <li>Choisissez <b>Installer l'application</b> (ou <b>Ajouter à l'écran d'accueil</b>).</li>
+        </ol>
+      </div>
+    </div>
+    <p class="why">L'icône Vocalink apparaît avec vos autres applications. À la première dictée, autorisez le micro. Si le micro ne réagit pas depuis l'icône, ouvrez simplement votre adresse dans le navigateur.</p>
+    <label class="check"><input type="checkbox" data-step="6"> C'est fait : Vocalink est sur mon écran d'accueil.</label>
+  </section>
+
+  <div class="finish" id="finish">
+    <h2>🎉 Bravo, votre Vocalink est prêt !</h2>
+    <p style="margin:10px 0 0">Dictez, relisez, enregistrez. Retrouvez tout dans <b>Voir mes idées</b>, avec la recherche par nom, société ou mot-clé.</p>
+  </div>
+
+  <section class="help" aria-labelledby="aide">
+    <h2 id="aide">Besoin d'aide ?</h2>
+
+    <details>
+      <summary>« Transcription indisponible » ou « La transcription a échoué »</summary>
+      <p>La clé OpenAI est absente ou mal copiée, ou votre crédit est épuisé. Vérifiez votre crédit sur <a href="https://platform.openai.com/settings/organization/billing" target="_blank" rel="noopener">la page de facturation OpenAI</a>. Si besoin, créez une nouvelle clé et remplacez-la (voir ci-dessous).</p>
+    </details>
+
+    <details>
+      <summary>Changer la clé OpenAI ou le mot de passe (ou mot de passe oublié)</summary>
+      <ol>
+        <li>Sur <a href="https://vercel.com" target="_blank" rel="noopener">vercel.com</a>, ouvrez votre projet <b>mon-vocalink</b> → <span class="btn-name">Settings</span> → <span class="btn-name">Environment Variables</span>.</li>
+        <li>Sur la ligne <code>OPENAI_API_KEY</code> ou <code>APP_PASSWORD</code> : <span class="btn-name">⋯</span> → <span class="btn-name">Edit</span>, collez la nouvelle valeur, <span class="btn-name">Save</span>.</li>
+        <li>Onglet <span class="btn-name">Deployments</span>, première ligne : <span class="btn-name">⋯</span> → <span class="btn-name">Redeploy</span>. Attendez 2 minutes.</li>
+      </ol>
+    </details>
+
+    <details>
+      <summary>L'installation (étape 4) s'est arrêtée sur une erreur rouge</summary>
+      <p>Dans Vercel, onglet <span class="btn-name">Deployments</span> → <span class="btn-name">⋯</span> → <span class="btn-name">Redeploy</span>. Un deuxième essai suffit souvent.</p>
+      <p>Si la base Neon n'a pas été créée : dans votre projet, onglet <span class="btn-name">Storage</span> → <span class="btn-name">Create Database</span> → <b>Neon</b> → <span class="btn-name">Free</span> → <span class="btn-name">Connect</span>, puis <span class="btn-name">Redeploy</span>.</p>
+    </details>
+
+    <details>
+      <summary>Le micro ne fonctionne pas</summary>
+      <p>Vérifiez que le navigateur a le droit d'utiliser le micro (Réglages du téléphone → Safari ou Chrome → Micro). L'adresse doit bien commencer par <code>https://</code>.</p>
+    </details>
+
+    <details class="good">
+      <summary>Bon à savoir : données, usage, mises à jour</summary>
+      <ul>
+        <li><b>Vos données</b> sont rangées dans <b>votre</b> base, protégée par <b>votre</b> mot de passe. Le son est envoyé à OpenAI pour être transcrit, puis n'est conservé nulle part par Vocalink.</li>
+        <li><b>Contacts</b> : si vous notez les coordonnées d'autres personnes, gardez-les pour votre usage personnel.</li>
+        <li><b>Usage</b> : l'offre gratuite de Vercel est prévue pour un usage personnel, non commercial.</li>
+        <li><b>Mises à jour</b> : votre Vocalink est une copie indépendante. Il ne change pas tout seul et continue de fonctionner tel quel.</li>
+        <li><b>Options avancées</b> (Notion, Google Tasks, email récapitulatif) : <a href="https://github.com/polemoineperso-ai/vocalink-kit/blob/main/docs/OPTIONS-AVANCEES.md" target="_blank" rel="noopener">voir le guide technique</a>.</li>
+      </ul>
+    </details>
+  </section>
+
+  <footer>Les sites cités changent parfois le nom exact de leurs boutons : si un bouton ne correspond pas tout à fait, choisissez celui qui s'en approche le plus.</footer>
+</div>
+
+<script>
+  (function () {
+    var KEY = "vocalink-install-steps";
+    var boxes = Array.prototype.slice.call(document.querySelectorAll("input[data-step]"));
+    var saved = {};
+    try { saved = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) { saved = {}; }
+
+    function render() {
+      var done = 0;
+      boxes.forEach(function (b) {
+        var step = b.closest(".step");
+        step.classList.toggle("done", b.checked);
+        if (b.checked) done++;
+      });
+      document.getElementById("bar").style.width = (done / boxes.length * 100) + "%";
+      document.getElementById("count").textContent = done + " / " + boxes.length + " étapes";
+      document.getElementById("finish").classList.toggle("show", done === boxes.length);
+    }
+
+    boxes.forEach(function (b) {
+      b.checked = Boolean(saved[b.dataset.step]);
+      b.addEventListener("change", function () {
+        saved[b.dataset.step] = b.checked;
+        try { localStorage.setItem(KEY, JSON.stringify(saved)); } catch (e) {}
+        render();
+        if (b.checked) {
+          var next = document.getElementById("etape-" + (Number(b.dataset.step) + 1));
+          if (next) next.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      });
+    });
+    render();
+  })();
+</script>
+</body>
+</html>

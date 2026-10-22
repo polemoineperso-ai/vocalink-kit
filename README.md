@@ -1,5 +1,9 @@
 # Vocalink
 
+> ## 👉 [Guide d'installation simple, étape par étape](https://polemoineperso-ai.github.io/vocalink-kit/)
+>
+> Vous voulez simplement installer Vocalink ? Ouvrez **[ce guide](https://polemoineperso-ai.github.io/vocalink-kit/)** : il est plus facile à suivre que cette page.
+
 **Dites une idée à voix haute, elle se transforme en action** : un projet, un email à écrire, un appel à passer, ou simplement une note. Vocalink transcrit votre voix, range l'idée dans la bonne catégorie, repère les contacts (nom, téléphone, email…) et les dates, puis vous laisse tout relire avant d'enregistrer.
 
 Ce guide vous permet d'installer **votre propre Vocalink**, seul, sans connaissances techniques. Vos idées restent chez vous : personne d'autre n'y a accès.
