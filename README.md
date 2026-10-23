@@ -8,7 +8,7 @@
 
 Le guide fait tout le chemin avec vous. Pour mémoire, le bouton d'installation est celui-ci :
 
-[![Installer sur Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fpolemoineperso-ai%2Fvocalink-kit&project-name=mon-vocalink&repository-name=mon-vocalink&env=OPENAI_API_KEY,APP_PASSWORD&envDescription=OPENAI_API_KEY%20%3A%20la%20cl%C3%A9%20OpenAI%20cr%C3%A9%C3%A9e%20%C3%A0%20l%27%C3%A9tape%202.%20APP_PASSWORD%20%3A%20le%20mot%20de%20passe%20choisi%20%C3%A0%20l%27%C3%A9tape%203.&envLink=https%3A%2F%2Fgithub.com%2Fpolemoineperso-ai%2Fvocalink-kit%23readme&stores=%5B%7B%22type%22%3A%22integration%22%2C%22integrationSlug%22%3A%22neon%22%2C%22productSlug%22%3A%22neon%22%2C%22protocol%22%3A%22storage%22%7D%5D)
+[![Installer sur Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fpolemoineperso-ai%2Fvocalink-kit&project-name=mon-vocalink&repository-name=mon-vocalink&env=OPENAI_API_KEY,APP_PASSWORD&envDescription=OPENAI_API_KEY%20%3A%20votre%20cl%C3%A9%20OpenAI%2C%20pr%C3%A9par%C3%A9e%20%C3%A0%20la%20mission%202%20du%20guide%20%28elle%20commence%20par%20sk-%29.%20APP_PASSWORD%20%3A%20le%20mot%20de%20passe%20secret%20not%C3%A9%20%C3%A0%20la%20mission%202.&envLink=https%3A%2F%2Fgithub.com%2Fpolemoineperso-ai%2Fvocalink-kit%23readme&stores=%5B%7B%22type%22%3A%22integration%22%2C%22integrationSlug%22%3A%22neon%22%2C%22productSlug%22%3A%22neon%22%2C%22protocol%22%3A%22storage%22%7D%5D)
 
 Vercel y demande deux réglages :
 
@@ -42,13 +42,14 @@ Collez-les sans espace avant ni après.
 
 ## Mettre à jour votre Vocalink
 
-Quand une nouvelle version existe, une pastille apparaît sur votre initiale dans Vocalink, et **Réglages → À propos** l'annonce. La mise à jour prend 2 minutes et ne touche pas à vos idées.
+Quand une nouvelle version existe, une pastille apparaît sur votre initiale dans Vocalink. La mise à jour prend 2 minutes et ne touche pas à vos idées.
 
-1. Sur [github.com](https://github.com), ouvrez votre dépôt **mon-vocalink**.
-2. Onglet **Actions** → à gauche **Mettre à jour Vocalink** → à droite **Run workflow** → bouton vert **Run workflow**.
-3. Attendez la coche verte (environ 1 minute), puis 2 à 3 minutes que Vercel remette votre assistant en ligne. Fermez et rouvrez l'app.
+Dans Vocalink, **Réglages → À propos** propose deux boutons qui ouvrent directement votre dépôt sur GitHub :
 
-Une croix rouge ? Votre Vocalink continue de marcher comme avant : signalez-le (ci-dessous).
+1. **Activer les mises à jour**, une seule fois : GitHub s'ouvre sur un fichier déjà rempli, cliquez sur **Commit changes** (deux fois). Ce fichier n'est pas copié à l'installation : Vercel n'en a pas le droit.
+2. **Mettre à jour maintenant** : **Run workflow**, puis le bouton vert **Run workflow**. Attendez la coche verte (1 minute), puis 2 à 3 minutes que Vercel remette votre assistant en ligne.
+
+Vocalink ne s'ouvre plus ? L'aide du [guide](https://polemoineperso-ai.github.io/vocalink-kit/#mise-a-jour) prépare les mêmes liens à partir de votre nom de compte GitHub.
 
 ## Signaler un problème
 

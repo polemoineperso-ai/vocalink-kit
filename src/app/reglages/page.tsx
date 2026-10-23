@@ -5,6 +5,7 @@ import { getAppSettings } from "@/lib/actions/settings-actions";
 import { NotificationsToggle } from "@/components/notifications-toggle";
 import { CopyShortcutUrl, FirstNameField, HealthCheck } from "@/components/settings-panels";
 import { AboutPanel } from "@/components/update-check";
+import { repoFromEnv } from "@/lib/version";
 
 export const dynamic = "force-dynamic";
 
@@ -85,7 +86,7 @@ export default async function SettingsPage() {
       </div>
 
       <h2 className="group-label">À propos</h2>
-      <AboutPanel />
+      <AboutPanel repo={repoFromEnv(process.env)} />
 
       {process.env.APP_PASSWORD ? (
         <div className="group mt-8">
