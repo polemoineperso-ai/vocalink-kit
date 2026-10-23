@@ -7,7 +7,7 @@
  * ici ET dans docs/version.json du kit, dans le même commit.
  */
 
-export const APP_VERSION = "1.0.4";
+export const APP_VERSION = "1.0.5";
 
 const KIT_SITE = "https://polemoineperso-ai.github.io/vocalink-kit";
 const KIT_REPO = "https://github.com/polemoineperso-ai/vocalink-kit";
